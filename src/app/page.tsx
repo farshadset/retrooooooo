@@ -165,28 +165,30 @@ export default function HomePage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header - Dynamic based on theme settings */}
-      <header className={`${currentTheme.header.showBackground ? 'bg-primary text-primary-foreground' : 'bg-transparent text-foreground'} py-4 sm:py-6`}>
-        <div className="container mx-auto px-3 sm:px-4">
+    <div className="min-h-screen bg-md-background mobile-portrait">
+      {/* Header - Material Design 3 optimized */}
+      <header className={`${currentTheme.header.showBackground ? 'md-primary' : 'md-surface'} safe-area-top`}>
+        <div className="mobile-container py-md-lg">
           <div className="flex justify-between items-center">
             {/* Admin Login - Top Left */}
-            <AdminLogin
-              onLogin={handleAdminLogin}
-              isLoggedIn={isAdmin}
-              onLogout={handleAdminLogout}
-              onUpdateMenuItem={handleUpdateMenuItem}
-              onUpdateCategories={handleUpdateCategories}
-              onUpdateItems={handleUpdateItems}
-              onNavbarStyleChange={handleNavbarStyleChange}
-              onTemplateChange={handleTemplateChange}
-              onDessertsConfigChange={handleDessertsConfigChange}
-            />
+            <div className="md-touch-target">
+              <AdminLogin
+                onLogin={handleAdminLogin}
+                isLoggedIn={isAdmin}
+                onLogout={handleAdminLogout}
+                onUpdateMenuItem={handleUpdateMenuItem}
+                onUpdateCategories={handleUpdateCategories}
+                onUpdateItems={handleUpdateItems}
+                onNavbarStyleChange={handleNavbarStyleChange}
+                onTemplateChange={handleTemplateChange}
+                onDessertsConfigChange={handleDessertsConfigChange}
+              />
+            </div>
             
-            {/* Main Title/Logo - Center - Dynamic based on header type */}
+            {/* Main Title/Logo - Center - Material Design 3 Typography */}
             <div className="text-center flex-1">
               {currentTheme.header.type === 'text' && (
-                <h1 className="text-2xl sm:text-3xl md:text-5xl font-bold mb-2 sm:mb-3" style={{ fontFamily: currentTheme.typography.headerTitleFontFamily }}>
+                <h1 className="md-display-small mobile-headline" style={{ fontFamily: currentTheme.typography.headerTitleFontFamily }}>
                   {currentTheme.header.title}
                 </h1>
               )}
@@ -200,7 +202,7 @@ export default function HomePage() {
                 </div>
               )}
               {currentTheme.header.type === 'textAndLogo' && (
-                <div className="space-y-4">
+                <div className="space-y-md-md">
                   <div className="flex justify-center">
                     <img 
                       src={currentTheme.header.logoUrl || '/api/placeholder/200/80/cccccc/666666?text=RETRO'} 
@@ -208,7 +210,7 @@ export default function HomePage() {
                       className="h-16 sm:h-20 md:h-24 w-auto"
                     />
                   </div>
-                  <h1 className="text-2xl sm:text-3xl md:text-5xl font-bold mb-2 sm:mb-3" style={{ fontFamily: currentTheme.typography.headerTitleFontFamily }}>
+                  <h1 className="md-display-small mobile-headline" style={{ fontFamily: currentTheme.typography.headerTitleFontFamily }}>
                     {currentTheme.header.title}
                   </h1>
                 </div>
@@ -244,31 +246,28 @@ export default function HomePage() {
 
 
 
-      {/* Menu Content - All items in one continuous list */}
-      <main className="py-4 sm:py-6 relative bg-background">
-        {/* Enhanced background pattern for glass effect visibility */}
-        <div className="absolute inset-0 bg-gradient-to-br from-background via-background/99 to-background/97 pointer-events-none"></div>
-        
-        <div className="container mx-auto px-3 sm:px-4 relative z-10">
+      {/* Menu Content - Material Design 3 optimized for mobile */}
+      <main className="content-section relative bg-md-background">
+        <div className="mobile-container relative z-10">
           <div className="max-w-5xl mx-auto">
-            <div className="flex flex-col space-y-8 sm:space-y-12">
+            <div className="flex flex-col space-y-md-2xl">
               {groupedItems.map(({ category, items }) => (
                 <div key={category.id} id={`category-${category.id}`} data-category={category.id}>
-                  {/* Category Header */}
-                  <div className="mb-6 sm:mb-8 text-center">
-                    <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground font-headline">
+                  {/* Category Header - Material Design 3 Typography */}
+                  <div className="mb-md-lg text-center">
+                    <h2 className="md-headline-medium mobile-headline text-md-on-background">
                       {category.name}
                     </h2>
                   </div>
                   
-                  {/* Menu Items - Render based on selected template */}
+                  {/* Menu Items - Mobile-optimized layouts */}
                   {selectedTemplate === 'compact' ? (
-                    // Compact template - 2 items per row
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    // Compact template - Mobile: 1 column, Tablet: 2 columns
+                    <div className="grid grid-cols-1 tablet:grid-cols-2 gap-md-lg">
                       {items.map((item, index) => (
                         <div
                           key={item.id}
-                          className="animate-slide-up"
+                          className="animate-md-slide-in mobile-card"
                           style={{ animationDelay: `${index * 100}ms` }}
                         >
                           <TemplateRenderer
@@ -282,12 +281,12 @@ export default function HomePage() {
                       ))}
                     </div>
                   ) : selectedTemplate === 'square' ? (
-                    // Square template - 4 items per row
-                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-6">
+                    // Square template - Mobile: 2 columns, Tablet: 3 columns, Desktop: 4 columns
+                    <div className="grid grid-cols-2 tablet:grid-cols-3 desktop:grid-cols-4 gap-md-md">
                       {items.map((item, index) => (
                         <div
                           key={item.id}
-                          className="animate-slide-up flex justify-center"
+                          className="animate-md-scale-in flex justify-center"
                           style={{ animationDelay: `${index * 100}ms` }}
                         >
                           <TemplateRenderer
@@ -301,12 +300,12 @@ export default function HomePage() {
                       ))}
                     </div>
                   ) : (
-                    // Other templates - vertical stack layout
-                    <div className="flex flex-col space-y-9 sm:space-y-12">
+                    // Default template - Single column for mobile
+                    <div className="flex flex-col space-y-md-xl">
                       {items.map((item, index) => (
                         <div
                           key={item.id}
-                          className="animate-slide-up"
+                          className="animate-md-slide-in mobile-card"
                           style={{ animationDelay: `${index * 100}ms` }}
                         >
                           <TemplateRenderer
@@ -327,11 +326,11 @@ export default function HomePage() {
         </div>
       </main>
 
-      {/* Footer - Reduced spacing */}
-      <footer className="bg-foreground text-primary-foreground py-4 sm:py-6 mt-8 sm:mt-12">
-        <div className="container mx-auto px-3 sm:px-4 text-center">
-          <p className="text-sm sm:text-base font-semibold mb-1 sm:mb-2 font-headline">کافه RETRO</p>
-          <p className="opacity-80 text-xs sm:text-sm font-body">
+      {/* Footer - Material Design 3 optimized */}
+      <footer className="md-surface-container safe-area-bottom">
+        <div className="mobile-container py-md-lg text-center">
+          <p className="md-title-medium mobile-title text-md-on-surface mb-md-sm">کافه RETRO</p>
+          <p className="md-body-medium mobile-body text-md-on-surface-variant">
             تجربه‌ای از ترکیب سنت و نوآوری
           </p>
         </div>
