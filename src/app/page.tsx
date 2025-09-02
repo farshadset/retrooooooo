@@ -1,23 +1,58 @@
 'use client'
 
 import React, { useState, useMemo, useRef, useEffect } from 'react'
-import CategoryNav from '@/components/menu/category-nav'
-import { MenuCard } from '@/components/menu/menu-card'
+import { 
+  AppBar, 
+  Toolbar, 
+  Typography, 
+  Container, 
+  Box, 
+  Fab,
+  BottomNavigation,
+  BottomNavigationAction,
+  Paper,
+  IconButton,
+  Drawer,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Divider,
+  useTheme,
+  useMediaQuery,
+  Card,
+  CardContent,
+  Grid,
+  Chip
+} from '@mui/material'
+import { 
+  Menu as MenuIcon, 
+  Home as HomeIcon, 
+  Restaurant as RestaurantIcon,
+  Cake as CakeIcon,
+  Coffee as CoffeeIcon,
+  Settings as SettingsIcon,
+  AdminPanelSettings as AdminIcon,
+  Close as CloseIcon
+} from '@mui/icons-material'
 import { AdminLogin } from '@/components/admin/admin-login'
-
-import { TemplateRenderer } from '@/components/menu/template-renderer'
-
+import { M3CategoryNav } from '@/components/menu/m3-category-nav'
+import { MenuSection } from '@/components/menu/menu-section'
+import { SpecialItemsCarousel } from '@/components/menu/special-items-carousel'
 import { DessertsHorizontal } from '@/components/menu/desserts-horizontal'
-import { menuData } from '@/data/menu-data'
-import { useScrollSync } from '@/hooks/useScrollSync'
-import { useTheme } from '@/contexts/ThemeContext'
+import { TemplateSelector } from '@/components/menu/template-selector'
+import { TemplateRenderer } from '@/components/menu/template-renderer'
 import { useMenuData } from '@/contexts/MenuDataContext'
-
-import { Category, MenuItem, TemplateType, NavbarStyle, DessertsSectionConfig } from '@/types/menu'
-
+import { useTheme as useCustomTheme } from '@/contexts/ThemeContext'
+import { useScrollSync } from '@/hooks/useScrollSync'
+import { MenuItem, Category, TemplateType, NavbarStyle, DessertsSectionConfig } from '@/types/menu'
+import { designTokens } from '@/design-tokens'
 
 export default function HomePage() {
-  const { currentTheme } = useTheme()
+  const { currentTheme } = useCustomTheme()
+  const muiTheme = useTheme()
+  const isMobile = useMediaQuery(muiTheme.breakpoints.down('md'))
 
   // Menu data management
   const {
@@ -39,6 +74,10 @@ export default function HomePage() {
     cancelChanges
   } = useMenuData()
 
+  // State for mobile UI
+  const [drawerOpen, setDrawerOpen] = useState(false)
+  const [bottomNavValue, setBottomNavValue] = useState(0)
+
   // Ref and state for measuring desserts section height
   const dessertsSectionRef = useRef<HTMLElement>(null)
   const [dessertsSectionHeight, setDessertsSectionHeight] = useState(0)
@@ -56,7 +95,6 @@ export default function HomePage() {
         for (const entry of entries) {
           const height = entry.contentRect.height
           setDessertsSectionHeight(height)
-          console.log('Desserts section height measured:', height)
         }
       })
       
@@ -65,14 +103,12 @@ export default function HomePage() {
       return () => resizeObserver.disconnect()
     } else {
       setDessertsSectionHeight(0)
-      console.log('Desserts section hidden, height set to 0')
     }
   }, [dessertsConfig.isVisible])
 
   // Reset template to original when user is not admin
   useEffect(() => {
     if (!isAdmin) {
-      // Load the original template from localStorage when user is not admin
       if (typeof window !== 'undefined') {
         const saved = localStorage.getItem('retro-menu-data')
         if (saved) {
@@ -89,20 +125,19 @@ export default function HomePage() {
     }
   }, [isAdmin, selectedTemplate, updateTemplate])
 
-  // Use scroll synchronization hook with improved settings
+  // Use scroll synchronization hook
   const { activeCategory, setActiveCategory } = useScrollSync({
     categories: categoryIds,
-    offset: 150, // Increased offset for more stable detection
-    threshold: 0.4, // Higher threshold to prevent flickering
+    offset: 150,
+    threshold: 0.4,
     dessertsSectionHeight: dessertsSectionHeight
   })
 
-  // Group items by category for display (excluding desserts - they have their own horizontal section)
+  // Group items by category for display (excluding desserts)
   const groupedItems = useMemo(() => {
     const grouped: { category: Category; items: MenuItem[] }[] = []
     
     categories.forEach(category => {
-      // Skip desserts category - it has its own horizontal section
       if (category.id === 'desserts') {
         return
       }
@@ -116,12 +151,28 @@ export default function HomePage() {
     return grouped
   }, [menuItems, categories])
 
-
+  // Handle bottom navigation change
+  const handleBottomNavChange = (event: React.SyntheticEvent, newValue: number) => {
+    setBottomNavValue(newValue)
+    switch (newValue) {
+      case 0:
+        setActiveCategory('all')
+        break
+      case 1:
+        setActiveCategory('coffee')
+        break
+      case 2:
+        setActiveCategory('desserts')
+        break
+      case 3:
+        setActiveCategory('food')
+        break
+    }
+  }
 
   const handleAdminLogin = (isAdmin: boolean) => {
     setIsAdmin(isAdmin)
     if (isAdmin) {
-      // Store original values when admin logs in
       confirmChanges()
     }
   }
@@ -165,111 +216,235 @@ export default function HomePage() {
   }
 
   return (
-    <div className="min-h-screen bg-md-background mobile-portrait">
-      {/* Header - Material Design 3 optimized */}
-      <header className={`${currentTheme.header.showBackground ? 'md-primary' : 'md-surface'} safe-area-top`}>
-        <div className="mobile-container py-md-lg">
-          <div className="flex justify-between items-center">
-            {/* Admin Login - Top Left */}
-            <div className="md-touch-target">
-              <AdminLogin
-                onLogin={handleAdminLogin}
-                isLoggedIn={isAdmin}
-                onLogout={handleAdminLogout}
-                onUpdateMenuItem={handleUpdateMenuItem}
-                onUpdateCategories={handleUpdateCategories}
-                onUpdateItems={handleUpdateItems}
-                onNavbarStyleChange={handleNavbarStyleChange}
-                onTemplateChange={handleTemplateChange}
-                onDessertsConfigChange={handleDessertsConfigChange}
-              />
-            </div>
-            
-            {/* Main Title/Logo - Center - Material Design 3 Typography */}
-            <div className="text-center flex-1">
-              {currentTheme.header.type === 'text' && (
-                <h1 className="md-display-small mobile-headline" style={{ fontFamily: currentTheme.typography.headerTitleFontFamily }}>
-                  {currentTheme.header.title}
-                </h1>
-              )}
-              {currentTheme.header.type === 'logo' && (
-                <div className="flex justify-center">
-                  <img 
-                    src={currentTheme.header.logoUrl || '/api/placeholder/200/80/cccccc/666666?text=RETRO'} 
-                    alt="لوگو" 
-                    className="h-16 sm:h-20 md:h-24 w-auto"
-                  />
-                </div>
-              )}
-              {currentTheme.header.type === 'textAndLogo' && (
-                <div className="space-y-md-md">
-                  <div className="flex justify-center">
-                    <img 
-                      src={currentTheme.header.logoUrl || '/api/placeholder/200/80/cccccc/666666?text=RETRO'} 
-                      alt="لوگو" 
-                      className="h-16 sm:h-20 md:h-24 w-auto"
-                    />
-                  </div>
-                  <h1 className="md-display-small mobile-headline" style={{ fontFamily: currentTheme.typography.headerTitleFontFamily }}>
-                    {currentTheme.header.title}
-                  </h1>
-                </div>
-              )}
-            </div>
-            
-            {/* Spacer for balance */}
-            <div className="w-24"></div>
-          </div>
-        </div>
-      </header>
-
-
-
-      {/* Category Navigation */}
-      <CategoryNav
-        categories={categories.filter(cat => cat.id !== 'desserts')}
-        selectedCategory={activeCategory}
-        onCategoryChange={setActiveCategory}
-        navbarStyle={navbarStyle}
+    <Box 
+      sx={{ 
+        display: 'flex', 
+        flexDirection: 'column',
+        height: '100vh',
+        maxHeight: '1920px',
+        maxWidth: '1080px',
+        margin: '0 auto',
+        backgroundColor: designTokens.colors.surface.default,
+        overflow: 'hidden'
+      }}
+    >
+      {/* Admin Login Component */}
+      <AdminLogin
+        onLogin={handleAdminLogin}
+        isLoggedIn={isAdmin}
+        onLogout={handleAdminLogout}
+        onUpdateMenuItem={handleUpdateMenuItem}
+        onUpdateCategories={handleUpdateCategories}
+        onUpdateItems={handleUpdateItems}
+        onNavbarStyleChange={handleNavbarStyleChange}
+        onTemplateChange={handleTemplateChange}
+        onDessertsConfigChange={handleDessertsConfigChange}
       />
 
-      {/* Desserts Horizontal Section - بالای بخش نوشیدنی بر پایه اسپرسو */}
-      {dessertsConfig.isVisible && (
-        <DessertsHorizontal 
-          ref={dessertsSectionRef}
-          config={dessertsConfig}
-          items={menuItems}
-        />
-      )}
+      {/* App Bar */}
+      <AppBar 
+        position="sticky" 
+        elevation={0}
+        sx={{
+          backgroundColor: designTokens.colors.surface.container.high,
+          color: designTokens.colors.neutral[10],
+          borderBottom: `1px solid ${designTokens.colors.outline.variant}`,
+          height: '64px'
+        }}
+      >
+        <Toolbar sx={{ minHeight: '64px !important', paddingX: designTokens.spacing[4] }}>
+          <IconButton
+            edge="start"
+            color="inherit"
+            aria-label="menu"
+            onClick={() => setDrawerOpen(true)}
+            sx={{ 
+              marginRight: designTokens.spacing[2],
+              minWidth: designTokens.mobile.touchTarget.min,
+              minHeight: designTokens.mobile.touchTarget.min
+            }}
+          >
+            <MenuIcon />
+          </IconButton>
+          
+          <Typography 
+            variant="h6" 
+            component="div" 
+            sx={{ 
+              flexGrow: 1,
+              fontFamily: 'Vazirmatn, Roboto, sans-serif',
+              fontSize: designTokens.typography.title.large.fontSize,
+              fontWeight: designTokens.typography.title.large.fontWeight,
+              lineHeight: designTokens.typography.title.large.lineHeight
+            }}
+          >
+            {currentTheme.header.title}
+          </Typography>
 
+          {isAdmin && (
+            <IconButton
+              color="inherit"
+              aria-label="admin"
+              sx={{ 
+                minWidth: designTokens.mobile.touchTarget.min,
+                minHeight: designTokens.mobile.touchTarget.min
+              }}
+            >
+              <AdminIcon />
+            </IconButton>
+          )}
+        </Toolbar>
+      </AppBar>
 
+      {/* Navigation Drawer */}
+      <Drawer
+        anchor="right"
+        open={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        sx={{
+          '& .MuiDrawer-paper': {
+            width: 280,
+            backgroundColor: designTokens.colors.surface.container.default,
+            borderLeft: `1px solid ${designTokens.colors.outline.variant}`,
+          },
+        }}
+      >
+        <Box sx={{ padding: designTokens.spacing[4] }}>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: designTokens.spacing[4] }}>
+            <Typography 
+              variant="h6" 
+              sx={{ 
+                fontFamily: 'Vazirmatn, Roboto, sans-serif',
+                fontSize: designTokens.typography.title.large.fontSize
+              }}
+            >
+              منو
+            </Typography>
+            <IconButton onClick={() => setDrawerOpen(false)}>
+              <CloseIcon />
+            </IconButton>
+          </Box>
+        </Box>
+        
+        <List>
+          <ListItem disablePadding>
+            <ListItemButton 
+              selected={activeCategory === 'all'}
+              onClick={() => {
+                setActiveCategory('all')
+                setDrawerOpen(false)
+              }}
+            >
+              <ListItemIcon>
+                <HomeIcon />
+              </ListItemIcon>
+              <ListItemText primary="همه" />
+            </ListItemButton>
+          </ListItem>
+          
+          {categories.map((category) => (
+            <ListItem key={category.id} disablePadding>
+              <ListItemButton 
+                selected={activeCategory === category.id}
+                onClick={() => {
+                  setActiveCategory(category.id)
+                  setDrawerOpen(false)
+                }}
+              >
+                <ListItemIcon>
+                  {category.id === 'coffee' && <CoffeeIcon />}
+                  {category.id === 'desserts' && <CakeIcon />}
+                  {category.id === 'food' && <RestaurantIcon />}
+                </ListItemIcon>
+                <ListItemText primary={category.name} />
+              </ListItemButton>
+            </ListItem>
+          ))}
+        </List>
+      </Drawer>
 
+      {/* Main Content */}
+      <Box 
+        component="main" 
+        sx={{ 
+          flexGrow: 1,
+          overflow: 'auto',
+          paddingBottom: '80px', // Space for bottom navigation
+          backgroundColor: designTokens.colors.surface.default
+        }}
+      >
+        <Container 
+          maxWidth={false} 
+          sx={{ 
+            paddingX: designTokens.spacing[4],
+            paddingY: designTokens.spacing[6]
+          }}
+        >
+          {/* Category Navigation - Hidden on mobile, shown in drawer */}
+          {!isMobile && (
+            <Box sx={{ marginBottom: designTokens.spacing[8] }}>
+              <M3CategoryNav
+                categories={categories.filter(cat => cat.id !== 'desserts')}
+                selectedCategory={activeCategory}
+                onCategoryChange={setActiveCategory}
+                navbarStyle={navbarStyle}
+              />
+            </Box>
+          )}
 
+          {/* Desserts Horizontal Section */}
+          {dessertsConfig.isVisible && (
+            <Box sx={{ marginBottom: designTokens.spacing[8] }}>
+              <DessertsHorizontal 
+                ref={dessertsSectionRef}
+                config={dessertsConfig}
+                items={menuItems}
+              />
+            </Box>
+          )}
 
-      {/* Menu Content - Material Design 3 optimized for mobile */}
-      <main className="content-section relative bg-md-background">
-        <div className="mobile-container relative z-10">
-          <div className="max-w-5xl mx-auto">
-            <div className="flex flex-col space-y-md-2xl">
-              {groupedItems.map(({ category, items }) => (
-                <div key={category.id} id={`category-${category.id}`} data-category={category.id}>
-                  {/* Category Header - Material Design 3 Typography */}
-                  <div className="mb-md-lg text-center">
-                    <h2 className="md-headline-medium mobile-headline text-md-on-background">
-                      {category.name}
-                    </h2>
-                  </div>
-                  
-                  {/* Menu Items - Mobile-optimized layouts */}
-                  {selectedTemplate === 'compact' ? (
-                    // Compact template - Mobile: 1 column, Tablet: 2 columns
-                    <div className="grid grid-cols-1 tablet:grid-cols-2 gap-md-lg">
-                      {items.map((item, index) => (
-                        <div
-                          key={item.id}
-                          className="animate-md-slide-in mobile-card"
-                          style={{ animationDelay: `${index * 100}ms` }}
-                        >
+          {/* Menu Content */}
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: designTokens.spacing[8] }}>
+            {groupedItems.map(({ category, items }) => (
+              <Box key={category.id} id={`category-${category.id}`} data-category={category.id}>
+                {/* Category Header */}
+                <Box sx={{ textAlign: 'center', marginBottom: designTokens.spacing[6] }}>
+                  <Typography 
+                    variant="h4" 
+                    sx={{ 
+                      fontFamily: 'Vazirmatn, Roboto, sans-serif',
+                      fontSize: designTokens.typography.headline.medium.fontSize,
+                      fontWeight: designTokens.typography.headline.medium.fontWeight,
+                      lineHeight: designTokens.typography.headline.medium.lineHeight,
+                      color: designTokens.colors.neutral[10]
+                    }}
+                  >
+                    {category.name}
+                  </Typography>
+                </Box>
+                
+                {/* Menu Items - Render based on selected template */}
+                {selectedTemplate === 'compact' ? (
+                  // Compact template - 2 items per row
+                  <Grid container spacing={3}>
+                    {items.map((item, index) => (
+                      <Grid item xs={12} md={6} key={item.id}>
+                        <TemplateRenderer
+                          template={selectedTemplate}
+                          item={item}
+                          isAdmin={false}
+                          onEditItem={null}
+                          categoryDiscounts={categoryDiscounts}
+                        />
+                      </Grid>
+                    ))}
+                  </Grid>
+                ) : selectedTemplate === 'square' ? (
+                  // Square template - 4 items per row
+                  <Grid container spacing={2}>
+                    {items.map((item, index) => (
+                      <Grid item xs={6} sm={4} md={3} lg={2.4} key={item.id}>
+                        <Box sx={{ display: 'flex', justifyContent: 'center' }}>
                           <TemplateRenderer
                             template={selectedTemplate}
                             item={item}
@@ -277,64 +452,96 @@ export default function HomePage() {
                             onEditItem={null}
                             categoryDiscounts={categoryDiscounts}
                           />
-                        </div>
-                      ))}
-                    </div>
-                  ) : selectedTemplate === 'square' ? (
-                    // Square template - Mobile: 2 columns, Tablet: 3 columns, Desktop: 4 columns
-                    <div className="grid grid-cols-2 tablet:grid-cols-3 desktop:grid-cols-4 gap-md-md">
-                      {items.map((item, index) => (
-                        <div
-                          key={item.id}
-                          className="animate-md-scale-in flex justify-center"
-                          style={{ animationDelay: `${index * 100}ms` }}
-                        >
-                          <TemplateRenderer
-                            template={selectedTemplate}
-                            item={item}
-                            isAdmin={false}
-                            onEditItem={null}
-                            categoryDiscounts={categoryDiscounts}
-                          />
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    // Default template - Single column for mobile
-                    <div className="flex flex-col space-y-md-xl">
-                      {items.map((item, index) => (
-                        <div
-                          key={item.id}
-                          className="animate-md-slide-in mobile-card"
-                          style={{ animationDelay: `${index * 100}ms` }}
-                        >
-                          <TemplateRenderer
-                            template={selectedTemplate}
-                            item={item}
-                            isAdmin={false}
-                            onEditItem={null}
-                            categoryDiscounts={categoryDiscounts}
-                          />
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </main>
+                        </Box>
+                      </Grid>
+                    ))}
+                  </Grid>
+                ) : (
+                  // Default template - vertical stack layout
+                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: designTokens.spacing[6] }}>
+                    {items.map((item, index) => (
+                      <TemplateRenderer
+                        key={item.id}
+                        template={selectedTemplate}
+                        item={item}
+                        isAdmin={false}
+                        onEditItem={null}
+                        categoryDiscounts={categoryDiscounts}
+                      />
+                    ))}
+                  </Box>
+                )}
+              </Box>
+            ))}
+          </Box>
+        </Container>
+      </Box>
 
-      {/* Footer - Material Design 3 optimized */}
-      <footer className="md-surface-container safe-area-bottom">
-        <div className="mobile-container py-md-lg text-center">
-          <p className="md-title-medium mobile-title text-md-on-surface mb-md-sm">کافه RETRO</p>
-          <p className="md-body-medium mobile-body text-md-on-surface-variant">
-            تجربه‌ای از ترکیب سنت و نوآوری
-          </p>
-        </div>
-      </footer>
-    </div>
+      {/* Bottom Navigation */}
+      <Paper 
+        sx={{ 
+          position: 'fixed', 
+          bottom: 0, 
+          left: 0, 
+          right: 0,
+          maxWidth: '1080px',
+          margin: '0 auto',
+          zIndex: 1000,
+          backgroundColor: designTokens.colors.surface.container.high,
+          borderTop: `1px solid ${designTokens.colors.outline.variant}`
+        }} 
+        elevation={3}
+      >
+        <BottomNavigation
+          value={bottomNavValue}
+          onChange={handleBottomNavChange}
+          sx={{
+            height: '80px',
+            backgroundColor: 'transparent'
+          }}
+        >
+          <BottomNavigationAction 
+            label="همه" 
+            icon={<HomeIcon />}
+            sx={{
+              color: designTokens.colors.neutral[50],
+              '&.Mui-selected': {
+                color: designTokens.colors.primary[40]
+              }
+            }}
+          />
+          <BottomNavigationAction 
+            label="قهوه" 
+            icon={<CoffeeIcon />}
+            sx={{
+              color: designTokens.colors.neutral[50],
+              '&.Mui-selected': {
+                color: designTokens.colors.primary[40]
+              }
+            }}
+          />
+          <BottomNavigationAction 
+            label="دسر" 
+            icon={<CakeIcon />}
+            sx={{
+              color: designTokens.colors.neutral[50],
+              '&.Mui-selected': {
+                color: designTokens.colors.primary[40]
+              }
+            }}
+          />
+          <BottomNavigationAction 
+            label="غذا" 
+            icon={<RestaurantIcon />}
+            sx={{
+              color: designTokens.colors.neutral[50],
+              '&.Mui-selected': {
+                color: designTokens.colors.primary[40]
+              }
+            }}
+          />
+        </BottomNavigation>
+      </Paper>
+    </Box>
   )
 }
