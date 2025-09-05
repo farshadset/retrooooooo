@@ -12,7 +12,7 @@ interface M3TypographyProps extends React.HTMLAttributes<HTMLElement> {
     | 'label-large' | 'label-medium' | 'label-small'
   color?: 'primary' | 'secondary' | 'tertiary' | 'error' | 'on-surface' | 'on-surface-variant'
   align?: 'left' | 'center' | 'right' | 'justify'
-  as?: keyof JSX.IntrinsicElements
+  as?: 'p' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'span' | 'div'
 }
 
 export function M3Typography({

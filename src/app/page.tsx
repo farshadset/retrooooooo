@@ -5,7 +5,7 @@ import { M3Card, M3CardContent, M3CardHeader } from '@/components/ui/m3-card'
 import { M3Button } from '@/components/ui/m3-button'
 import { M3Typography } from '@/components/ui/m3-typography'
 import { MenuSection } from '@/components/menu/menu-section'
-import { CategoryNav } from '@/components/menu/category-nav'
+// import { CategoryNav } from '@/components/menu/category-nav'
 import { AdminLogin } from '@/components/admin/admin-login'
 import { MenuDataProvider, useMenuData } from '@/contexts/MenuDataContext'
 import { ThemeProvider, useTheme } from '@/contexts/ThemeContext'
@@ -13,21 +13,20 @@ import { Menu, Settings, Coffee, Cake, IceCream } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 function MainContent() {
-  const {
-    menuItems,
-    categories,
-    selectedTemplate,
+    const { 
+    menuItems, 
+    categories, 
+    selectedTemplate, 
     navbarStyle,
     dessertsConfig,
-    updateMenuItem,
+    updateMenuItems,
     updateCategories,
-    updateItems,
     updateNavbarStyle,
     updateTemplate,
     updateDessertsConfig
   } = useMenuData()
 
-  const { theme, updateTheme } = useTheme()
+  const { currentTheme, setTheme } = useTheme()
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
 
@@ -48,6 +47,15 @@ function MainContent() {
 
   const handleLogout = () => {
     setIsAdminLoggedIn(false)
+  }
+
+  const handleUpdateMenuItem = (id: number, newTitle: string, newDescription: string, newImage: string) => {
+    const updatedItems = menuItems.map(item => 
+      item.id === id 
+        ? { ...item, title: newTitle, description: newDescription, image: newImage }
+        : item
+    )
+    updateMenuItems(updatedItems)
   }
 
   return (
@@ -156,9 +164,9 @@ function MainContent() {
           onLogin={handleLogin}
           isLoggedIn={isAdminLoggedIn}
           onLogout={handleLogout}
-          onUpdateMenuItem={updateMenuItem}
+          onUpdateMenuItem={handleUpdateMenuItem}
           onUpdateCategories={updateCategories}
-          onUpdateItems={updateItems}
+          onUpdateItems={updateMenuItems}
           onNavbarStyleChange={updateNavbarStyle}
           onTemplateChange={updateTemplate}
           onDessertsConfigChange={updateDessertsConfig}

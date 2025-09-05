@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { Vazirmatn } from 'next/font/google'
 import './globals.css'
-import '../src/styles/design-tokens.css'
+import '../styles/design-tokens.css'
 import { ThemeProvider } from '@/contexts/ThemeContext'
 import { MenuDataProvider } from '@/contexts/MenuDataContext'
 
