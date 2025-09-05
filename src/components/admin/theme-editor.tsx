@@ -463,18 +463,18 @@ export function ThemeEditor({
       }}
       onClick={handleModalClick}
     >
-      <div className="w-full max-w-7xl h-[90vh] mobile:h-[95vh] tablet:h-[95vh] desktop:h-[90vh] flex gap-4 mobile:gap-0 tablet:gap-0 desktop:gap-4">
+      <div className="w-full max-w-7xl h-[90vh] flex gap-4">
         {/* Main Editor Panel */}
-        <Card className="flex-1 mobile:w-full tablet:w-full desktop:flex-1 bg-card/95 backdrop-blur-md border border-border shadow-2xl overflow-hidden">
+        <Card className="flex-1 bg-card/95 backdrop-blur-md border border-border shadow-2xl overflow-hidden">
           {/* Header */}
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4 mobile:pb-3 tablet:pb-4 desktop:pb-4 border-b border-border">
-            <div className="flex items-center space-x-3 mobile:space-x-2 tablet:space-x-3 desktop:space-x-3">
-              <Palette size={24} className="mobile:w-5 mobile:h-5 tablet:w-6 tablet:h-6 desktop:w-6 desktop:h-6" />
-              <CardTitle className="text-xl mobile:text-lg tablet:text-xl desktop:text-xl">ویرایشگر تم</CardTitle>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4 border-b border-border">
+            <div className="flex items-center space-x-3">
+              <Palette size={24} />
+              <CardTitle className="text-xl">ویرایشگر تم</CardTitle>
 
             </div>
             
-            <div className="flex items-center space-x-2 mobile:space-x-1 tablet:space-x-2 desktop:space-x-2">
+            <div className="flex items-center space-x-2">
               {/* Action Buttons - Show when there are unsaved changes in theme or menu */}
               {(hasUnsavedChanges || hasMenuChanges) && (
                 <>
@@ -485,10 +485,9 @@ export function ThemeEditor({
                       if (hasUnsavedChanges) saveTheme()
                       if (hasMenuChanges) confirmMenuChanges()
                     }}
-                    className="bg-green-600 hover:bg-green-700 text-white px-4 mobile:px-2 mobile:text-xs tablet:px-3 desktop:px-4"
+                    className="bg-green-600 hover:bg-green-700 text-white px-4"
                   >
-                    <span className="mobile:hidden tablet:inline desktop:inline">تایید تغییرات</span>
-                    <span className="mobile:inline tablet:hidden desktop:hidden">تایید</span>
+                    تایید تغییرات
                   </Button>
                   <Button
                     variant="outline"
@@ -497,10 +496,9 @@ export function ThemeEditor({
                       if (hasUnsavedChanges) revertChanges()
                       if (hasMenuChanges) cancelMenuChanges()
                     }}
-                    className="border-red-500 text-red-600 hover:bg-red-50 px-4 mobile:px-2 mobile:text-xs tablet:px-3 desktop:px-4"
+                    className="border-red-500 text-red-600 hover:bg-red-50 px-4"
                   >
-                    <span className="mobile:hidden tablet:inline desktop:inline">لغو تغییرات</span>
-                    <span className="mobile:inline tablet:hidden desktop:hidden">لغو</span>
+                    لغو تغییرات
                   </Button>
                 </>
               )}
@@ -509,9 +507,9 @@ export function ThemeEditor({
                 variant="ghost"
                 size="sm"
                 onClick={onClose}
-                className="p-2 mobile:p-1 tablet:p-2 desktop:p-2"
+                className="p-2"
               >
-                <X size={20} className="mobile:w-4 mobile:h-4 tablet:w-5 tablet:h-5 desktop:w-5 desktop:h-5" />
+                <X size={20} />
               </Button>
             </div>
           </CardHeader>
@@ -519,17 +517,7 @@ export function ThemeEditor({
           <CardContent className="p-0 h-full overflow-hidden">
             <div className="flex h-full">
               {/* Controls Panel */}
-              <div className="w-1/2 mobile:w-full tablet:w-full desktop:w-1/2 p-6 mobile:p-4 tablet:p-5 desktop:p-6 overflow-y-auto space-y-6 mobile:space-y-4 tablet:space-y-5 desktop:space-y-6">
-                {/* Mobile Notice */}
-                <div className="mobile:block tablet:hidden desktop:hidden bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
-                  <div className="flex items-center space-x-2">
-                    <Info size={16} className="text-blue-600" />
-                    <span className="text-sm text-blue-800">
-                      در نسخه موبایل، پیش‌نمایش زنده نمایش داده نمی‌شود تا فضای بیشتری برای ویرایش تم در دسترس باشد.
-                    </span>
-                  </div>
-                </div>
-
+              <div className="w-1/2 p-6 overflow-y-auto space-y-6">
                 {/* Theme Presets */}
                 <div className="space-y-3">
                   <h3 className="font-semibold flex items-center space-x-2">
@@ -1060,8 +1048,8 @@ export function ThemeEditor({
 
               </div>
 
-              {/* Preview Panel - Hidden on Mobile */}
-              <div className="w-1/2 mobile:hidden tablet:hidden desktop:block border-l border-border p-6 overflow-y-auto">
+              {/* Preview Panel */}
+              <div className="w-1/2 border-l border-border p-6 overflow-y-auto">
                 <div className="space-y-4">
                   <div className="flex items-center space-x-2">
                     <h3 className="font-semibold">پیش‌نمایش زنده</h3>
@@ -1716,25 +1704,23 @@ export function ThemeEditor({
           )}
 
           {/* Footer Actions */}
-          <div className="border-t border-border p-4 mobile:p-3 tablet:p-4 desktop:p-4 flex items-center justify-between bg-background/50 mobile:flex-col mobile:space-y-2 mobile:space-x-0 tablet:flex-row tablet:space-y-0 tablet:space-x-2 desktop:flex-row desktop:space-y-0 desktop:space-x-2">
-            <div className="flex items-center space-x-2 mobile:space-x-1 tablet:space-x-2 desktop:space-x-2">
+          <div className="border-t border-border p-4 flex items-center justify-between bg-background/50">
+            <div className="flex items-center space-x-2">
               <Button
                 variant="outline"
                 size="sm"
                 onClick={resetToDefault}
-                className="flex items-center space-x-2 mobile:text-xs mobile:px-2 mobile:py-1 tablet:px-3 tablet:py-2 desktop:px-4 desktop:py-2"
+                className="flex items-center space-x-2"
               >
-                <RotateCcw size={16} className="mobile:w-3 mobile:h-3 tablet:w-4 tablet:h-4 desktop:w-4 desktop:h-4" />
-                <span className="mobile:hidden tablet:inline desktop:inline">بازگشت به پیش‌فرض</span>
-                <span className="mobile:inline tablet:hidden desktop:hidden">پیش‌فرض</span>
+                <RotateCcw size={16} />
+                <span>بازگشت به پیش‌فرض</span>
               </Button>
             </div>
 
-            <div className="flex items-center space-x-2 mobile:space-x-1 tablet:space-x-2 desktop:space-x-2">
+            <div className="flex items-center space-x-2">
               <Button
                 variant="outline"
                 onClick={onClose}
-                className="mobile:text-xs mobile:px-2 mobile:py-1 tablet:px-3 tablet:py-2 desktop:px-4 desktop:py-2"
               >
                 لغو
               </Button>
@@ -1743,12 +1729,11 @@ export function ThemeEditor({
                   saveTheme()
                   onClose()
                 }}
-                className="flex items-center space-x-2 mobile:text-xs mobile:px-2 mobile:py-1 tablet:px-3 tablet:py-2 desktop:px-4 desktop:py-2"
+                className="flex items-center space-x-2"
                 disabled={!hasUnsavedChanges}
               >
-                <Save size={16} className="mobile:w-3 mobile:h-3 tablet:w-4 tablet:h-4 desktop:w-4 desktop:h-4" />
-                <span className="mobile:hidden tablet:inline desktop:inline">ذخیره و اعمال</span>
-                <span className="mobile:inline tablet:hidden desktop:hidden">ذخیره</span>
+                <Save size={16} />
+                <span>ذخیره و اعمال</span>
               </Button>
             </div>
           </div>
