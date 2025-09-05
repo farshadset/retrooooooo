@@ -1,86 +1,140 @@
 'use client'
 
 import React from 'react'
-import { Card as MuiCard, CardProps as MuiCardProps, styled } from '@mui/material'
-import { designTokens } from '@/design-tokens'
+import { cn } from '@/lib/utils'
 
-// Material Design 3 Card variants
-export interface M3CardProps extends Omit<MuiCardProps, 'variant'> {
-  variant?: 'elevated' | 'filled' | 'outlined'
-  size?: 'small' | 'medium' | 'large'
+interface M3CardProps extends React.HTMLAttributes<HTMLDivElement> {
+  variant?: 'filled' | 'outlined' | 'elevated'
+  elevation?: 0 | 1 | 2 | 3 | 4 | 5
+  interactive?: boolean
 }
 
-const StyledCard = styled(MuiCard, {
-  shouldForwardProp: (prop) => prop !== 'variant' && prop !== 'size',
-})<M3CardProps>(({ theme, variant = 'elevated', size = 'medium' }) => {
-  const getVariantStyles = () => {
-    switch (variant) {
-      case 'elevated':
-        return {
-          backgroundColor: designTokens.colors.surface.container.lowest,
-          border: 'none',
-          boxShadow: designTokens.elevation[1],
-          '&:hover': {
-            boxShadow: designTokens.elevation[2],
-          },
-        }
-      case 'filled':
-        return {
-          backgroundColor: designTokens.colors.surface.container.default,
-          border: 'none',
-          boxShadow: designTokens.elevation[0],
-          '&:hover': {
-            backgroundColor: designTokens.colors.surface.container.high,
-          },
-        }
-      case 'outlined':
-        return {
-          backgroundColor: designTokens.colors.surface.container.lowest,
-          border: `1px solid ${designTokens.colors.outline.variant}`,
-          boxShadow: designTokens.elevation[0],
-          '&:hover': {
-            borderColor: designTokens.colors.outline.default,
-            boxShadow: designTokens.elevation[1],
-          },
-        }
-      default:
-        return {}
-    }
+export function M3Card({
+  children,
+  className,
+  variant = 'filled',
+  elevation = 1,
+  interactive = false,
+  ...props
+}: M3CardProps) {
+  const baseClasses = [
+    'rounded-[var(--md-sys-shape-corner-large)]',
+    'transition-all duration-200 ease-in-out',
+    'overflow-hidden'
+  ]
+
+  const variantClasses = {
+    filled: [
+      'bg-[var(--md-sys-color-surface-container)]',
+      'text-[var(--md-sys-color-on-surface)]'
+    ],
+    outlined: [
+      'bg-[var(--md-sys-color-surface)]',
+      'text-[var(--md-sys-color-on-surface)]',
+      'border border-[var(--md-sys-color-outline-variant)]'
+    ],
+    elevated: [
+      'bg-[var(--md-sys-color-surface-container-low)]',
+      'text-[var(--md-sys-color-on-surface)]'
+    ]
   }
 
-  const getSizeStyles = () => {
-    switch (size) {
-      case 'small':
-        return {
-          borderRadius: designTokens.radius.sm,
-          padding: designTokens.spacing[3],
-        }
-      case 'medium':
-        return {
-          borderRadius: designTokens.radius.md,
-          padding: designTokens.spacing[4],
-        }
-      case 'large':
-        return {
-          borderRadius: designTokens.radius.lg,
-          padding: designTokens.spacing[6],
-        }
-      default:
-        return {}
-    }
+  const elevationClasses = {
+    0: 'shadow-none',
+    1: 'shadow-[var(--md-sys-elevation-level1)]',
+    2: 'shadow-[var(--md-sys-elevation-level2)]',
+    3: 'shadow-[var(--md-sys-elevation-level3)]',
+    4: 'shadow-[var(--md-sys-elevation-level4)]',
+    5: 'shadow-[var(--md-sys-elevation-level5)]'
   }
 
-  return {
-    transition: `all ${designTokens.motion.duration.medium2} ${designTokens.motion.easing.standard}`,
-    ...getVariantStyles(),
-    ...getSizeStyles(),
-  }
-})
+  const interactiveClasses = interactive ? [
+    'cursor-pointer',
+    'hover:shadow-[var(--md-sys-elevation-level2)]',
+    'active:shadow-[var(--md-sys-elevation-level1)]',
+    'focus:outline-none focus:ring-2 focus:ring-[var(--md-sys-color-primary)] focus:ring-offset-2'
+  ] : []
 
-export function M3Card({ children, variant = 'elevated', size = 'medium', ...props }: M3CardProps) {
+  const classes = cn(
+    baseClasses,
+    variantClasses[variant],
+    elevationClasses[elevation],
+    interactiveClasses,
+    className
+  )
+
   return (
-    <StyledCard variant={variant} size={size} {...props}>
+    <div className={classes} {...props}>
       {children}
-    </StyledCard>
+    </div>
+  )
+}
+
+interface M3CardContentProps extends React.HTMLAttributes<HTMLDivElement> {
+  padding?: 'none' | 'small' | 'medium' | 'large'
+}
+
+export function M3CardContent({
+  children,
+  className,
+  padding = 'medium',
+  ...props
+}: M3CardContentProps) {
+  const paddingClasses = {
+    none: 'p-0',
+    small: 'p-[var(--md-sys-spacing-sm)]',
+    medium: 'p-[var(--md-sys-spacing-md)]',
+    large: 'p-[var(--md-sys-spacing-lg)]'
+  }
+
+  const classes = cn(paddingClasses[padding], className)
+
+  return (
+    <div className={classes} {...props}>
+      {children}
+    </div>
+  )
+}
+
+interface M3CardHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
+  title?: string
+  subtitle?: string
+  action?: React.ReactNode
+}
+
+export function M3CardHeader({
+  children,
+  className,
+  title,
+  subtitle,
+  action,
+  ...props
+}: M3CardHeaderProps) {
+  const classes = cn(
+    'flex items-start justify-between p-[var(--md-sys-spacing-md)]',
+    className
+  )
+
+  return (
+    <div className={classes} {...props}>
+      <div className="flex-1 min-w-0">
+        {title && (
+          <h3 className="text-[var(--md-sys-typescale-title-large-size)] font-[var(--md-sys-typescale-title-large-weight)] leading-[var(--md-sys-typescale-title-large-line-height)] text-[var(--md-sys-color-on-surface)]">
+            {title}
+          </h3>
+        )}
+        {subtitle && (
+          <p className="mt-1 text-[var(--md-sys-typescale-body-medium-size)] font-[var(--md-sys-typescale-body-medium-weight)] leading-[var(--md-sys-typescale-body-medium-line-height)] text-[var(--md-sys-color-on-surface-variant)]">
+            {subtitle}
+          </p>
+        )}
+        {children}
+      </div>
+      {action && (
+        <div className="ml-[var(--md-sys-spacing-sm)] flex-shrink-0">
+          {action}
+        </div>
+      )}
+    </div>
   )
 }

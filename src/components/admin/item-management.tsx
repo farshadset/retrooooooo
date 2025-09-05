@@ -370,7 +370,7 @@ export function ItemManagement({
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="space-y-2">
               {/* Text Only */}
               <div 
                 className={`border rounded-lg p-4 cursor-pointer transition-all ${
@@ -380,20 +380,19 @@ export function ItemManagement({
                 }`}
                 onClick={() => onNavbarStyleChange?.('text-only')}
               >
-                <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
                   <h3 className="font-medium">فقط متن</h3>
-                  
                   {/* Preview */}
                   <div className="border rounded p-2 bg-background">
                     <div className="flex gap-2 text-xs justify-center">
                       <span className="px-2 py-1 bg-muted rounded">قهوه</span>
+                      </div>
                     </div>
                   </div>
                   
                   {navbarStyle === 'text-only' && (
-                    <div className="text-center">
                       <Badge variant="default">انتخاب شده</Badge>
-                    </div>
                   )}
                 </div>
               </div>
@@ -407,22 +406,21 @@ export function ItemManagement({
                 }`}
                 onClick={() => onNavbarStyleChange?.('icon-only')}
               >
-                <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
                   <h3 className="font-medium">فقط آیکون</h3>
-                  
                   {/* Preview */}
                   <div className="border rounded p-2 bg-background">
                     <div className="flex gap-2 text-xs justify-center">
                       <div className="w-8 h-8 bg-muted rounded flex items-center justify-center">
                         <Coffee size={16} />
+                        </div>
                       </div>
                     </div>
                   </div>
                   
                   {navbarStyle === 'icon-only' && (
-                    <div className="text-center">
                       <Badge variant="default">انتخاب شده</Badge>
-                    </div>
                   )}
                 </div>
               </div>
@@ -436,23 +434,22 @@ export function ItemManagement({
                 }`}
                 onClick={() => onNavbarStyleChange?.('icon-with-text')}
               >
-                <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
                   <h3 className="font-medium">آیکون + متن</h3>
-                  
                   {/* Preview */}
                   <div className="border rounded p-2 bg-background">
                     <div className="flex gap-2 text-xs justify-center">
                       <div className="flex flex-col items-center space-y-1 p-1">
                         <Coffee size={16} />
                         <span>قهوه</span>
+                        </div>
                       </div>
                     </div>
                   </div>
                   
                   {navbarStyle === 'icon-with-text' && (
-                    <div className="text-center">
                       <Badge variant="default">انتخاب شده</Badge>
-                    </div>
                   )}
                 </div>
               </div>
@@ -599,6 +596,26 @@ export function ItemManagement({
                 <div className="flex items-center justify-between">
                   {/* Percentage Input with Text (left) */}
                   <div className="flex items-center gap-3">
+                    {/* Toggle (left side) */}
+                    <input
+                      type="checkbox"
+                      id={`categoryDiscount-${selectedCategory}`}
+                      checked={categoryDiscounts[selectedCategory]?.isActive || false}
+                      onChange={(e) => {
+                        if (onUpdateCategoryDiscounts) {
+                          onUpdateCategoryDiscounts({
+                            ...categoryDiscounts,
+                            [selectedCategory]: {
+                              ...categoryDiscounts[selectedCategory],
+                              isActive: e.target.checked,
+                              percentage: categoryDiscounts[selectedCategory]?.percentage || 10
+                            }
+                          })
+                        }
+                      }}
+                      className="w-4 h-4 text-primary border-border rounded focus:ring-primary focus:ring-2"
+                    />
+                    
                     <input
                       type="number"
                       min="1"
@@ -621,31 +638,6 @@ export function ItemManagement({
                     <span className="text-sm text-muted-foreground">%</span>
                     <span className="text-sm font-bold text-gray-700">تخفیف</span>
                   </div>
-
-                  {/* Toggle (right) */}
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      id={`categoryDiscount-${selectedCategory}`}
-                      checked={categoryDiscounts[selectedCategory]?.isActive || false}
-                      onChange={(e) => {
-                        if (onUpdateCategoryDiscounts) {
-                          onUpdateCategoryDiscounts({
-                            ...categoryDiscounts,
-                            [selectedCategory]: {
-                              ...categoryDiscounts[selectedCategory],
-                              isActive: e.target.checked,
-                              percentage: categoryDiscounts[selectedCategory]?.percentage || 10
-                            }
-                          })
-                        }
-                      }}
-                      className="w-4 h-4 text-primary border-border rounded focus:ring-primary focus:ring-2"
-                    />
-                    <label htmlFor={`categoryDiscount-${selectedCategory}`} className="text-sm">
-                      {categoryDiscounts[selectedCategory]?.isActive ? 'فعال' : 'غیرفعال'}
-                    </label>
-                  </div>
                 </div>
               </div>
               
@@ -654,12 +646,129 @@ export function ItemManagement({
                   {selectedCategoryItems.map((item, index) => (
                     <div
                       key={item.id}
-                      className="flex items-center justify-between p-4 border border-border rounded-lg bg-background hover:bg-muted/50 transition-colors"
+                      className="flex items-center justify-between p-4 mobile:p-3 tablet:p-4 desktop:p-4 border border-border rounded-lg bg-background hover:bg-muted/50 transition-colors mobile:flex-col mobile:space-y-3 mobile:items-start tablet:flex-row tablet:space-y-0 tablet:items-center desktop:flex-row desktop:space-y-0 desktop:items-center"
                     >
-                      <div className="flex items-center space-x-3">
+                      {/* Mobile Layout */}
+                      <div className="mobile:flex mobile:items-center mobile:justify-between mobile:w-full tablet:hidden desktop:hidden">
+                        {/* Left side - Move up/down buttons */}
+                        <div className="flex flex-col space-y-1">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleMoveItemUp(item.id)}
+                            disabled={index === 0}
+                            title="انتقال به بالا"
+                            className="w-8 h-8 p-0"
+                          >
+                            <ChevronUp size={16} className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleMoveItemDown(item.id)}
+                            disabled={index === selectedCategoryItems.length - 1}
+                            title="انتقال به پایین"
+                            className="w-8 h-8 p-0"
+                          >
+                            <ChevronDown size={16} className="w-4 h-4" />
+                          </Button>
+                        </div>
+                        
+                        {/* Center - Item info */}
+                        <div className="flex-1 text-center">
+                          <div className="font-medium">{item.title}</div>
+                          <div className="text-sm">
+                            {(() => {
+                              // Check for individual discount first
+                              if (item.hasIndividualDiscount && item.discountedPrice) {
+                                return (
+                                  <div className="flex items-center gap-2">
+                                    {/* Individual Discounted Price - Green */}
+                                    <span className="font-medium text-green-600">
+                                      {item.discountedPrice.toLocaleString('en-US', { 
+                                        minimumFractionDigits: 0, 
+                                        maximumFractionDigits: 2 
+                                      }).replace(/,/g, '.')} تومان
+                                    </span>
+                                    {/* Original Price - Red with Strike-through */}
+                                    <span className="text-xs text-red-600 line-through">
+                                      {item.price.toLocaleString('en-US').replace(/,/g, '.')} تومان
+                                    </span>
+                                  </div>
+                                )
+                              }
+                              
+                              // Check for category discount
+                              const categoryDiscount = categoryDiscounts[item.category]
+                              if (categoryDiscount?.isActive) {
+                                const originalPrice = Number(item.price) || 0
+                                const discountPercentage = Number(categoryDiscount.percentage) || 0
+                                
+                                // Validate inputs
+                                if (originalPrice > 0 && discountPercentage > 0 && discountPercentage < 100) {
+                                  // Calculate discounted price: originalPrice - (discountPercentage * originalPrice / 100)
+                                  const discountedPrice = originalPrice - (discountPercentage * originalPrice / 100)
+                                  
+                                  // Final validation
+                                  if (!isNaN(discountedPrice) && discountedPrice > 0) {
+                                    return (
+                                      <div className="flex items-center gap-2">
+                                        {/* Category Discounted Price - Green */}
+                                        <span className="font-medium text-green-600">
+                                          {discountedPrice.toLocaleString('en-US', { 
+                                            minimumFractionDigits: 0, 
+                                            maximumFractionDigits: 2 
+                                          }).replace(/,/g, '.')} تومان
+                                        </span>
+                                        {/* Original Price - Red with Strike-through */}
+                                        <span className="text-xs text-red-600 line-through">
+                                          {item.price.toLocaleString('en-US').replace(/,/g, '.')} تومان
+                                        </span>
+                                      </div>
+                                    )
+                                  }
+                                }
+                              }
+                              
+                              // Default price display
+                              return (
+                                <span className="font-medium text-green-600">
+                                  {item.price.toLocaleString('en-US').replace(/,/g, '.')} تومان
+                                </span>
+                              )
+                            })()}
+                          </div>
+                        </div>
+                        
+                        {/* Right side - Edit/Delete buttons */}
+                        <div className="flex flex-col space-y-1">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleStartEditItem(item.id)}
+                            title="ویرایش"
+                            className="w-8 h-8 p-0"
+                          >
+                            <Edit size={16} className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleDeleteItem(item.id)}
+                            className="text-destructive hover:text-destructive w-8 h-8 p-0"
+                            title="حذف"
+                          >
+                            <Trash2 size={16} className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </div>
+
+                      {/* Desktop/Tablet Layout */}
+                      <div className="mobile:hidden tablet:flex desktop:flex items-center space-x-3">
                         <Badge variant="outline">{index + 1}</Badge>
                         <div className="space-y-1">
                           <div className="font-medium">{item.title}</div>
+                          {/* Description - Hidden on Mobile */}
                           <div className="text-sm text-muted-foreground">{item.description}</div>
                           <div className="text-sm">
                             {(() => {
@@ -722,13 +831,10 @@ export function ItemManagement({
                               )
                             })()}
                           </div>
-                          {item.image && (
-                            <div className="text-xs text-blue-600">دارای تصویر</div>
-                          )}
                         </div>
                       </div>
                       
-                      <div className="flex items-center space-x-2">
+                      <div className="mobile:hidden tablet:flex desktop:flex items-center space-x-2">
                         <Button
                           size="sm"
                           variant="outline"

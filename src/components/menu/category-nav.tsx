@@ -312,32 +312,33 @@ export default function CategoryNav({ categories, selectedCategory, onCategoryCh
     }
   }
 
-  // Get dynamic sizing based on navbar style
+  // Get dynamic sizing based on navbar style - Mobile-first responsive
   const getButtonClasses = () => {
     switch (navbarStyle) {
       case 'text-only':
-        return "min-w-[80px] sm:min-w-[100px] px-3 sm:px-4 py-2.5 sm:py-3 h-auto"
+        return "min-w-[60px] mobile:min-w-[80px] tablet:min-w-[100px] desktop:min-w-[100px] px-2 mobile:px-3 tablet:px-4 desktop:px-4 py-2 mobile:py-2.5 tablet:py-3 desktop:py-3 h-auto"
       
       case 'icon-only':
-        return "w-12 h-12 sm:w-14 sm:h-14 p-2"
+        return "w-8 h-8 mobile:w-10 mobile:h-10 tablet:w-12 tablet:h-12 desktop:w-14 desktop:h-14 p-1 mobile:p-1.5 tablet:p-2 desktop:p-2"
       
       case 'icon-with-text':
       default:
-        return "min-w-[85px] sm:min-w-[110px] px-3 sm:px-4 py-3 sm:py-4 h-auto"
+        return "min-w-[65px] mobile:min-w-[85px] tablet:min-w-[110px] desktop:min-w-[110px] px-2 mobile:px-3 tablet:px-4 desktop:px-4 py-2 mobile:py-3 tablet:py-4 desktop:py-4 h-auto"
     }
   }
 
   return (
-    <nav className="sticky top-0 z-40 bg-background/90 backdrop-blur-md border-b border-border shadow-sm">
-      <div className="container mx-auto px-3 sm:px-4">
+    <nav className="sticky top-0 z-40 bg-background/90 backdrop-blur-md border-b border-border shadow-sm" role="navigation" aria-label="دسته‌بندی‌های منو">
+      <div className="mobile-container tablet:tablet-container desktop:desktop-container">
         <div 
           ref={navRef}
-          className="flex gap-2 sm:gap-3 py-3 sm:py-4 overflow-x-auto no-scrollbar cursor-grab select-none"
+          className="flex gap-1 mobile:gap-2 tablet:gap-3 desktop:gap-3 py-2 mobile:py-3 tablet:py-4 desktop:py-4 overflow-x-auto no-scrollbar cursor-grab select-none"
           onMouseDown={handleMouseDown}
           onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUp}
           onMouseLeave={handleMouseLeave}
           style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+          role="tablist"
         >
           {categories.map((category) => {
             const isActive = selectedCategory === category.id
@@ -349,13 +350,13 @@ export default function CategoryNav({ categories, selectedCategory, onCategoryCh
                 size="sm"
                 onClick={() => handleCategoryClick(category.id)}
                 className={cn(
-                  "flex-shrink-0",
+                  "flex-shrink-0 m3-button",
                   getButtonClasses(),
                   "rounded-xl border-2 transition-all duration-300 ease-in-out",
                   "bg-transparent backdrop-blur-md border-transparent",
                   "text-foreground font-medium font-body",
                   "hover:bg-secondary/70 hover:border-gold/50 hover:scale-105",
-                  "active:scale-95",
+                  "active:scale-95 focus-visible",
                   // Active state styles
                   isActive && [
                     "bg-primary text-primary-foreground",
@@ -363,6 +364,11 @@ export default function CategoryNav({ categories, selectedCategory, onCategoryCh
                     "hover:bg-primary hover:border-gold hover:scale-100"
                   ]
                 )}
+                role="tab"
+                aria-selected={isActive}
+                aria-controls={`category-${category.id}`}
+                aria-label={`دسته‌بندی ${category.name}`}
+                tabIndex={isActive ? 0 : -1}
               >
                 {renderCategoryContent(category)}
               </Button>

@@ -1,170 +1,120 @@
 'use client'
 
 import React from 'react'
-import { Button as MuiButton, ButtonProps as MuiButtonProps, styled } from '@mui/material'
-import { designTokens } from '@/design-tokens'
+import { cn } from '@/lib/utils'
 
-// Material Design 3 Button variants
-export interface M3ButtonProps extends Omit<MuiButtonProps, 'variant'> {
+interface M3ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'filled' | 'outlined' | 'text' | 'elevated' | 'tonal'
   size?: 'small' | 'medium' | 'large'
+  icon?: React.ReactNode
+  iconPosition?: 'leading' | 'trailing'
+  fullWidth?: boolean
+  loading?: boolean
 }
 
-const StyledButton = styled(MuiButton, {
-  shouldForwardProp: (prop) => prop !== 'variant' && prop !== 'size',
-})<M3ButtonProps>(({ theme, variant = 'filled', size = 'medium' }) => {
-  const getVariantStyles = () => {
-    switch (variant) {
-      case 'filled':
-        return {
-          backgroundColor: designTokens.colors.primary[40],
-          color: designTokens.colors.primary[100],
-          border: 'none',
-          boxShadow: designTokens.elevation[0],
-          '&:hover': {
-            backgroundColor: designTokens.colors.primary[30],
-            boxShadow: designTokens.elevation[1],
-          },
-          '&:active': {
-            backgroundColor: designTokens.colors.primary[20],
-            boxShadow: designTokens.elevation[0],
-          },
-          '&:disabled': {
-            backgroundColor: designTokens.colors.neutral[90],
-            color: designTokens.colors.neutral[60],
-          },
-        }
-      case 'outlined':
-        return {
-          backgroundColor: 'transparent',
-          color: designTokens.colors.primary[40],
-          border: `1px solid ${designTokens.colors.outline.default}`,
-          boxShadow: designTokens.elevation[0],
-          '&:hover': {
-            backgroundColor: designTokens.colors.primary[95],
-            borderColor: designTokens.colors.primary[40],
-            boxShadow: designTokens.elevation[1],
-          },
-          '&:active': {
-            backgroundColor: designTokens.colors.primary[90],
-            boxShadow: designTokens.elevation[0],
-          },
-          '&:disabled': {
-            backgroundColor: 'transparent',
-            color: designTokens.colors.neutral[60],
-            borderColor: designTokens.colors.neutral[80],
-          },
-        }
-      case 'text':
-        return {
-          backgroundColor: 'transparent',
-          color: designTokens.colors.primary[40],
-          border: 'none',
-          boxShadow: designTokens.elevation[0],
-          '&:hover': {
-            backgroundColor: designTokens.colors.primary[95],
-            boxShadow: designTokens.elevation[0],
-          },
-          '&:active': {
-            backgroundColor: designTokens.colors.primary[90],
-            boxShadow: designTokens.elevation[0],
-          },
-          '&:disabled': {
-            backgroundColor: 'transparent',
-            color: designTokens.colors.neutral[60],
-          },
-        }
-      case 'elevated':
-        return {
-          backgroundColor: designTokens.colors.surface.container.lowest,
-          color: designTokens.colors.primary[40],
-          border: 'none',
-          boxShadow: designTokens.elevation[1],
-          '&:hover': {
-            backgroundColor: designTokens.colors.surface.container.low,
-            boxShadow: designTokens.elevation[2],
-          },
-          '&:active': {
-            backgroundColor: designTokens.colors.surface.container.default,
-            boxShadow: designTokens.elevation[1],
-          },
-          '&:disabled': {
-            backgroundColor: designTokens.colors.surface.container.lowest,
-            color: designTokens.colors.neutral[60],
-            boxShadow: designTokens.elevation[0],
-          },
-        }
-      case 'tonal':
-        return {
-          backgroundColor: designTokens.colors.secondary[90],
-          color: designTokens.colors.secondary[10],
-          border: 'none',
-          boxShadow: designTokens.elevation[0],
-          '&:hover': {
-            backgroundColor: designTokens.colors.secondary[80],
-            boxShadow: designTokens.elevation[1],
-          },
-          '&:active': {
-            backgroundColor: designTokens.colors.secondary[70],
-            boxShadow: designTokens.elevation[0],
-          },
-          '&:disabled': {
-            backgroundColor: designTokens.colors.neutral[90],
-            color: designTokens.colors.neutral[60],
-          },
-        }
-      default:
-        return {}
-    }
+export function M3Button({
+  children,
+  className,
+  variant = 'filled',
+  size = 'medium',
+  icon,
+  iconPosition = 'leading',
+  fullWidth = false,
+  loading = false,
+  disabled,
+  ...props
+}: M3ButtonProps) {
+  const baseClasses = [
+    'inline-flex items-center justify-center gap-2',
+    'font-medium rounded-full',
+    'transition-all duration-200 ease-in-out',
+    'focus:outline-none focus:ring-2 focus:ring-offset-2',
+    'disabled:opacity-38 disabled:cursor-not-allowed',
+    'relative overflow-hidden',
+    fullWidth && 'w-full'
+  ]
+
+  const variantClasses = {
+    filled: [
+      'bg-[var(--md-sys-color-primary)] text-[var(--md-sys-color-on-primary)]',
+      'hover:bg-[var(--md-sys-color-primary)]/90',
+      'focus:ring-[var(--md-sys-color-primary)]',
+      'shadow-[var(--md-sys-elevation-level1)]'
+    ],
+    outlined: [
+      'border border-[var(--md-sys-color-outline)]',
+      'text-[var(--md-sys-color-primary)]',
+      'hover:bg-[var(--md-sys-color-primary)]/8',
+      'focus:ring-[var(--md-sys-color-primary)]'
+    ],
+    text: [
+      'text-[var(--md-sys-color-primary)]',
+      'hover:bg-[var(--md-sys-color-primary)]/8',
+      'focus:ring-[var(--md-sys-color-primary)]'
+    ],
+    elevated: [
+      'bg-[var(--md-sys-color-surface-container-low)] text-[var(--md-sys-color-primary)]',
+      'hover:bg-[var(--md-sys-color-primary)]/8',
+      'focus:ring-[var(--md-sys-color-primary)]',
+      'shadow-[var(--md-sys-elevation-level1)]'
+    ],
+    tonal: [
+      'bg-[var(--md-sys-color-secondary-container)] text-[var(--md-sys-color-on-secondary-container)]',
+      'hover:bg-[var(--md-sys-color-secondary-container)]/80',
+      'focus:ring-[var(--md-sys-color-secondary)]'
+    ]
   }
 
-  const getSizeStyles = () => {
-    switch (size) {
-      case 'small':
-        return {
-          minHeight: designTokens.mobile.touchTarget.min,
-          padding: `${designTokens.spacing[2]} ${designTokens.spacing[4]}`,
-          fontSize: designTokens.typography.label.medium.fontSize,
-          fontWeight: designTokens.typography.label.medium.fontWeight,
-          lineHeight: designTokens.typography.label.medium.lineHeight,
-          borderRadius: designTokens.radius.full,
-        }
-      case 'medium':
-        return {
-          minHeight: designTokens.mobile.touchTarget.recommended,
-          padding: `${designTokens.spacing[3]} ${designTokens.spacing[6]}`,
-          fontSize: designTokens.typography.label.large.fontSize,
-          fontWeight: designTokens.typography.label.large.fontWeight,
-          lineHeight: designTokens.typography.label.large.lineHeight,
-          borderRadius: designTokens.radius.full,
-        }
-      case 'large':
-        return {
-          minHeight: '64px',
-          padding: `${designTokens.spacing[4]} ${designTokens.spacing[8]}`,
-          fontSize: designTokens.typography.title.medium.fontSize,
-          fontWeight: designTokens.typography.title.medium.fontWeight,
-          lineHeight: designTokens.typography.title.medium.lineHeight,
-          borderRadius: designTokens.radius.full,
-        }
-      default:
-        return {}
-    }
+  const sizeClasses = {
+    small: [
+      'h-8 px-12 py-0',
+      'text-[var(--md-sys-typescale-label-large-size)]',
+      'leading-[var(--md-sys-typescale-label-large-line-height)]'
+    ],
+    medium: [
+      'h-10 px-16 py-0',
+      'text-[var(--md-sys-typescale-label-large-size)]',
+      'leading-[var(--md-sys-typescale-label-large-line-height)]'
+    ],
+    large: [
+      'h-12 px-20 py-0',
+      'text-[var(--md-sys-typescale-label-large-size)]',
+      'leading-[var(--md-sys-typescale-label-large-line-height)]'
+    ]
   }
 
-  return {
-    fontFamily: 'Vazirmatn, Roboto, sans-serif',
-    textTransform: 'none',
-    transition: `all ${designTokens.motion.duration.medium2} ${designTokens.motion.easing.standard}`,
-    ...getVariantStyles(),
-    ...getSizeStyles(),
-  }
-})
+  const classes = cn(
+    baseClasses,
+    variantClasses[variant],
+    sizeClasses[size],
+    className
+  )
 
-export function M3Button({ children, variant = 'filled', size = 'medium', ...props }: M3ButtonProps) {
   return (
-    <StyledButton variant={variant} size={size} {...props}>
-      {children}
-    </StyledButton>
+    <button
+      className={classes}
+      disabled={disabled || loading}
+      {...props}
+    >
+      {/* State layer for hover/press effects */}
+      <div className="absolute inset-0 bg-current opacity-0 hover:opacity-[var(--md-sys-state-hover)] active:opacity-[var(--md-sys-state-pressed)] transition-opacity duration-150" />
+      
+      {/* Content */}
+      <div className="relative flex items-center gap-2">
+        {icon && iconPosition === 'leading' && (
+          <span className="flex-shrink-0">{icon}</span>
+        )}
+        
+        {loading ? (
+          <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+        ) : (
+          children
+        )}
+        
+        {icon && iconPosition === 'trailing' && (
+          <span className="flex-shrink-0">{icon}</span>
+        )}
+      </div>
+    </button>
   )
 }
