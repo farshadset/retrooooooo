@@ -38,9 +38,9 @@ export function CompactTemplate({
   }
 
   const renderPrice = () => {
-    // Check for individual discount first
-    if (item.hasIndividualDiscount && item.discountedPrice) {
-      return (
+                // Check for individual discount first
+                if (item.hasIndividualDiscount && item.discountedPrice) {
+                  return (
         <div className="flex items-center gap-[var(--md-sys-spacing-xs)]">
           <M3Typography variant="title-medium" color="primary">
             {item.discountedPrice.toLocaleString('fa-IR')} تومان
@@ -52,21 +52,21 @@ export function CompactTemplate({
           >
             {item.price.toLocaleString('fa-IR')} تومان
           </M3Typography>
-        </div>
-      )
-    }
-    
-    // Check for category discount
-    const categoryDiscount = categoryDiscounts[item.category]
-    if (categoryDiscount?.isActive) {
-      const originalPrice = Number(item.price) || 0
-      const discountPercentage = Number(categoryDiscount.percentage) || 0
-      
-      if (originalPrice > 0 && discountPercentage > 0 && discountPercentage < 100) {
-        const discountedPrice = originalPrice - (discountPercentage * originalPrice / 100)
-        
-        if (!isNaN(discountedPrice) && discountedPrice > 0) {
-          return (
+                    </div>
+                  )
+                }
+                
+                // Check for category discount
+                const categoryDiscount = categoryDiscounts[item.category]
+                if (categoryDiscount?.isActive) {
+                  const originalPrice = Number(item.price) || 0
+                  const discountPercentage = Number(categoryDiscount.percentage) || 0
+                  
+                  if (originalPrice > 0 && discountPercentage > 0 && discountPercentage < 100) {
+                    const discountedPrice = originalPrice - (discountPercentage * originalPrice / 100)
+                    
+                    if (!isNaN(discountedPrice) && discountedPrice > 0) {
+                      return (
             <div className="flex items-center gap-[var(--md-sys-spacing-xs)]">
               <M3Typography variant="title-medium" color="primary">
                 {discountedPrice.toLocaleString('fa-IR')} تومان
@@ -78,14 +78,14 @@ export function CompactTemplate({
               >
                 {item.price.toLocaleString('fa-IR')} تومان
               </M3Typography>
-            </div>
-          )
-        }
-      }
-    }
-    
-    // Default price display
-    return (
+                        </div>
+                      )
+                    }
+                  }
+                }
+                
+                // Default price display
+                return (
       <M3Typography variant="title-medium" color="primary">
         {item.price.toLocaleString('fa-IR')} تومان
       </M3Typography>
@@ -116,20 +116,20 @@ export function CompactTemplate({
 
       <M3CardContent padding="small">
         <div className="flex flex-row-reverse gap-[var(--md-sys-spacing-sm)]">
-          {/* Image Section */}
+              {/* Image Section */}
           <div className="w-16 h-16 flex-shrink-0">
             <div className="relative w-full h-full rounded-[var(--md-sys-shape-corner-small)] overflow-hidden">
-              <Image
+                    <Image
                 src={imageError ? '/placeholder-food.jpg' : item.image}
                 alt={item.title}
-                fill
-                className="object-cover"
+                      fill
+                      className="object-cover"
                 sizes="64px"
                 onError={() => setImageError(true)}
               />
-            </div>
-          </div>
-          
+                    </div>
+                  </div>
+                  
           {/* Content Section */}
           <div className="flex-1 min-w-0">
             <div className="space-y-[var(--md-sys-spacing-xs)]">
