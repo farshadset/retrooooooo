@@ -329,8 +329,8 @@ export function CompactTemplate({ item, className, isAdmin = false, onEditItem, 
                       ? 'text-green-600 bg-green-100 border border-green-300' 
                       : 'text-blue-600 bg-blue-100'
                   }`}>
-                    {item.price.toLocaleString('en-US').replace(/,/g, '.')} تومان
-                  </span>
+                {item.price.toLocaleString('en-US').replace(/,/g, '.')} تومان
+              </span>
                 )
               })()}
             </div>

@@ -326,10 +326,10 @@ export function ItemManagement({
       const item2Index = allItems.findIndex(item => item.id === previousItem.id)
       
       if (item1Index !== -1 && item2Index !== -1) {
-        [allItems[item1Index], allItems[item2Index]] = [allItems[item2Index], allItems[item1Index]]
-        
-        setLocalItems(allItems)
-        onUpdateItems(allItems)
+      [allItems[item1Index], allItems[item2Index]] = [allItems[item2Index], allItems[item1Index]]
+      
+      setLocalItems(allItems)
+      onUpdateItems(allItems)
       }
     }
   }
@@ -346,10 +346,10 @@ export function ItemManagement({
       const item2Index = allItems.findIndex(item => item.id === nextItem.id)
       
       if (item1Index !== -1 && item2Index !== -1) {
-        [allItems[item1Index], allItems[item2Index]] = [allItems[item2Index], allItems[item1Index]]
-        
-        setLocalItems(allItems)
-        onUpdateItems(allItems)
+      [allItems[item1Index], allItems[item2Index]] = [allItems[item2Index], allItems[item1Index]]
+      
+      setLocalItems(allItems)
+      onUpdateItems(allItems)
       }
     }
   }
@@ -387,8 +387,8 @@ export function ItemManagement({
                   <div className="border rounded p-2 bg-background">
                     <div className="flex gap-2 text-xs justify-center">
                       <span className="px-2 py-1 bg-muted rounded">قهوه</span>
-                    </div>
-                  </div>
+        </div>
+      </div>
                   
                   {navbarStyle === 'text-only' && (
                     <div className="text-center">
@@ -678,7 +678,7 @@ export function ItemManagement({
                                     <span className="text-xs text-red-600 line-through">
                                       {item.price.toLocaleString('en-US').replace(/,/g, '.')} تومان
                                     </span>
-                                  </div>
+                        </div>
                                 )
                               }
                               
@@ -900,13 +900,13 @@ export function ItemManagement({
               <div className="bg-muted/50 p-4 rounded-lg border border-border">
                 <div className="flex items-center space-x-2">
                   <div className="p-2 bg-primary/10 rounded-lg">
-                    {getCategoryIcon(localCategories.find(c => c.id === selectedCategory)?.icon || 'coffee')}
+                  {getCategoryIcon(localCategories.find(c => c.id === selectedCategory)?.icon || 'coffee')}
                   </div>
                   <div>
                     <span className="text-sm text-muted-foreground">بخش:</span>
                     <span className="font-semibold text-foreground mr-2">
                       {localCategories.find(c => c.id === selectedCategory)?.name}
-                    </span>
+                  </span>
                   </div>
                 </div>
               </div>
@@ -1076,7 +1076,7 @@ export function ItemManagement({
                   <span>لغو</span>
                 </Button>
               </div>
-            </div>
+        </div>
           </Card>
         </div>,
         document.body
@@ -1193,13 +1193,13 @@ export function ItemManagement({
                     <X size={16} />
                   </Button>
                 </div>
-              </CardHeader>
+            </CardHeader>
               <CardContent className="flex-1 overflow-y-auto p-6">
-                {(() => {
-                  const item = localItems.find(i => i.id === editingItem)
-                  if (!item) return null
-                  
-                  return (
+              {(() => {
+                const item = localItems.find(i => i.id === editingItem)
+                if (!item) return null
+                
+                return (
                     <div className="space-y-4">
                       {/* Image Management Section - Moved to top and centered */}
                       <div className="text-center">
@@ -1269,37 +1269,37 @@ export function ItemManagement({
                         )}
                       </div>
 
-                      <div>
+                    <div>
                         <label className="block text-sm font-medium mb-2 text-foreground">نام آیتم *</label>
-                        <input
-                          type="text"
-                          defaultValue={item.title}
-                          onChange={(e) => handleUpdateItem(item.id, { title: e.target.value })}
+                      <input
+                        type="text"
+                        defaultValue={item.title}
+                        onChange={(e) => handleUpdateItem(item.id, { title: e.target.value })}
                           className="w-full p-3 border border-border rounded-lg bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200"
-                          autoFocus
+                        autoFocus
                           required
-                        />
-                      </div>
+                      />
+                    </div>
 
-                      <div>
+                    <div>
                         <label className="block text-sm font-medium mb-2 text-foreground">توضیحات *</label>
-                        <textarea
-                          defaultValue={item.description}
-                          onChange={(e) => handleUpdateItem(item.id, { description: e.target.value })}
+                      <textarea
+                        defaultValue={item.description}
+                        onChange={(e) => handleUpdateItem(item.id, { description: e.target.value })}
                           className="w-full p-3 border border-border rounded-lg resize-none bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200"
-                          rows={3}
-                        />
-                      </div>
+                        rows={3}
+                      />
+                    </div>
 
-                      <div>
+                    <div>
                         <label className="block text-sm font-medium mb-2 text-foreground">قیمت (تومان) *</label>
-                        <input
-                          type="number"
-                          defaultValue={item.price}
-                          onChange={(e) => handleUpdateItem(item.id, { price: parseInt(e.target.value) || 0 })}
+                      <input
+                        type="number"
+                        defaultValue={item.price}
+                        onChange={(e) => handleUpdateItem(item.id, { price: parseInt(e.target.value) || 0 })}
                           className="w-full p-3 border border-border rounded-lg bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200"
-                          min="0"
-                        />
+                        min="0"
+                      />
                         
                         {/* Current Price Display */}
                         <div className="mt-2 p-2 bg-muted/30 rounded-lg">
@@ -1321,7 +1321,7 @@ export function ItemManagement({
                                     <span className="text-xs text-red-600 line-through">
                                       {item.price.toLocaleString('en-US').replace(/,/g, '.')} تومان
                                     </span>
-                                  </div>
+                    </div>
                                 )
                               }
                               
@@ -1410,23 +1410,23 @@ export function ItemManagement({
               {/* Fixed Footer with Buttons */}
               <div className="flex-shrink-0 border-t border-border p-6">
                 <div className="flex space-x-2">
-                  <Button 
+                      <Button 
                     onClick={handleSaveItemEdit} 
                     className="flex-1 h-12 text-base font-medium"
-                  >
+                      >
                     <Save size={18} className="ml-2" />
-                    <span>ذخیره</span>
-                  </Button>
-                  <Button 
-                    variant="outline" 
+                        <span>ذخیره</span>
+                      </Button>
+                      <Button 
+                        variant="outline" 
                     onClick={handleCancelItemEdit}
                     className="flex-1 h-12 text-base font-medium"
-                  >
+                      >
                     <X size={18} className="ml-2" />
-                    <span>لغو</span>
-                  </Button>
-                </div>
-              </div>
+                        <span>لغو</span>
+                      </Button>
+                    </div>
+        </div>
             </Card>
         </div>,
         document.body

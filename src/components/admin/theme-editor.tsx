@@ -613,7 +613,7 @@ export function ThemeEditor({
                      <div>
                        <label className="block text-sm font-medium mb-2">آپلود لوگو</label>
                     <div className="space-y-2">
-                         <input
+                      <input
                            type="file"
                            accept=".png"
                            onChange={(e) => {
@@ -637,8 +637,8 @@ export function ThemeEditor({
                            <p>• اندازه پیشنهادی: 200×80 پیکسل</p>
                            <p>• پس‌زمینه شفاف برای بهترین نتیجه</p>
                          </div>
-                       </div>
-                     </div>
+                      </div>
+                    </div>
 
                     
 
@@ -710,7 +710,7 @@ export function ThemeEditor({
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-white rounded-lg border border-gray-200">
                       <div className="space-y-3">
                         <label className="block text-sm font-medium">عنوان بخش</label>
-                        <input
+                      <input
                           type="text"
                           placeholder="مثال: کیک و دسر"
                           value={dessertsConfig?.title || ''}
@@ -753,7 +753,7 @@ export function ThemeEditor({
                           <label className="block text-sm font-medium mb-1">نمایش منو افقی</label>
                         </div>
                         <div className="flex items-center gap-2">
-                          <input
+                      <input
                             type="checkbox"
                             id="dessertsVisibility"
                             checked={dessertsConfig?.isVisible || false}
@@ -769,8 +769,8 @@ export function ThemeEditor({
                           <label htmlFor="dessertsVisibility" className="text-sm">
                             {dessertsConfig?.isVisible ? 'فعال' : 'غیرفعال'}
                           </label>
-                        </div>
                       </div>
+                    </div>
 
                       {/* Discount Configuration */}
                       <div className="p-4 bg-white rounded-lg border border-gray-200">
@@ -792,7 +792,7 @@ export function ThemeEditor({
                               className="w-20 px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                             />
                             <span className="text-sm text-muted-foreground">%</span>
-                    </div>
+                  </div>
 
                           {/* Center Text */}
                           <div className="text-sm font-bold text-gray-700">
@@ -815,10 +815,10 @@ export function ThemeEditor({
                         />
                             <label htmlFor="dessertsDiscount" className="text-sm">
                               {dessertsDiscountConfig?.isActive ? 'فعال' : 'غیرفعال'}
-                        </label>
-                          </div>
-                        </div>
+                      </label>
                       </div>
+                    </div>
+                  </div>
                     </div>
 
                     {/* Icon Selection */}
@@ -1179,8 +1179,8 @@ export function ThemeEditor({
                                     />
                                   </div>
                                   <h1 className="text-2xl sm:text-3xl md:text-5xl font-bold mb-2 sm:mb-3" style={{ fontFamily: currentTheme.typography.headerTitleFontFamily }}>{currentTheme.header.title}</h1>
-                                </div>
-                              )}
+                    </div>
+                  )}
                             </div>
                           </div>
                         </div>
