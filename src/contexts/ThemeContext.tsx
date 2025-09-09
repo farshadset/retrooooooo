@@ -52,6 +52,16 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
         root.style.setProperty(`--${cssVar}`, value)
       })
 
+      // Apply theme colors to Material Design CSS variables
+      root.style.setProperty('--md-background', currentTheme.colors.background)
+      root.style.setProperty('--md-primary', currentTheme.colors.primary)
+      root.style.setProperty('--md-on-primary', currentTheme.colors.primaryForeground)
+      root.style.setProperty('--md-secondary', currentTheme.colors.accent)
+      root.style.setProperty('--md-on-secondary', currentTheme.colors.accentForeground)
+      root.style.setProperty('--md-surface', currentTheme.colors.card)
+      root.style.setProperty('--md-on-surface', currentTheme.colors.cardForeground)
+      root.style.setProperty('--md-outline', currentTheme.colors.border)
+
       // Apply typography variables
       root.style.setProperty('--font-family', currentTheme.typography.fontFamily)
       root.style.setProperty('--font-headline', currentTheme.typography.headlineFontFamily)

@@ -267,25 +267,25 @@ export default function CategoryNav({ categories, selectedCategory, onCategoryCh
     return icons[iconKey] || <Coffee size={iconSize} />
   }
 
-  // Get icon size based on navbar style
+  // Get icon size based on navbar style - Mobile optimized
   const getIconSize = () => {
     switch (navbarStyle) {
       case 'icon-only':
-        return 24 // Larger for icon-only
+        return 20 // Smaller for mobile, larger for desktop
       case 'icon-with-text':
-        return 22 // Medium size for combined view
+        return 18 // Medium size for combined view
       case 'text-only':
       default:
-        return 18 // Default size (not used in text-only)
+        return 16 // Default size (not used in text-only)
     }
   }
 
-  // Render category content based on navbar style
+  // Render category content based on navbar style - Mobile optimized
   const renderCategoryContent = (category: Category) => {
     switch (navbarStyle) {
       case 'text-only':
         return (
-          <span className="text-sm sm:text-base font-medium">
+          <span className="text-xs sm:text-sm md:text-base font-medium">
             {category.name}
           </span>
         )
@@ -300,11 +300,11 @@ export default function CategoryNav({ categories, selectedCategory, onCategoryCh
       case 'icon-with-text':
       default:
         return (
-          <div className="flex flex-col items-center space-y-1.5 sm:space-y-2">
+          <div className="flex flex-col items-center space-y-1 sm:space-y-1.5 md:space-y-2">
             <div className="flex items-center justify-center">
               {getCategoryIcon(category.icon)}
             </div>
-            <span className="text-xs sm:text-sm font-medium text-center leading-tight">
+            <span className="text-xs sm:text-sm md:text-sm font-medium text-center leading-tight">
               {category.name}
             </span>
           </div>
@@ -312,27 +312,27 @@ export default function CategoryNav({ categories, selectedCategory, onCategoryCh
     }
   }
 
-  // Get dynamic sizing based on navbar style
+  // Get dynamic sizing based on navbar style - Mobile optimized
   const getButtonClasses = () => {
     switch (navbarStyle) {
       case 'text-only':
-        return "min-w-[80px] sm:min-w-[100px] px-3 sm:px-4 py-2.5 sm:py-3 h-auto"
+        return "min-w-[70px] sm:min-w-[90px] md:min-w-[110px] px-2 sm:px-3 md:px-4 py-2 sm:py-2.5 md:py-3 h-auto"
       
       case 'icon-only':
-        return "w-12 h-12 sm:w-14 sm:h-14 p-2"
+        return "w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 p-1.5 sm:p-2"
       
       case 'icon-with-text':
       default:
-        return "min-w-[85px] sm:min-w-[110px] px-3 sm:px-4 py-3 sm:py-4 h-auto"
+        return "min-w-[75px] sm:min-w-[95px] md:min-w-[115px] px-2 sm:px-3 md:px-4 py-2 sm:py-3 md:py-4 h-auto"
     }
   }
 
   return (
     <nav className="sticky top-0 z-40 bg-background/90 backdrop-blur-md border-b border-border shadow-sm">
-      <div className="container mx-auto px-3 sm:px-4">
+      <div className="mobile-container">
         <div 
           ref={navRef}
-          className="flex gap-2 sm:gap-3 py-3 sm:py-4 overflow-x-auto no-scrollbar cursor-grab select-none"
+          className="flex gap-2 sm:gap-3 md:gap-4 py-2 sm:py-3 md:py-4 overflow-x-auto no-scrollbar cursor-grab select-none"
           onMouseDown={handleMouseDown}
           onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUp}
@@ -351,7 +351,7 @@ export default function CategoryNav({ categories, selectedCategory, onCategoryCh
                 className={cn(
                   "flex-shrink-0",
                   getButtonClasses(),
-                  "rounded-xl border-2 transition-all duration-300 ease-in-out",
+                  "rounded-lg sm:rounded-xl border-2 transition-all duration-300 ease-in-out",
                   "bg-transparent backdrop-blur-md border-transparent",
                   "text-foreground font-medium font-body",
                   "hover:bg-secondary/70 hover:border-gold/50 hover:scale-105",

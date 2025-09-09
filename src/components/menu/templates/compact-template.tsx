@@ -244,9 +244,9 @@ export function CompactTemplate({ item, className, isAdmin = false, onEditItem, 
         )}
 
         <div className="flex flex-row-reverse relative z-10">
-          {/* Image Section - 28% width with further reduced height and zoom effect */}
+          {/* Image Section - 28% width on all screens */}
           <div className="w-[28%] flex-shrink-0 overflow-hidden rounded-l-xl">
-            <div className="relative w-full h-[189px] sm:h-[197px]">
+            <div className="relative w-full h-40 sm:h-[189px] md:h-[197px]">
               <Image
                 src={imagePreview || editImage || item.image}
                 alt={item.title}
@@ -258,32 +258,32 @@ export function CompactTemplate({ item, className, isAdmin = false, onEditItem, 
             </div>
           </div>
           
-          {/* Content Section - 72% width with further reduced padding */}
-          <div className="w-[72%] flex flex-col text-right px-8 py-5 relative">
-            <h3 className="text-2xl font-bold text-foreground mb-3 leading-tight font-headline group-hover:text-primary transition-colors duration-300">
+          {/* Content Section - 72% width on all screens */}
+          <div className="w-[72%] flex flex-col text-right px-4 sm:px-6 md:px-8 py-3 sm:py-4 md:py-5 relative">
+            <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-foreground mb-2 sm:mb-3 leading-tight font-headline group-hover:text-primary transition-colors duration-300">
               {item.title}
             </h3>
             
-            <p className="text-base text-muted-foreground leading-relaxed font-body group-hover:text-foreground/80 transition-colors duration-300 mb-4 line-clamp-2 overflow-hidden">
+            <p className="text-sm sm:text-base text-muted-foreground leading-relaxed font-body group-hover:text-foreground/80 transition-colors duration-300 mb-3 sm:mb-4 line-clamp-2 overflow-hidden">
               {item.description}
             </p>
 
-            {/* Price Display - Bottom Right */}
-            <div className="absolute bottom-5 right-8">
+            {/* Price Display - Bottom Right - Mobile responsive */}
+            <div className="absolute bottom-3 sm:bottom-4 md:bottom-5 right-4 sm:right-6 md:right-8">
               {(() => {
                 // Check for individual discount first
                 if (item.hasIndividualDiscount && item.discountedPrice) {
                   return (
                     <div className="flex items-center gap-2">
                       {/* Individual Discounted Price - Green */}
-                      <span className="text-lg font-bold text-green-600 bg-green-100 border border-green-300 px-3 py-1 rounded-full">
+                      <span className="text-sm sm:text-base md:text-lg font-bold text-green-600 bg-green-100 border border-green-300 px-2 sm:px-3 py-1 rounded-full">
                         {item.discountedPrice.toLocaleString('en-US', { 
                           minimumFractionDigits: 0, 
                           maximumFractionDigits: 2 
                         }).replace(/,/g, '.')} تومان
                       </span>
                       {/* Original Price - Red with Strike-through */}
-                      <span className="text-sm font-medium text-red-600 bg-red-100 border border-red-300 px-2 py-1 rounded-full line-through">
+                      <span className="text-xs sm:text-sm font-medium text-red-600 bg-red-100 border border-red-300 px-1.5 sm:px-2 py-1 rounded-full line-through">
                         {item.price.toLocaleString('en-US').replace(/,/g, '.')} تومان
                       </span>
                     </div>
@@ -306,14 +306,14 @@ export function CompactTemplate({ item, className, isAdmin = false, onEditItem, 
                       return (
                         <div className="flex items-center gap-2">
                           {/* Category Discounted Price - Green */}
-                          <span className="text-lg font-bold text-green-600 bg-green-100 border border-green-300 px-3 py-1 rounded-full">
+                          <span className="text-sm sm:text-base md:text-lg font-bold text-green-600 bg-green-100 border border-green-300 px-2 sm:px-3 py-1 rounded-full">
                             {discountedPrice.toLocaleString('en-US', { 
                               minimumFractionDigits: 0, 
                               maximumFractionDigits: 2 
                             }).replace(/,/g, '.')} تومان
                           </span>
                           {/* Original Price - Red with Strike-through */}
-                          <span className="text-sm font-medium text-red-600 bg-red-100 border border-red-300 px-2 py-1 rounded-full line-through">
+                          <span className="text-xs sm:text-sm font-medium text-red-600 bg-red-100 border border-red-300 px-1.5 sm:px-2 py-1 rounded-full line-through">
                             {item.price.toLocaleString('en-US').replace(/,/g, '.')} تومان
                           </span>
                         </div>
@@ -324,7 +324,7 @@ export function CompactTemplate({ item, className, isAdmin = false, onEditItem, 
                 
                 // Default price display
                 return (
-                  <span className={`text-lg font-bold px-3 py-1 rounded-full ${
+                  <span className={`text-sm sm:text-base md:text-lg font-bold px-2 sm:px-3 py-1 rounded-full ${
                     item.category === 'desserts' 
                       ? 'text-green-600 bg-green-100 border border-green-300' 
                       : 'text-blue-600 bg-blue-100'

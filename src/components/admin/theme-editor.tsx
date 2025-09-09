@@ -205,7 +205,7 @@ function ColorInput({
           <div className="flex-1 relative">
             {/* Color Spectrum Background */}
             <div 
-              className="absolute inset-0 rounded-md pointer-events-none"
+              className="absolute inset-0 rounded-md pointer-events-none h-3 sm:h-6"
               style={{
                 background: `linear-gradient(to right, 
                   hsl(360, 100%, 50%), 
@@ -238,7 +238,7 @@ function ColorInput({
           <div className="flex-1 relative">
             {/* Saturation Background */}
             <div 
-              className="absolute inset-0 rounded-md pointer-events-none"
+              className="absolute inset-0 rounded-md pointer-events-none h-3 sm:h-6"
               style={{
                 background: `linear-gradient(to right, 
                   hsl(${hue || 0}, 100%, ${lightness || 50}%), 
@@ -266,7 +266,7 @@ function ColorInput({
           <div className="flex-1 relative">
             {/* Lightness Background */}
             <div 
-              className="absolute inset-0 rounded-md pointer-events-none"
+              className="absolute inset-0 rounded-md pointer-events-none h-3 sm:h-6"
               style={{
                 background: `linear-gradient(to right, 
                   hsl(${hue || 0}, ${saturation || 50}%, 100%), 
@@ -463,7 +463,7 @@ export function ThemeEditor({
       }}
       onClick={handleModalClick}
     >
-      <div className="w-full max-w-7xl h-[90vh] flex gap-4">
+      <div className="w-full max-w-7xl h-[90vh] flex flex-col lg:flex-row gap-4">
         {/* Main Editor Panel */}
         <Card className="flex-1 bg-card/95 backdrop-blur-md border border-border shadow-2xl overflow-hidden">
           {/* Header */}
@@ -487,7 +487,8 @@ export function ThemeEditor({
                     }}
                     className="bg-green-600 hover:bg-green-700 text-white px-4"
                   >
-                    تایید تغییرات
+                    <span className="sm:hidden">تایید</span>
+                    <span className="hidden sm:inline">تایید تغییرات</span>
                   </Button>
                   <Button
                     variant="outline"
@@ -498,7 +499,8 @@ export function ThemeEditor({
                     }}
                     className="border-red-500 text-red-600 hover:bg-red-50 px-4"
                   >
-                    لغو تغییرات
+                    <span className="sm:hidden">لغو</span>
+                    <span className="hidden sm:inline">لغو تغییرات</span>
                   </Button>
                 </>
               )}
@@ -515,9 +517,9 @@ export function ThemeEditor({
           </CardHeader>
 
           <CardContent className="p-0 h-full overflow-hidden">
-            <div className="flex h-full">
-              {/* Controls Panel */}
-              <div className="w-1/2 p-6 overflow-y-auto space-y-6">
+            <div className="flex flex-col lg:flex-row h-full">
+              {/* Controls Panel - Full width on mobile, half width on desktop */}
+              <div className="w-full lg:w-1/2 p-4 sm:p-6 overflow-y-auto space-y-4 sm:space-y-6">
                 {/* Theme Presets */}
                 <div className="space-y-3">
                   <h3 className="font-semibold flex items-center space-x-2">
@@ -855,7 +857,7 @@ export function ThemeEditor({
                             >
                               {option.icon}
                             </div>
-                            <div className="text-xs text-center mt-1 text-gray-600">
+                            <div className="text-xs text-center mt-1 text-gray-600 hidden sm:block">
                               {option.name}
                             </div>
                           </button>
@@ -891,9 +893,146 @@ export function ThemeEditor({
                             {dessertsItems.map((item, index) => (
                               <div
                                 key={item.id}
-                                className="flex items-center justify-between p-4 border border-border rounded-lg bg-background hover:bg-muted/50 transition-colors"
+                                className="flex items-center justify-between p-3 sm:p-4 border border-border rounded-lg bg-background hover:bg-muted/50 transition-colors"
                               >
-                                <div className="flex items-center space-x-3">
+                                  {/* Mobile Layout */}
+                                  <div className="flex items-center justify-between w-full sm:hidden">
+                                    {/* Left side - Up and Down arrows stacked */}
+                                    <div className="flex flex-col space-y-1">
+                                      <Button
+                                        size="sm"
+                                        variant="outline"
+                                        onClick={() => {
+                                          const dessertsItems = menuItems.filter(i => i.category === 'desserts')
+                                          const currentIndex = dessertsItems.findIndex(i => i.id === item.id)
+                                          if (currentIndex > 0) {
+                                            const allItems = [...menuItems]
+                                            const currentItem = dessertsItems[currentIndex]
+                                            const previousItem = dessertsItems[currentIndex - 1]
+                                            const item1Index = allItems.findIndex(i => i.id === currentItem.id)
+                                            const item2Index = allItems.findIndex(i => i.id === previousItem.id)
+                                            if (item1Index !== -1 && item2Index !== -1) {
+                                              [allItems[item1Index], allItems[item2Index]] = [allItems[item2Index], allItems[item1Index]]
+                                              updateMenuItems(allItems)
+                                            }
+                                          }
+                                        }}
+                                        disabled={index === 0}
+                                        title="انتقال به بالا"
+                                        className="p-1.5"
+                                      >
+                                        <ChevronUp size={14} />
+                                      </Button>
+                                      <Button
+                                        size="sm"
+                                        variant="outline"
+                                        onClick={() => {
+                                          const dessertsItems = menuItems.filter(i => i.category === 'desserts')
+                                          const currentIndex = dessertsItems.findIndex(i => i.id === item.id)
+                                          if (currentIndex < dessertsItems.length - 1) {
+                                            const allItems = [...menuItems]
+                                            const currentItem = dessertsItems[currentIndex]
+                                            const nextItem = dessertsItems[currentIndex + 1]
+                                            const item1Index = allItems.findIndex(i => i.id === currentItem.id)
+                                            const item2Index = allItems.findIndex(i => i.id === nextItem.id)
+                                            if (item1Index !== -1 && item2Index !== -1) {
+                                              [allItems[item1Index], allItems[item2Index]] = [allItems[item2Index], allItems[item1Index]]
+                                              updateMenuItems(allItems)
+                                            }
+                                          }
+                                        }}
+                                        disabled={index === dessertsItems.length - 1}
+                                        title="انتقال به پایین"
+                                        className="p-1.5"
+                                      >
+                                        <ChevronDown size={14} />
+                                      </Button>
+                                    </div>
+                                    
+                                    {/* Center - Item info without description and image text */}
+                                    <div className="flex flex-col items-center space-y-1 flex-1 px-2">
+                                      <div className="font-medium text-sm text-center">{item.title}</div>
+                                      <div className="text-xs">
+                                        {(dessertsDiscountConfig?.isActive || item.hasIndividualDiscount) ? (
+                                          <div className="flex items-center gap-1">
+                                            <div className="text-xs font-medium text-green-600">
+                                              {(() => {
+                                                // Check if item has individual discount
+                                                if (item.hasIndividualDiscount && item.discountedPrice) {
+                                                  return item.discountedPrice.toLocaleString('en-US', { 
+                                                    minimumFractionDigits: 0, 
+                                                    maximumFractionDigits: 2 
+                                                  })
+                                                }
+                                                
+                                                // Use global discount if no individual discount
+                                                if (dessertsDiscountConfig?.isActive) {
+                                                  const originalPrice = Number(item.price) || 0
+                                                  const discountPercentage = Number(dessertsDiscountConfig?.percentage) || 0
+                                                  
+                                                  // Validate inputs
+                                                  if (originalPrice <= 0 || discountPercentage <= 0 || discountPercentage >= 100) {
+                                                    return originalPrice.toLocaleString()
+                                                  }
+                                                  
+                                                  // Calculate discounted price: originalPrice - (discountPercentage * originalPrice / 100)
+                                                  const discountedPrice = originalPrice - (discountPercentage * originalPrice / 100)
+                                                  
+                                                  // Final validation
+                                                  if (isNaN(discountedPrice) || discountedPrice <= 0) {
+                                                    return originalPrice.toLocaleString()
+                                                  }
+                                                  
+                                                  return discountedPrice.toLocaleString('en-US', { 
+                                                    minimumFractionDigits: 0, 
+                                                    maximumFractionDigits: 2 
+                                                  })
+                                                }
+                                                
+                                                // Fallback to original price
+                                                return item.price.toLocaleString()
+                                              })()} تومان
+                                            </div>
+                                            <div className="text-xs text-red-600 line-through">
+                                              {item.price.toLocaleString()} تومان
+                                            </div>
+                                          </div>
+                                        ) : (
+                                          <div className="text-xs font-medium text-green-600">{item.price.toLocaleString()} تومان</div>
+                                        )}
+                                      </div>
+                                    </div>
+                                    
+                                    {/* Right side - Edit and Trash icons stacked */}
+                                    <div className="flex flex-col space-y-1">
+                                      <Button
+                                        size="sm"
+                                        variant="outline"
+                                        onClick={() => setEditingDessertsItem(item)}
+                                        title="ویرایش"
+                                        className="p-1.5"
+                                      >
+                                        <Edit size={14} />
+                                      </Button>
+                                      <Button
+                                        size="sm"
+                                        variant="outline"
+                                        onClick={() => {
+                                          if (confirm(`آیا از حذف آیتم "${item.title}" اطمینان دارید؟`)) {
+                                            const updatedItems = menuItems.filter(i => i.id !== item.id)
+                                            updateMenuItems(updatedItems)
+                                          }
+                                        }}
+                                        className="text-destructive hover:text-destructive p-1.5"
+                                        title="حذف"
+                                      >
+                                        <Trash2 size={14} />
+                                      </Button>
+                                    </div>
+                                  </div>
+
+                                {/* Desktop Layout */}
+                                <div className="hidden sm:flex items-center space-x-3 flex-1">
                                   <Badge variant="outline">{index + 1}</Badge>
                                   <div className="space-y-1">
                                     <div className="font-medium">{item.title}</div>
@@ -951,7 +1090,7 @@ export function ThemeEditor({
                       </div>
                                 </div>
                                 
-                                <div className="flex items-center space-x-2">
+                                <div className="hidden sm:flex items-center space-x-2">
                                   <Button
                                     size="sm"
                                     variant="outline"
@@ -1048,8 +1187,8 @@ export function ThemeEditor({
 
               </div>
 
-              {/* Preview Panel */}
-              <div className="w-1/2 border-l border-border p-6 overflow-y-auto">
+              {/* Preview Panel - Hidden on mobile devices */}
+              <div className="hidden lg:block w-full lg:w-1/2 border-l border-border p-4 sm:p-6 overflow-y-auto">
                 <div className="space-y-4">
                   <div className="flex items-center space-x-2">
                     <h3 className="font-semibold">پیش‌نمایش زنده</h3>

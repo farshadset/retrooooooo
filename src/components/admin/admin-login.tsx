@@ -247,19 +247,19 @@ export function AdminLogin({
               variant="ghost"
               size="sm"
               onClick={handleHamburgerMenuClick}
-          className="group p-2 text-primary-foreground/80 hover:text-primary-foreground hover:bg-background/20 rounded-xl transition-all duration-300 ease-in-out hover:scale-110 active:scale-95"
+          className="group p-1.5 sm:p-2 text-primary-foreground/80 hover:text-primary-foreground hover:bg-background/20 rounded-lg sm:rounded-xl transition-all duration-300 ease-in-out hover:scale-110 active:scale-95"
           title="منو"
         >
           <div className="relative">
             {/* Animated Hamburger Icon */}
-            <div className="flex flex-col justify-center items-center w-6 h-6">
-              <span className={`bg-current block transition-all duration-300 ease-out h-0.5 w-6 rounded-sm ${
+            <div className="flex flex-col justify-center items-center w-5 h-5 sm:w-6 sm:h-6">
+              <span className={`bg-current block transition-all duration-300 ease-out h-0.5 w-5 sm:w-6 rounded-sm ${
                 showHamburgerMenu ? 'rotate-45 translate-y-1' : '-translate-y-0.5'
               }`}></span>
-              <span className={`bg-current block transition-all duration-300 ease-out h-0.5 w-6 rounded-sm my-0.5 ${
+              <span className={`bg-current block transition-all duration-300 ease-out h-0.5 w-5 sm:w-6 rounded-sm my-0.5 ${
                 showHamburgerMenu ? 'opacity-0' : 'opacity-100'
               }`}></span>
-              <span className={`bg-current block transition-all duration-300 ease-out h-0.5 w-6 rounded-sm ${
+              <span className={`bg-current block transition-all duration-300 ease-out h-0.5 w-5 sm:w-6 rounded-sm ${
                 showHamburgerMenu ? '-rotate-45 -translate-y-1' : 'translate-y-0.5'
               }`}></span>
             </div>
@@ -276,7 +276,7 @@ export function AdminLogin({
                onClick={() => setShowAdminPanel(false)}
              />
              <div className="fixed inset-0 z-[999999] flex items-center justify-center p-4" style={{ zIndex: 999999, position: 'fixed' }}>
-               <Card className="modal-content w-96 max-h-96 overflow-y-auto bg-card/95 backdrop-blur-md border border-border shadow-xl relative z-[999999]" style={{ zIndex: 999999 }}>
+               <Card className="modal-content w-full max-w-sm sm:max-w-md lg:w-96 max-h-96 overflow-y-auto bg-card/95 backdrop-blur-md border border-border shadow-xl relative z-[999999]" style={{ zIndex: 999999 }}>
               <CardHeader>
                 <CardTitle className="text-center text-lg">پنل ادمین</CardTitle>
               </CardHeader>
@@ -372,7 +372,7 @@ export function AdminLogin({
               className="fixed inset-0 z-[999998] bg-transparent"
               onClick={() => setShowHamburgerMenu(false)}
             />
-            <div className="fixed top-16 right-4 z-[999999] bg-card/95 backdrop-blur-md border border-border rounded-xl shadow-2xl p-2 min-w-52 animate-in slide-in-from-top-2 duration-300">
+            <div className="fixed top-12 sm:top-16 right-2 sm:right-4 z-[999999] bg-card/95 backdrop-blur-md border border-border rounded-lg sm:rounded-xl shadow-2xl p-2 min-w-48 sm:min-w-52 animate-in slide-in-from-top-2 duration-300">
             <div className="space-y-1">
               {/* Login/Logout Section */}
               {!isLoggedIn ? (
@@ -381,10 +381,10 @@ export function AdminLogin({
                     setShowLoginModal(true)
                     setShowHamburgerMenu(false)
                   }}
-                  className="w-full flex items-center gap-3 px-4 py-3 text-sm text-foreground hover:bg-background/60 rounded-lg transition-all duration-200 hover:scale-[1.02] group"
+                  className="w-full flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2.5 sm:py-3 text-xs sm:text-sm text-foreground hover:bg-background/60 rounded-lg transition-all duration-200 hover:scale-[1.02] group"
                 >
                   <div className="p-1 bg-primary/10 rounded-md group-hover:bg-primary/20 transition-colors">
-                    <LogIn size={16} className="text-primary" />
+                    <LogIn size={14} className="text-primary sm:w-4 sm:h-4" />
                   </div>
                   <span className="font-medium">ورود ادمین</span>
                 </button>

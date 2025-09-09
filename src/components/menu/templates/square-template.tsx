@@ -102,44 +102,44 @@ export function SquareTemplate({ item, className, isAdmin = false, onEditItem, c
   return (
     <>
       <div className={cn(
-        "group relative text-center p-4 w-full max-w-[200px] mx-auto",
+        "group relative text-center p-2 sm:p-3 md:p-4 w-full max-w-[180px] sm:max-w-[200px] mx-auto",
         className
       )}>
         {/* Edit Button - Only visible when admin is logged in */}
         {isAdmin && onEditItem && (
-          <div className="absolute top-2 right-2 z-50">
+          <div className="absolute top-1 sm:top-2 right-1 sm:right-2 z-50">
             <Button
               variant="ghost"
               size="sm"
               onClick={handleEditClick}
-              className="p-2 bg-red-500 hover:bg-red-600 text-white border border-white shadow-lg rounded-full cursor-pointer transition-all duration-200 hover:scale-110"
+              className="p-1.5 sm:p-2 bg-red-500 hover:bg-red-600 text-white border border-white shadow-lg rounded-full cursor-pointer transition-all duration-200 hover:scale-110"
               title="ویرایش آیتم"
             >
-              <Edit3 size={14} className="text-white" />
+              <Edit3 size={12} className="text-white sm:w-3.5 sm:h-3.5" />
             </Button>
           </div>
         )}
 
         <div className="relative z-10">
-          {/* Square Image */}
-          <div className="w-40 h-40 mx-auto mb-4 overflow-hidden rounded-lg">
+          {/* Square Image - Mobile responsive */}
+          <div className="w-32 h-32 sm:w-36 sm:h-36 md:w-40 md:h-40 mx-auto mb-3 sm:mb-4 overflow-hidden rounded-lg">
             <Image
               src={imagePreview || item.image}
               alt={item.title}
               width={160}
               height={160}
               className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-300 ease-in-out"
-              sizes="160px"
+              sizes="(max-width: 640px) 128px, (max-width: 768px) 144px, 160px"
               priority={false}
             />
           </div>
           
-          {/* Title */}
-          <h3 className="text-lg font-bold text-foreground mb-2 leading-tight font-headline group-hover:text-primary transition-colors duration-300 line-clamp-2 text-center">
+          {/* Title - Mobile responsive */}
+          <h3 className="text-sm sm:text-base md:text-lg font-bold text-foreground mb-2 leading-tight font-headline group-hover:text-primary transition-colors duration-300 line-clamp-2 text-center">
             {item.title}
           </h3>
           
-          {/* Price */}
+          {/* Price - Mobile responsive */}
           <div className="mt-auto text-center">
             {(() => {
               // Check for individual discount first
@@ -147,14 +147,14 @@ export function SquareTemplate({ item, className, isAdmin = false, onEditItem, c
                 return (
                   <div className="flex flex-col items-center gap-1">
                     {/* Individual Discounted Price - Green */}
-                    <span className="text-base font-bold text-green-600 bg-green-100 border border-green-300 px-3 py-1 rounded-full">
+                    <span className="text-xs sm:text-sm md:text-base font-bold text-green-600 bg-green-100 border border-green-300 px-2 sm:px-3 py-1 rounded-full">
                       {item.discountedPrice.toLocaleString('en-US', { 
                         minimumFractionDigits: 0, 
                         maximumFractionDigits: 2 
                       }).replace(/,/g, '.')} تومان
                     </span>
                     {/* Original Price - Red with Strike-through */}
-                    <span className="text-xs font-medium text-red-600 bg-red-100 border border-red-300 px-2 py-1 rounded-full line-through">
+                    <span className="text-xs font-medium text-red-600 bg-red-100 border border-red-300 px-1.5 sm:px-2 py-1 rounded-full line-through">
                       {item.price.toLocaleString('en-US').replace(/,/g, '.')} تومان
                     </span>
                   </div>
@@ -177,14 +177,14 @@ export function SquareTemplate({ item, className, isAdmin = false, onEditItem, c
                     return (
                       <div className="flex flex-col items-center gap-1">
                         {/* Category Discounted Price - Green */}
-                        <span className="text-base font-bold text-green-600 bg-green-100 border border-green-300 px-3 py-1 rounded-full">
+                        <span className="text-xs sm:text-sm md:text-base font-bold text-green-600 bg-green-100 border border-green-300 px-2 sm:px-3 py-1 rounded-full">
                           {discountedPrice.toLocaleString('en-US', { 
                             minimumFractionDigits: 0, 
                             maximumFractionDigits: 2 
                           }).replace(/,/g, '.')} تومان
                         </span>
                         {/* Original Price - Red with Strike-through */}
-                        <span className="text-xs font-medium text-red-600 bg-red-100 border border-red-300 px-2 py-1 rounded-full line-through">
+                        <span className="text-xs font-medium text-red-600 bg-red-100 border border-red-300 px-1.5 sm:px-2 py-1 rounded-full line-through">
                           {item.price.toLocaleString('en-US').replace(/,/g, '.')} تومان
                         </span>
                       </div>
@@ -195,7 +195,7 @@ export function SquareTemplate({ item, className, isAdmin = false, onEditItem, c
               
               // Default price display
               return (
-                <span className={`text-base font-bold px-3 py-1 rounded-full ${
+                <span className={`text-xs sm:text-sm md:text-base font-bold px-2 sm:px-3 py-1 rounded-full ${
                   item.category === 'desserts' 
                     ? 'text-green-600 bg-green-100 border border-green-300' 
                     : 'text-blue-600 bg-blue-100'

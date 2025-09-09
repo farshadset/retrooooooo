@@ -134,25 +134,27 @@ export const DessertsHorizontal = forwardRef<HTMLElement, DessertsHorizontalProp
     <section ref={ref} className="py-6 border-b border-gray-200">
       <div className="container mx-auto px-3 sm:px-4">
         <div className="max-w-7xl mx-auto">
-          {/* Section Header */}
-          <div className="mb-6">
+          {/* Section Header - Mobile responsive */}
+          <div className="mb-4 sm:mb-6">
             <div className="flex items-center justify-between mb-2">
               <div className="flex-1">
                 <div className="mb-2">
                   <div className="flex items-start justify-between mb-2">
                     <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-2">
+                      <div className="flex items-center gap-2 sm:gap-3 mb-2">
                         {config.icon && config.icon !== 'none' && (
                           <div className="text-primary">
-                            {getDessertsIcon(config.icon)}
+                            <div className="w-6 h-6 sm:w-8 sm:h-8">
+                              {getDessertsIcon(config.icon)}
+                            </div>
                           </div>
                         )}
-                        <h2 className="text-2xl sm:text-3xl font-bold text-foreground" 
+                        <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-foreground" 
                             style={{ fontFamily: currentTheme.typography.headlineFontFamily }}>
                           {config.title}
                         </h2>
                       </div>
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-xs sm:text-sm text-muted-foreground">
                         {dessertsItems.length} {config.description}
                       </p>
                     </div>
@@ -167,26 +169,26 @@ export const DessertsHorizontal = forwardRef<HTMLElement, DessertsHorizontalProp
 
           {/* Horizontal Items Container */}
           <div className="relative group">
-            {/* Scroll Left Button */}
+            {/* Scroll Left Button - Mobile responsive */}
             <button
               onClick={scrollLeftHandler}
-              className="absolute left-0 top-1/2 -translate-y-1/2 z-30 w-10 h-10 bg-background/80 backdrop-blur-sm border border-border rounded-full shadow-lg flex items-center justify-center text-foreground hover:bg-background transition-all duration-300 opacity-0 group-hover:opacity-100 hover:scale-110"
+              className="absolute left-0 top-1/2 -translate-y-1/2 z-30 w-8 h-8 sm:w-10 sm:h-10 bg-background/80 backdrop-blur-sm border border-border rounded-full shadow-lg flex items-center justify-center text-foreground hover:bg-background transition-all duration-300 opacity-0 group-hover:opacity-100 hover:scale-110"
             >
-              <ChevronLeft className="w-5 h-5" />
+              <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
 
-            {/* Scroll Right Button */}
+            {/* Scroll Right Button - Mobile responsive */}
             <button
               onClick={scrollRightHandler}
-              className="absolute right-0 top-1/2 -translate-y-1/2 z-30 w-10 h-10 bg-background/80 backdrop-blur-sm border border-border rounded-full shadow-lg flex items-center justify-center text-foreground hover:bg-background transition-all duration-300 opacity-0 group-hover:opacity-100 hover:scale-110"
+              className="absolute right-0 top-1/2 -translate-y-1/2 z-30 w-8 h-8 sm:w-10 sm:h-10 bg-background/80 backdrop-blur-sm border border-border rounded-full shadow-lg flex items-center justify-center text-foreground hover:bg-background transition-all duration-300 opacity-0 group-hover:opacity-100 hover:scale-110"
             >
-              <ChevronRight className="w-5 h-5" />
+              <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
 
-            {/* Items Container */}
+            {/* Items Container - Mobile responsive */}
             <div
               ref={scrollContainerRef}
-              className="flex gap-4 overflow-x-auto scrollbar-hide pb-2 cursor-grab select-none"
+              className="flex gap-3 sm:gap-4 overflow-x-auto scrollbar-hide pb-2 cursor-grab select-none"
               style={{ 
                 scrollbarWidth: 'none', 
                 msOverflowStyle: 'none',
@@ -200,15 +202,15 @@ export const DessertsHorizontal = forwardRef<HTMLElement, DessertsHorizontalProp
               onTouchMove={handleTouchMove}
               onTouchEnd={handleTouchEnd}
             >
-              {/* All Items with Square Template Design */}
+              {/* All Items with Square Template Design - Mobile responsive */}
               {dessertsItems.map((item) => (
                 <div key={item.id} className="flex-shrink-0">
-                  <div className="w-80 h-96 bg-card text-card-foreground shadow-sm border border-border rounded-lg hover:shadow-lg transition-all duration-300 hover:scale-105 group overflow-hidden relative z-10">
+                  <div className="w-64 sm:w-72 md:w-80 h-80 sm:h-88 md:h-96 bg-card text-card-foreground shadow-sm border border-border rounded-lg hover:shadow-lg transition-all duration-300 hover:scale-105 group overflow-hidden relative z-10">
                     
 
                     
-                    {/* Image Section - Same as Square Template */}
-                    <div className="relative h-56 overflow-hidden z-10">
+                    {/* Image Section - Mobile responsive */}
+                    <div className="relative h-44 sm:h-48 md:h-56 overflow-hidden z-10">
                       {item.image ? (
                         <img 
                           src={item.image} 
@@ -217,29 +219,29 @@ export const DessertsHorizontal = forwardRef<HTMLElement, DessertsHorizontalProp
                         />
                       ) : (
                         <div className="w-full h-full bg-muted flex items-center justify-center">
-                          <span className="text-muted-foreground font-medium">تصویر</span>
+                          <span className="text-muted-foreground font-medium text-sm sm:text-base">تصویر</span>
                         </div>
                       )}
                     </div>
 
-                    {/* Content Section - Same as Square Template */}
-                    <div className="p-5 flex flex-col h-40 relative z-20">
-                      {/* Title - Same styling as other menu items */}
-                      <h3 className="text-2xl font-bold text-foreground mb-3 leading-tight font-headline group-hover:text-primary transition-colors duration-300">
+                    {/* Content Section - Mobile responsive */}
+                    <div className="p-3 sm:p-4 md:p-5 flex flex-col h-36 sm:h-40 relative z-20">
+                      {/* Title - Mobile responsive */}
+                      <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-foreground mb-2 sm:mb-3 leading-tight font-headline group-hover:text-primary transition-colors duration-300">
                         {item.title}
                       </h3>
                       
-                      {/* Description - Same styling as other menu items */}
-                      <p className="text-base text-muted-foreground leading-relaxed font-body group-hover:text-foreground/80 transition-colors duration-300 mb-4 line-clamp-2">
+                      {/* Description - Mobile responsive */}
+                      <p className="text-sm sm:text-base text-muted-foreground leading-relaxed font-body group-hover:text-foreground/80 transition-colors duration-300 mb-3 sm:mb-4 line-clamp-2">
                         {item.description}
                       </p>
                       
-                                            {/* Price - Centered */}
-                      <div className="mt-auto flex flex-col items-center justify-center space-y-2">
+                      {/* Price - Centered - Mobile responsive */}
+                      <div className="mt-auto flex flex-col items-center justify-center space-y-1 sm:space-y-2">
                         {(dessertsDiscountConfig?.isActive || item.hasIndividualDiscount) ? (
                           <div className="flex items-center gap-3">
-                            {/* Discounted Price - Green Box on Left */}
-                            <span className="text-lg font-bold text-green-600 bg-green-100 border border-green-300 px-3 py-1 rounded-full">
+                            {/* Discounted Price - Green Box on Left - Mobile responsive */}
+                            <span className="text-sm sm:text-base md:text-lg font-bold text-green-600 bg-green-100 border border-green-300 px-2 sm:px-3 py-1 rounded-full">
                               {(() => {
                                 // Check if item has individual discount
                                 if (item.hasIndividualDiscount && item.discountedPrice) {
@@ -277,13 +279,13 @@ export const DessertsHorizontal = forwardRef<HTMLElement, DessertsHorizontalProp
                                 return item.price.toLocaleString('en-US').replace(/,/g, '.')
                               })()} تومان
                             </span>
-                            {/* Original Price - Red Box on Right with Strike-through */}
-                            <span className="text-sm font-medium text-red-600 bg-red-100 border border-red-300 px-2 py-1 rounded-full line-through">
+                            {/* Original Price - Red Box on Right with Strike-through - Mobile responsive */}
+                            <span className="text-xs sm:text-sm font-medium text-red-600 bg-red-100 border border-red-300 px-1.5 sm:px-2 py-1 rounded-full line-through">
                               {item.price.toLocaleString('en-US').replace(/,/g, '.')} تومان
                             </span>
                           </div>
                         ) : (
-                          <span className="text-lg font-bold text-green-600 bg-green-100 border border-green-300 px-3 py-1 rounded-full">
+                          <span className="text-sm sm:text-base md:text-lg font-bold text-green-600 bg-green-100 border border-green-300 px-2 sm:px-3 py-1 rounded-full">
                             {item.price.toLocaleString('en-US').replace(/,/g, '.')} تومان
                           </span>
                         )}
