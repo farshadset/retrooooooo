@@ -211,7 +211,7 @@ export function MenuCard({ item, className, isAdmin = false, onEditItem, categor
   return (
     <>
       <Card className={cn(
-        "group relative backdrop-blur-md shadow-xl rounded-xl border-2 border-transparent transition-all duration-300 ease-in-out overflow-hidden touch-manipulation max-w-4xl mx-auto menu-card",
+        "group relative rounded-xl border-2 border-transparent transition-all duration-300 ease-in-out overflow-hidden touch-manipulation max-w-4xl mx-auto menu-card",
         // Desktop hover effects
         "hover:-translate-y-2 hover:shadow-2xl",
         // Mobile optimized - only shadow and smooth lift

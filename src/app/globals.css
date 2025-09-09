@@ -678,6 +678,9 @@
                   box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
       position: relative;
       z-index: 1;
+      /* Default shadow for cards */
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      background: hsl(var(--card));
     }
     
     .menu-card:active {
@@ -695,6 +698,14 @@
     /* Remove image zoom on mobile */
     .menu-card img {
       transition: none;
+    }
+  }
+  
+  /* Desktop cards */
+  @media (min-width: 769px) {
+    .menu-card {
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      background: hsl(var(--card));
     }
   }
 
