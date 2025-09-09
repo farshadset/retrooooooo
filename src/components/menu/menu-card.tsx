@@ -211,7 +211,7 @@ export function MenuCard({ item, className, isAdmin = false, onEditItem, categor
   return (
     <>
       <Card className={cn(
-        "group relative backdrop-blur-md shadow-xl rounded-xl border-2 border-transparent transition-all duration-300 ease-in-out overflow-hidden touch-manipulation max-w-4xl mx-auto menu-card",
+        "group relative backdrop-blur-md shadow-xl rounded-xl border-2 border-transparent transition-all duration-300 ease-in-out touch-manipulation max-w-4xl mx-auto menu-card",
         // Desktop hover effects
         "hover:border-gold/80 hover:-translate-y-2 hover:shadow-2xl",
         // Mobile optimized - only shadow and smooth lift
@@ -250,7 +250,7 @@ export function MenuCard({ item, className, isAdmin = false, onEditItem, categor
           </div>
         )}
 
-        <div className="flex flex-row-reverse relative z-10">
+        <div className="flex flex-row-reverse relative z-10 rounded-xl overflow-hidden">
           {/* Image Section - 28% width on all screens */}
           <div className="w-[28%] flex-shrink-0 overflow-hidden rounded-l-xl">
             <div className="relative w-full h-48 sm:h-60 md:h-64">

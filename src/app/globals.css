@@ -675,13 +675,19 @@
   @media (max-width: 768px) {
     .menu-card {
       transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), 
-                  box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+                  box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+                  border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      z-index: 1;
+      will-change: transform, box-shadow, border-color;
     }
     
     .menu-card:active {
       transform: translateY(-4px);
       box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15), 
                   0 10px 10px -5px rgba(0, 0, 0, 0.1);
+      border-color: hsl(var(--gold) / 0.8);
+      z-index: 10;
     }
     
     .menu-card img {
@@ -690,6 +696,16 @@
     
     .menu-card:active img {
       transform: scale(1.05);
+    }
+    
+    /* Ensure all child elements move with the card */
+    .menu-card:active > * {
+      transform: translateY(0);
+    }
+    
+    /* Fix for any absolute positioned elements */
+    .menu-card:active .absolute {
+      transform: translateY(0);
     }
   }
 
