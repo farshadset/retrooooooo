@@ -211,9 +211,9 @@ export function MenuCard({ item, className, isAdmin = false, onEditItem, categor
   return (
     <>
       <Card className={cn(
-        "group relative backdrop-blur-md shadow-xl rounded-xl border-2 border-transparent transition-all duration-300 ease-in-out touch-manipulation max-w-4xl mx-auto menu-card",
+        "group relative backdrop-blur-md shadow-xl rounded-xl border-2 border-transparent transition-all duration-300 ease-in-out overflow-hidden touch-manipulation max-w-4xl mx-auto menu-card",
         // Desktop hover effects
-        "hover:border-gold/80 hover:-translate-y-2 hover:shadow-2xl",
+        "hover:-translate-y-2 hover:shadow-2xl",
         // Mobile optimized - only shadow and smooth lift
         "active:shadow-2xl active:-translate-y-1",
         className
@@ -250,7 +250,7 @@ export function MenuCard({ item, className, isAdmin = false, onEditItem, categor
           </div>
         )}
 
-        <div className="flex flex-row-reverse relative z-10 rounded-xl overflow-hidden">
+        <div className="flex flex-row-reverse relative z-10">
           {/* Image Section - 28% width on all screens */}
           <div className="w-[28%] flex-shrink-0 overflow-hidden rounded-l-xl">
             <div className="relative w-full h-48 sm:h-60 md:h-64">
@@ -258,7 +258,7 @@ export function MenuCard({ item, className, isAdmin = false, onEditItem, categor
                 src={imagePreview || editImage || item.image}
                 alt={item.title}
                 fill
-                className="object-cover rounded-l-xl group-hover:scale-110 group-active:scale-105 transition-transform duration-300 ease-in-out"
+                className="object-cover rounded-l-xl"
                 sizes="28vw"
                 priority={false}
               />
