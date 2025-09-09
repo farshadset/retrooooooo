@@ -30,6 +30,7 @@ interface CropArea {
 }
 
 export function MenuCard({ item, className, isAdmin = false, onEditItem, categoryDiscounts = {} }: MenuCardProps) {
+  console.log('MenuCard props:', { isAdmin, onEditItem: !!onEditItem, itemTitle: item.title })
   
   const [showEditModal, setShowEditModal] = useState(false)
   const [editTitle, setEditTitle] = useState(item.title)
@@ -44,10 +45,17 @@ export function MenuCard({ item, className, isAdmin = false, onEditItem, categor
   const [originalImage, setOriginalImage] = useState<string | null>(null)
   const [showHelp, setShowHelp] = useState(false)
   
+  // Touch interaction states for mobile
+  const [isTouched, setIsTouched] = useState(false)
+  const [isPressed, setIsPressed] = useState(false)
+  const [touchStartTime, setTouchStartTime] = useState(0)
+  
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const imageRef = useRef<HTMLImageElement>(null)
+  const cardRef = useRef<HTMLDivElement>(null)
 
   const handleEditClick = () => {
+    console.log('Edit button clicked for item:', item.title)
     setEditTitle(item.title)
     setEditDescription(item.description)
     setEditImage(item.image)
@@ -206,12 +214,95 @@ export function MenuCard({ item, className, isAdmin = false, onEditItem, categor
     }
   }
 
+  // Touch event handlers for mobile interaction
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setIsTouched(true)
+    setIsPressed(true)
+    setTouchStartTime(Date.now())
+    
+    // Add visual feedback immediately
+    if (cardRef.current) {
+      cardRef.current.style.transform = 'translateY(-8px) scale(1.02)'
+      cardRef.current.style.boxShadow = '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)'
+    }
+  }
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    const touchDuration = Date.now() - touchStartTime
+    
+    // Only trigger hover effect if touch was brief (not a scroll)
+    if (touchDuration < 200) {
+      // Maintain hover state for a moment to show feedback
+      setTimeout(() => {
+        setIsTouched(false)
+        setIsPressed(false)
+        
+        if (cardRef.current) {
+          cardRef.current.style.transform = 'translateY(-8px) scale(1.02)'
+          cardRef.current.style.boxShadow = '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)'
+        }
+        
+        // Reset after showing feedback
+        setTimeout(() => {
+          if (cardRef.current) {
+            cardRef.current.style.transform = ''
+            cardRef.current.style.boxShadow = ''
+          }
+        }, 300)
+      }, 100)
+    } else {
+      // Reset immediately for longer touches (scrolling)
+      setIsTouched(false)
+      setIsPressed(false)
+      if (cardRef.current) {
+        cardRef.current.style.transform = ''
+        cardRef.current.style.boxShadow = ''
+      }
+    }
+  }
+
+  const handleTouchCancel = () => {
+    setIsTouched(false)
+    setIsPressed(false)
+    if (cardRef.current) {
+      cardRef.current.style.transform = ''
+      cardRef.current.style.boxShadow = ''
+    }
+  }
+
+  // Mouse event handlers for desktop
+  const handleMouseEnter = () => {
+    if (!isTouched) { // Only apply if not in touch mode
+      if (cardRef.current) {
+        cardRef.current.style.transform = 'translateY(-8px) scale(1.02)'
+        cardRef.current.style.boxShadow = '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)'
+      }
+    }
+  }
+
+  const handleMouseLeave = () => {
+    if (!isTouched) { // Only apply if not in touch mode
+      if (cardRef.current) {
+        cardRef.current.style.transform = ''
+        cardRef.current.style.boxShadow = ''
+      }
+    }
+  }
+
   return (
     <>
-      <Card className={cn(
-        "group relative backdrop-blur-md shadow-xl rounded-xl border-2 border-transparent hover:border-gold/80 transition-all duration-300 ease-in-out hover:-translate-y-2 hover:shadow-2xl overflow-hidden touch-manipulation max-w-4xl mx-auto",
-        className
-      )}>
+      <Card 
+        ref={cardRef}
+        className={cn(
+          "group relative backdrop-blur-md shadow-xl rounded-xl border-2 border-transparent hover:border-gold/80 transition-all duration-300 ease-in-out hover:-translate-y-2 hover:shadow-2xl overflow-hidden touch-manipulation max-w-4xl mx-auto",
+          className
+        )}
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+        onTouchCancel={handleTouchCancel}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+      >
         {/* Card Background Layer - Only this should have opacity */}
         <div 
           className="absolute inset-0 rounded-xl"
@@ -229,6 +320,7 @@ export function MenuCard({ item, className, isAdmin = false, onEditItem, categor
               onClick={(e) => {
                 e.preventDefault()
                 e.stopPropagation()
+                console.log('Edit button clicked for item:', item.title)
                 handleEditClick()
               }}
               className="p-3 bg-red-500 hover:bg-red-600 text-white border-2 border-white shadow-lg rounded-full cursor-pointer transition-all duration-200 hover:scale-110"

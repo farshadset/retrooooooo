@@ -56,6 +56,10 @@ export default function CategoryNav({ categories, selectedCategory, onCategoryCh
   const [isDragging, setIsDragging] = useState(false)
   const [startX, setStartX] = useState(0)
   const [scrollLeft, setScrollLeft] = useState(0)
+  
+  // Touch interaction states for mobile
+  const [touchedButton, setTouchedButton] = useState<string | null>(null)
+  const [touchStartTime, setTouchStartTime] = useState(0)
 
   // Two separate functions for different scenarios
   const getActiveCategoryWithoutDesserts = useCallback(() => {
@@ -86,6 +90,13 @@ export default function CategoryNav({ categories, selectedCategory, onCategoryCh
     const dessertsOffset = -450
     const currentScrollPosition = window.scrollY + navHeight + extraOffset + dessertsOffset
     
+    console.log('Scroll Detection with Desserts Debug:', {
+      windowScrollY: window.scrollY,
+      navHeight,
+      extraOffset,
+      dessertsOffset,
+      currentScrollPosition
+    })
     
     // Find which category section is currently in view
     for (const category of categories) {
@@ -94,6 +105,16 @@ export default function CategoryNav({ categories, selectedCategory, onCategoryCh
         const sectionTop = categorySection.offsetTop
         const sectionBottom = sectionTop + categorySection.offsetHeight
         
+        // Debug logging for first category
+        if (category.id === categories[0]?.id) {
+          console.log('Category Check with Desserts:', {
+            categoryId: category.id,
+            sectionTop,
+            sectionBottom,
+            currentScrollPosition,
+            isInView: currentScrollPosition >= sectionTop && currentScrollPosition < sectionBottom
+          })
+        }
         
         if (currentScrollPosition >= sectionTop && currentScrollPosition < sectionBottom) {
           return category.id
@@ -153,11 +174,44 @@ export default function CategoryNav({ categories, selectedCategory, onCategoryCh
       const extraOffset = 0 // Reduced to 0px to show first two items properly
       const scrollPosition = categorySection.offsetTop - navHeight - extraOffset
       
+      console.log('Category Click without Desserts Debug:', {
+        categoryId,
+        categoryTop: categorySection.offsetTop,
+        navHeight,
+        extraOffset,
+        calculatedScrollPosition: scrollPosition
+      })
       
+      // Enhanced smooth scrolling for both mobile and desktop
       window.scrollTo({
         top: Math.max(0, scrollPosition),
         behavior: 'smooth'
       })
+      
+      // Fallback for browsers that don't support smooth scrolling
+      if (!('scrollBehavior' in document.documentElement.style)) {
+        const startPosition = window.pageYOffset
+        const distance = scrollPosition - startPosition
+        const duration = 500
+        let start: number | null = null
+        
+        const easeInOutQuad = (t: number, b: number, c: number, d: number): number => {
+          t /= d / 2
+          if (t < 1) return c / 2 * t * t + b
+          t--
+          return -c / 2 * (t * (t - 2) - 1) + b
+        }
+        
+        const animation = (currentTime: number) => {
+          if (start === null) start = currentTime
+          const timeElapsed = currentTime - start
+          const run = easeInOutQuad(timeElapsed, startPosition, distance, duration)
+          window.scrollTo(0, run)
+          if (timeElapsed < duration) requestAnimationFrame(animation)
+        }
+        
+        requestAnimationFrame(animation)
+      }
     }
     
     onCategoryChange(categoryId)
@@ -172,11 +226,45 @@ export default function CategoryNav({ categories, selectedCategory, onCategoryCh
       const dessertsOffset = 450
       const scrollPosition = categorySection.offsetTop - navHeight - extraOffset + dessertsOffset
       
+      console.log('Category Click with Desserts Debug:', {
+        categoryId,
+        categoryTop: categorySection.offsetTop,
+        navHeight,
+        extraOffset,
+        dessertsOffset,
+        calculatedScrollPosition: scrollPosition
+      })
       
+      // Enhanced smooth scrolling for both mobile and desktop
       window.scrollTo({
         top: Math.max(0, scrollPosition),
         behavior: 'smooth'
       })
+      
+      // Fallback for browsers that don't support smooth scrolling
+      if (!('scrollBehavior' in document.documentElement.style)) {
+        const startPosition = window.pageYOffset
+        const distance = scrollPosition - startPosition
+        const duration = 500
+        let start: number | null = null
+        
+        const easeInOutQuad = (t: number, b: number, c: number, d: number): number => {
+          t /= d / 2
+          if (t < 1) return c / 2 * t * t + b
+          t--
+          return -c / 2 * (t * (t - 2) - 1) + b
+        }
+        
+        const animation = (currentTime: number) => {
+          if (start === null) start = currentTime
+          const timeElapsed = currentTime - start
+          const run = easeInOutQuad(timeElapsed, startPosition, distance, duration)
+          window.scrollTo(0, run)
+          if (timeElapsed < duration) requestAnimationFrame(animation)
+        }
+        
+        requestAnimationFrame(animation)
+      }
     }
     
     onCategoryChange(categoryId)
@@ -226,6 +314,31 @@ export default function CategoryNav({ categories, selectedCategory, onCategoryCh
     if (navRef.current) {
       navRef.current.style.cursor = 'grab'
     }
+  }, [])
+
+  // Touch event handlers for mobile interaction
+  const handleButtonTouchStart = useCallback((categoryId: string) => {
+    setTouchedButton(categoryId)
+    setTouchStartTime(Date.now())
+  }, [])
+
+  const handleButtonTouchEnd = useCallback((categoryId: string) => {
+    const touchDuration = Date.now() - touchStartTime
+    
+    // Only trigger click if touch was brief (not a scroll)
+    if (touchDuration < 200) {
+      // Add visual feedback
+      setTimeout(() => {
+        setTouchedButton(null)
+        handleCategoryClick(categoryId)
+      }, 100)
+    } else {
+      setTouchedButton(null)
+    }
+  }, [touchStartTime, handleCategoryClick])
+
+  const handleButtonTouchCancel = useCallback(() => {
+    setTouchedButton(null)
   }, [])
 
   // Get category icon with appropriate size based on navbar style
@@ -309,6 +422,7 @@ export default function CategoryNav({ categories, selectedCategory, onCategoryCh
         >
           {categories.map((category) => {
             const isActive = selectedCategory === category.id
+            const isTouched = touchedButton === category.id
             return (
               <Button
                 key={category.id}
@@ -316,6 +430,9 @@ export default function CategoryNav({ categories, selectedCategory, onCategoryCh
                 variant="ghost"
                 size="sm"
                 onClick={() => handleCategoryClick(category.id)}
+                onTouchStart={() => handleButtonTouchStart(category.id)}
+                onTouchEnd={() => handleButtonTouchEnd(category.id)}
+                onTouchCancel={handleButtonTouchCancel}
                 className={cn(
                   "flex-shrink-0",
                   getButtonClasses(),
@@ -324,6 +441,11 @@ export default function CategoryNav({ categories, selectedCategory, onCategoryCh
                   "text-foreground font-medium font-body",
                   "hover:bg-secondary/70 hover:border-gold/50 hover:scale-105",
                   "active:scale-95",
+                  // Touch feedback styles
+                  isTouched && [
+                    "bg-secondary/70 border-gold/50 scale-105",
+                    "shadow-[0_0_12px_2px_hsl(var(--primary)/0.2)]"
+                  ],
                   // Active state styles
                   isActive && [
                     "bg-primary text-primary-foreground",

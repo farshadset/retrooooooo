@@ -601,6 +601,31 @@
     opacity: 0.9;
   }
   
+  /* Enhanced mobile touch feedback */
+  .menu-card-hover:active,
+  .menu-card-hover.touch-active {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    transition: all 0.2s ease-out;
+  }
+  
+  /* Smooth transitions for all interactive elements */
+  .interactive-element {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  /* Mobile-optimized hover effects */
+  @media (hover: none) and (pointer: coarse) {
+    .menu-card-hover:hover {
+      transform: none;
+    }
+    
+    .menu-card-hover:active {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+  }
+  
   .category-nav-active {
     @apply transition-all duration-200;
   }
@@ -623,6 +648,32 @@
   /* Enhanced navigation button styles */
   .nav-button {
     @apply transition-all duration-200 ease-in-out;
+  }
+  
+  /* Mobile-optimized button interactions */
+  .nav-button:active {
+    transform: scale(0.95);
+    transition: transform 0.1s ease-out;
+  }
+  
+  /* Smooth scroll behavior for all browsers */
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  /* Enhanced touch targets for mobile */
+  @media (max-width: 768px) {
+    .touch-target {
+      min-height: 44px;
+      min-width: 44px;
+    }
+  }
+  
+  /* Improved animation performance */
+  .animate-smooth {
+    will-change: transform, opacity;
+    transform: translateZ(0);
+    backface-visibility: hidden;
   }
 
   .nav-button:hover {
