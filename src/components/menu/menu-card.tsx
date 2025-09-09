@@ -30,7 +30,6 @@ interface CropArea {
 }
 
 export function MenuCard({ item, className, isAdmin = false, onEditItem, categoryDiscounts = {} }: MenuCardProps) {
-  console.log('MenuCard props:', { isAdmin, onEditItem: !!onEditItem, itemTitle: item.title })
   
   const [showEditModal, setShowEditModal] = useState(false)
   const [editTitle, setEditTitle] = useState(item.title)
@@ -49,7 +48,6 @@ export function MenuCard({ item, className, isAdmin = false, onEditItem, categor
   const imageRef = useRef<HTMLImageElement>(null)
 
   const handleEditClick = () => {
-    console.log('Edit button clicked for item:', item.title)
     setEditTitle(item.title)
     setEditDescription(item.description)
     setEditImage(item.image)
@@ -231,7 +229,6 @@ export function MenuCard({ item, className, isAdmin = false, onEditItem, categor
               onClick={(e) => {
                 e.preventDefault()
                 e.stopPropagation()
-                console.log('Edit button clicked for item:', item.title)
                 handleEditClick()
               }}
               className="p-3 bg-red-500 hover:bg-red-600 text-white border-2 border-white shadow-lg rounded-full cursor-pointer transition-all duration-200 hover:scale-110"

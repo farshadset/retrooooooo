@@ -86,13 +86,6 @@ export default function CategoryNav({ categories, selectedCategory, onCategoryCh
     const dessertsOffset = -450
     const currentScrollPosition = window.scrollY + navHeight + extraOffset + dessertsOffset
     
-    console.log('Scroll Detection with Desserts Debug:', {
-      windowScrollY: window.scrollY,
-      navHeight,
-      extraOffset,
-      dessertsOffset,
-      currentScrollPosition
-    })
     
     // Find which category section is currently in view
     for (const category of categories) {
@@ -101,16 +94,6 @@ export default function CategoryNav({ categories, selectedCategory, onCategoryCh
         const sectionTop = categorySection.offsetTop
         const sectionBottom = sectionTop + categorySection.offsetHeight
         
-        // Debug logging for first category
-        if (category.id === categories[0]?.id) {
-          console.log('Category Check with Desserts:', {
-            categoryId: category.id,
-            sectionTop,
-            sectionBottom,
-            currentScrollPosition,
-            isInView: currentScrollPosition >= sectionTop && currentScrollPosition < sectionBottom
-          })
-        }
         
         if (currentScrollPosition >= sectionTop && currentScrollPosition < sectionBottom) {
           return category.id
@@ -170,13 +153,6 @@ export default function CategoryNav({ categories, selectedCategory, onCategoryCh
       const extraOffset = 0 // Reduced to 0px to show first two items properly
       const scrollPosition = categorySection.offsetTop - navHeight - extraOffset
       
-      console.log('Category Click without Desserts Debug:', {
-        categoryId,
-        categoryTop: categorySection.offsetTop,
-        navHeight,
-        extraOffset,
-        calculatedScrollPosition: scrollPosition
-      })
       
       window.scrollTo({
         top: Math.max(0, scrollPosition),
@@ -196,14 +172,6 @@ export default function CategoryNav({ categories, selectedCategory, onCategoryCh
       const dessertsOffset = 450
       const scrollPosition = categorySection.offsetTop - navHeight - extraOffset + dessertsOffset
       
-      console.log('Category Click with Desserts Debug:', {
-        categoryId,
-        categoryTop: categorySection.offsetTop,
-        navHeight,
-        extraOffset,
-        dessertsOffset,
-        calculatedScrollPosition: scrollPosition
-      })
       
       window.scrollTo({
         top: Math.max(0, scrollPosition),
