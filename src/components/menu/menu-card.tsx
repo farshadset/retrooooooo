@@ -218,14 +218,6 @@ export function MenuCard({ item, className, isAdmin = false, onEditItem, categor
         "active:shadow-2xl active:-translate-y-1",
         className
       )}>
-        {/* Card Background Layer - Only this should have opacity */}
-        <div 
-          className="absolute inset-0 rounded-xl"
-          style={{ 
-            backgroundColor: `hsl(var(--card))`,
-            opacity: `var(--opacity-card)`
-          }}
-        />
         {/* Edit Button - Only visible when admin is logged in */}
         {isAdmin && onEditItem && (
           <div className="absolute top-3 right-3 z-[9999]">
@@ -250,7 +242,7 @@ export function MenuCard({ item, className, isAdmin = false, onEditItem, categor
           </div>
         )}
 
-        <div className="flex flex-row-reverse relative z-10">
+        <div className="flex flex-row-reverse relative z-10 rounded-xl overflow-hidden">
           {/* Image Section - 28% width on all screens */}
           <div className="w-[28%] flex-shrink-0 overflow-hidden rounded-l-xl">
             <div className="relative w-full h-48 sm:h-60 md:h-64">
