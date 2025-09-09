@@ -595,57 +595,43 @@
     transform: translateY(-0.25rem) scale(1.02);
   }
   
-  /* Mobile touch feedback */
+  /* Mobile touch feedback - simplified for better UX */
   .menu-card-hover:active {
-    transform: scale(0.98);
-    opacity: 0.9;
-  }
-  
-  /* Enhanced mobile touch feedback - Simplified */
-  .menu-card-hover:active,
-  .menu-card-hover.touch-active {
-    transform: none;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    /* Only shadow effect, no transform to preserve card borders */
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
     transition: box-shadow 0.2s ease-out;
   }
+  
+  /* Enhanced mobile touch feedback - removed to prevent border issues */
   
   /* Smooth transitions for all interactive elements */
   .interactive-element {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
   
-  /* Mobile-optimized hover effects - Simplified for mobile */
+  /* Mobile-optimized hover effects */
   @media (hover: none) and (pointer: coarse) {
     .menu-card-hover:hover {
       transform: none;
     }
     
     .menu-card-hover:active {
-      transform: none;
-      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      /* Only shadow effect on mobile, no transform to preserve borders */
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      transition: box-shadow 0.2s ease-out;
     }
   }
   
-  /* Mobile card simple interaction - Only shadow change */
+  /* Mobile-specific card animations - only shadow */
   @media (max-width: 768px) {
-    .group:hover {
-      transform: none !important;
-      border-color: transparent !important;
-    }
-    
     .group:active {
-      transform: none !important;
-      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
-      border-color: transparent !important;
-    }
-    
-    /* Ensure mobile cards don't have complex animations */
-    .group {
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
       transition: box-shadow 0.2s ease-out !important;
     }
     
+    /* Disable transform on mobile to preserve borders */
     .group:hover {
-      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+      transform: none !important;
     }
   }
   
@@ -714,14 +700,13 @@
     @apply shadow-[0_0_8px_0_hsl(var(--primary)/0.6)] ring-2 ring-primary/20;
   }
 
-  /* Mobile-specific utility classes */
+  /* Mobile-specific utility classes - simplified for card interactions */
   .mobile-touch-feedback {
-    transition: transform 0.1s ease-in-out;
+    transition: box-shadow 0.2s ease-out;
   }
 
   .mobile-touch-feedback:active {
-    transform: scale(0.95);
-    opacity: 0.8;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
   }
 
   .mobile-safe-area {

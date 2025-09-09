@@ -211,9 +211,11 @@ export function MenuCard({ item, className, isAdmin = false, onEditItem, categor
   return (
     <>
       <Card className={cn(
-        "group relative backdrop-blur-md shadow-xl rounded-xl border-2 border-transparent hover:border-gold/80 transition-all duration-300 ease-in-out hover:-translate-y-2 hover:shadow-2xl overflow-hidden touch-manipulation max-w-4xl mx-auto",
-        "sm:hover:-translate-y-2 sm:hover:shadow-2xl", // Desktop hover effects
-        "active:shadow-lg", // Simple mobile active state
+        "group relative backdrop-blur-md shadow-xl rounded-xl border-2 border-transparent transition-all duration-300 ease-in-out overflow-hidden touch-manipulation max-w-4xl mx-auto",
+        // Desktop hover effects
+        "hover:border-gold/80 hover:-translate-y-2 hover:shadow-2xl",
+        // Mobile touch effects - only shadow, no transform
+        "active:shadow-2xl sm:active:shadow-2xl",
         className
       )}>
         {/* Card Background Layer - Only this should have opacity */}
@@ -256,7 +258,7 @@ export function MenuCard({ item, className, isAdmin = false, onEditItem, categor
                 src={imagePreview || editImage || item.image}
                 alt={item.title}
                 fill
-                className="object-cover rounded-l-xl sm:group-hover:scale-110 transition-transform duration-300 ease-in-out"
+                className="object-cover rounded-l-xl group-hover:scale-110 transition-transform duration-300 ease-in-out"
                 sizes="28vw"
                 priority={false}
               />
@@ -265,11 +267,11 @@ export function MenuCard({ item, className, isAdmin = false, onEditItem, categor
           
           {/* Content Section - 72% width on all screens */}
           <div className="w-[72%] flex flex-col text-right px-4 sm:px-6 md:px-8 py-4 sm:py-6 md:py-8 relative">
-            <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-foreground mb-2 sm:mb-3 leading-tight font-headline sm:group-hover:text-primary transition-colors duration-300">
+            <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-foreground mb-2 sm:mb-3 leading-tight font-headline group-hover:text-primary transition-colors duration-300">
               {item.title}
             </h3>
             
-            <p className="text-sm sm:text-base text-muted-foreground leading-relaxed font-body sm:group-hover:text-foreground/80 transition-colors duration-300 mb-3 sm:mb-4">
+            <p className="text-sm sm:text-base text-muted-foreground leading-relaxed font-body group-hover:text-foreground/80 transition-colors duration-300 mb-3 sm:mb-4">
               {item.description}
             </p>
 
