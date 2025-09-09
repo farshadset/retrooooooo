@@ -601,12 +601,12 @@
     opacity: 0.9;
   }
   
-  /* Enhanced mobile touch feedback */
+  /* Enhanced mobile touch feedback - Simplified */
   .menu-card-hover:active,
   .menu-card-hover.touch-active {
-    transform: translateY(-8px) scale(1.02);
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-    transition: all 0.2s ease-out;
+    transform: none;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    transition: box-shadow 0.2s ease-out;
   }
   
   /* Smooth transitions for all interactive elements */
@@ -614,29 +614,39 @@
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
   
-  /* Mobile-optimized hover effects */
+  /* Mobile-optimized hover effects - Simplified for mobile */
   @media (hover: none) and (pointer: coarse) {
     .menu-card-hover:hover {
       transform: none;
     }
     
     .menu-card-hover:active {
-      transform: translateY(-12px) scale(1.02);
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 215, 0, 0.3);
+      transform: none;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
     }
   }
   
-  /* Enhanced mobile touch feedback */
-  .mobile-card-touch {
-    transform: translateY(-12px) scale(1.02) !important;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 215, 0, 0.3) !important;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
-  }
-  
-  /* Mobile image zoom effect */
-  .mobile-image-zoom {
-    transform: scale(1.1) !important;
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  /* Mobile card simple interaction - Only shadow change */
+  @media (max-width: 768px) {
+    .group:hover {
+      transform: none !important;
+      border-color: transparent !important;
+    }
+    
+    .group:active {
+      transform: none !important;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+      border-color: transparent !important;
+    }
+    
+    /* Ensure mobile cards don't have complex animations */
+    .group {
+      transition: box-shadow 0.2s ease-out !important;
+    }
+    
+    .group:hover {
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+    }
   }
   
   .category-nav-active {

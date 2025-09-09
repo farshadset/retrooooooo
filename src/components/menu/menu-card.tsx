@@ -45,14 +45,8 @@ export function MenuCard({ item, className, isAdmin = false, onEditItem, categor
   const [originalImage, setOriginalImage] = useState<string | null>(null)
   const [showHelp, setShowHelp] = useState(false)
   
-  // Touch interaction states for mobile
-  const [isTouched, setIsTouched] = useState(false)
-  const [isPressed, setIsPressed] = useState(false)
-  const [touchStartTime, setTouchStartTime] = useState(0)
-  
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const imageRef = useRef<HTMLImageElement>(null)
-  const cardRef = useRef<HTMLDivElement>(null)
 
   const handleEditClick = () => {
     console.log('Edit button clicked for item:', item.title)
@@ -214,103 +208,14 @@ export function MenuCard({ item, className, isAdmin = false, onEditItem, categor
     }
   }
 
-  // Touch event handlers for mobile interaction
-  const handleTouchStart = (e: React.TouchEvent) => {
-    e.preventDefault()
-    setIsTouched(true)
-    setIsPressed(true)
-    setTouchStartTime(Date.now())
-    
-    // Add immediate visual feedback
-    if (cardRef.current) {
-      cardRef.current.style.transform = 'translateY(-12px) scale(1.02)'
-      cardRef.current.style.boxShadow = '0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 215, 0, 0.3)'
-      cardRef.current.style.transition = 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)'
-    }
-  }
-
-  const handleTouchEnd = (e: React.TouchEvent) => {
-    e.preventDefault()
-    const touchDuration = Date.now() - touchStartTime
-    
-    // Only trigger hover effect if touch was brief (not a scroll)
-    if (touchDuration < 300) {
-      // Maintain enhanced hover state for a moment
-      setTimeout(() => {
-        setIsTouched(false)
-        setIsPressed(false)
-        
-        if (cardRef.current) {
-          cardRef.current.style.transform = 'translateY(-12px) scale(1.02)'
-          cardRef.current.style.boxShadow = '0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 215, 0, 0.3)'
-        }
-        
-        // Reset after showing feedback
-        setTimeout(() => {
-          if (cardRef.current) {
-            cardRef.current.style.transform = ''
-            cardRef.current.style.boxShadow = ''
-            cardRef.current.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
-          }
-        }, 400)
-      }, 150)
-    } else {
-      // Reset immediately for longer touches (scrolling)
-      setIsTouched(false)
-      setIsPressed(false)
-      if (cardRef.current) {
-        cardRef.current.style.transform = ''
-        cardRef.current.style.boxShadow = ''
-        cardRef.current.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
-      }
-    }
-  }
-
-  const handleTouchCancel = () => {
-    setIsTouched(false)
-    setIsPressed(false)
-    if (cardRef.current) {
-      cardRef.current.style.transform = ''
-      cardRef.current.style.boxShadow = ''
-      cardRef.current.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
-    }
-  }
-
-  // Mouse event handlers for desktop
-  const handleMouseEnter = () => {
-    if (!isTouched) { // Only apply if not in touch mode
-      if (cardRef.current) {
-        cardRef.current.style.transform = 'translateY(-8px) scale(1.02)'
-        cardRef.current.style.boxShadow = '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)'
-        cardRef.current.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
-      }
-    }
-  }
-
-  const handleMouseLeave = () => {
-    if (!isTouched) { // Only apply if not in touch mode
-      if (cardRef.current) {
-        cardRef.current.style.transform = ''
-        cardRef.current.style.boxShadow = ''
-        cardRef.current.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
-      }
-    }
-  }
-
   return (
     <>
-      <Card 
-        ref={cardRef}
-        className={cn(
-          "group relative backdrop-blur-md shadow-xl rounded-xl border-2 border-transparent hover:border-gold/80 transition-all duration-300 ease-in-out hover:-translate-y-2 hover:shadow-2xl overflow-hidden touch-manipulation max-w-4xl mx-auto",
-          className
-        )}
-        onTouchStart={handleTouchStart}
-        onTouchEnd={handleTouchEnd}
-        onTouchCancel={handleTouchCancel}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-      >
+      <Card className={cn(
+        "group relative backdrop-blur-md shadow-xl rounded-xl border-2 border-transparent hover:border-gold/80 transition-all duration-300 ease-in-out hover:-translate-y-2 hover:shadow-2xl overflow-hidden touch-manipulation max-w-4xl mx-auto",
+        "sm:hover:-translate-y-2 sm:hover:shadow-2xl", // Desktop hover effects
+        "active:shadow-lg", // Simple mobile active state
+        className
+      )}>
         {/* Card Background Layer - Only this should have opacity */}
         <div 
           className="absolute inset-0 rounded-xl"
@@ -351,10 +256,7 @@ export function MenuCard({ item, className, isAdmin = false, onEditItem, categor
                 src={imagePreview || editImage || item.image}
                 alt={item.title}
                 fill
-                className={cn(
-                  "object-cover rounded-l-xl transition-transform duration-300 ease-in-out",
-                  (isTouched || isPressed) ? "scale-110" : "group-hover:scale-110"
-                )}
+                className="object-cover rounded-l-xl sm:group-hover:scale-110 transition-transform duration-300 ease-in-out"
                 sizes="28vw"
                 priority={false}
               />
@@ -363,11 +265,11 @@ export function MenuCard({ item, className, isAdmin = false, onEditItem, categor
           
           {/* Content Section - 72% width on all screens */}
           <div className="w-[72%] flex flex-col text-right px-4 sm:px-6 md:px-8 py-4 sm:py-6 md:py-8 relative">
-            <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-foreground mb-2 sm:mb-3 leading-tight font-headline group-hover:text-primary transition-colors duration-300">
+            <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-foreground mb-2 sm:mb-3 leading-tight font-headline sm:group-hover:text-primary transition-colors duration-300">
               {item.title}
             </h3>
             
-            <p className="text-sm sm:text-base text-muted-foreground leading-relaxed font-body group-hover:text-foreground/80 transition-colors duration-300 mb-3 sm:mb-4">
+            <p className="text-sm sm:text-base text-muted-foreground leading-relaxed font-body sm:group-hover:text-foreground/80 transition-colors duration-300 mb-3 sm:mb-4">
               {item.description}
             </p>
 
