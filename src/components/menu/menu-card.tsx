@@ -211,11 +211,11 @@ export function MenuCard({ item, className, isAdmin = false, onEditItem, categor
   return (
     <>
       <Card className={cn(
-        "group relative backdrop-blur-md shadow-xl rounded-xl border-2 border-transparent transition-all duration-300 ease-in-out overflow-hidden touch-manipulation max-w-4xl mx-auto",
+        "group relative backdrop-blur-md shadow-xl rounded-xl border-2 border-transparent transition-all duration-300 ease-in-out overflow-hidden touch-manipulation max-w-4xl mx-auto menu-card",
         // Desktop hover effects
         "hover:border-gold/80 hover:-translate-y-2 hover:shadow-2xl",
-        // Mobile touch effects - only shadow, no transform
-        "active:shadow-2xl sm:active:shadow-2xl",
+        // Mobile optimized - only shadow and smooth lift
+        "active:shadow-2xl active:-translate-y-1",
         className
       )}>
         {/* Card Background Layer - Only this should have opacity */}
@@ -258,7 +258,7 @@ export function MenuCard({ item, className, isAdmin = false, onEditItem, categor
                 src={imagePreview || editImage || item.image}
                 alt={item.title}
                 fill
-                className="object-cover rounded-l-xl group-hover:scale-110 transition-transform duration-300 ease-in-out"
+                className="object-cover rounded-l-xl group-hover:scale-110 group-active:scale-105 transition-transform duration-300 ease-in-out"
                 sizes="28vw"
                 priority={false}
               />
