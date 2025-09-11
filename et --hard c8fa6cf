@@ -1,0 +1,102 @@
+[33mcommit c8fa6cf398e6928dfe8dca2f0a88eae902a78139[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author:     farshadset <farshadseyayesh2023@gmail.com>
+AuthorDate: Wed Sep 10 00:17:59 2025 +0330
+Commit:     farshadset <farshadseyayesh2023@gmail.com>
+CommitDate: Wed Sep 10 00:17:59 2025 +0330
+
+    Remove extra box under menu cards: clean Card component and remove backdrop-blur
+
+[33mcommit 463f43570657772213405a67164974e34edfbbab[m
+Author:     farshadset <farshadseyayesh2023@gmail.com>
+AuthorDate: Wed Sep 10 00:11:21 2025 +0330
+Commit:     farshadset <farshadseyayesh2023@gmail.com>
+CommitDate: Wed Sep 10 00:11:21 2025 +0330
+
+    Fix mobile card animation: remove transparent overlay, ensure whole card moves together
+
+[33mcommit a3614d6d0db8d4087131a05fdf564eb2860a0642[m
+Author:     farshadset <farshadseyayesh2023@gmail.com>
+AuthorDate: Wed Sep 10 00:06:37 2025 +0330
+Commit:     farshadset <farshadseyayesh2023@gmail.com>
+CommitDate: Wed Sep 10 00:06:37 2025 +0330
+
+    Simplify mobile menu cards: only card lift with shadow, remove gold border and image zoom
+
+[33mcommit 48fb08615a5adaa03b1f866eac84876062ba109b[m
+Author:     farshadset <farshadseyayesh2023@gmail.com>
+AuthorDate: Wed Sep 10 00:00:01 2025 +0330
+Commit:     farshadset <farshadseyayesh2023@gmail.com>
+CommitDate: Wed Sep 10 00:00:01 2025 +0330
+
+    Fix mobile card border and container lift animation issues
+
+[33mcommit 6eb031323a41f7d995d7036522f03f18ae194628[m
+Author:     farshadset <farshadseyayesh2023@gmail.com>
+AuthorDate: Tue Sep 9 23:51:59 2025 +0330
+Commit:     farshadset <farshadseyayesh2023@gmail.com>
+CommitDate: Tue Sep 9 23:51:59 2025 +0330
+
+    Optimize mobile menu cards: clean animations with shadow and image zoom
+
+[33mcommit ad1644a0d424e2d5c26e441911e4caeb54546fa8[m
+Author:     farshadset <farshadseyayesh2023@gmail.com>
+AuthorDate: Tue Sep 9 23:47:14 2025 +0330
+Commit:     farshadset <farshadseyayesh2023@gmail.com>
+CommitDate: Tue Sep 9 23:47:14 2025 +0330
+
+    Fix mobile card animations: only shadow effect, no transform to preserve borders
+
+[33mcommit 298211b6c66a3dffbc34b34dc6132b908559a7f9[m
+Author:     farshadset <farshadseyayesh2023@gmail.com>
+AuthorDate: Tue Sep 9 23:33:15 2025 +0330
+Commit:     farshadset <farshadseyayesh2023@gmail.com>
+CommitDate: Tue Sep 9 23:33:15 2025 +0330
+
+    Simplify mobile card animations - only shadow effects, no complex transforms
+
+[33mcommit 07f6be4e68597c275d94628cc1d216f0a5076310[m
+Author:     farshadset <farshadseyayesh2023@gmail.com>
+AuthorDate: Tue Sep 9 22:56:56 2025 +0330
+Commit:     farshadset <farshadseyayesh2023@gmail.com>
+CommitDate: Tue Sep 9 22:56:56 2025 +0330
+
+    Enhanced mobile menu card animations with touch interactions, card lift effect, and image zoom
+
+[33mcommit 5183b0d504a26bf4a1fba661f8243481146521a2[m
+Author:     farshadset <farshadseyayesh2023@gmail.com>
+AuthorDate: Tue Sep 9 22:19:08 2025 +0330
+Commit:     farshadset <farshadseyayesh2023@gmail.com>
+CommitDate: Tue Sep 9 22:19:08 2025 +0330
+
+    Remove mobile touch interactions from menu cards
+
+[33mcommit 2d51482a4604236630f26601de445a555bfc79f9[m
+Author:     farshadset <farshadseyayesh2023@gmail.com>
+AuthorDate: Tue Sep 9 04:26:11 2025 +0330
+Commit:     farshadset <farshadseyayesh2023@gmail.com>
+CommitDate: Tue Sep 9 04:26:11 2025 +0330
+
+    feat: بهبود تجربه موبایل - یکسان‌سازی انیمیشن‌ها و تعاملات لمسی
+    
+    - اضافه کردن touch event handlers برای کارت‌های منو
+    - بهبود فیدبک لمسی برای ناوبری دسته‌بندی‌ها
+    - یکسان‌سازی انیمیشن‌های hover و touch
+    - بهبود اسکرول روان با fallback برای مرورگرهای قدیمی
+    - بهینه‌سازی CSS برای دستگاه‌های موبایل
+    - اضافه کردن TypeScript types برای بهتر شدن کد
+
+[33mcommit ec337e3c28e7b7f29711f2d2741b25d13047ed9e[m
+Author:     farshadset <farshadseyayesh2023@gmail.com>
+AuthorDate: Tue Sep 9 04:16:17 2025 +0330
+Commit:     farshadset <farshadseyayesh2023@gmail.com>
+CommitDate: Tue Sep 9 04:16:17 2025 +0330
+
+    Fix: Remove debug console.log statements causing mobile layout issues
+
+[33mcommit b51be62179d4722ed9e527deb56a626411ea4f72[m
+Author:     farshadset <farshadseyayesh2023@gmail.com>
+AuthorDate: Tue Sep 9 03:59:37 2025 +0330
+Commit:     farshadset <farshadseyayesh2023@gmail.com>
+CommitDate: Tue Sep 9 03:59:37 2025 +0330
+
+    update project files

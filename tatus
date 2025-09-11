@@ -1,0 +1,10 @@
+[33m8630ed2[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m Add mobile-specific animations and adaptive design for menu cards - Enhanced mobile hover effects with card lift and shadow - Improved image zoom on mobile (115% vs 110% desktop) - Reduced spacing between description and price on mobile - Added touch feedback animations - Maintained desktop functionality with responsive breakpoints
+[33mc8fa6cf[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m Remove extra box under menu cards: clean Card component and remove backdrop-blur
+[33m463f435[m Fix mobile card animation: remove transparent overlay, ensure whole card moves together
+[33ma3614d6[m Simplify mobile menu cards: only card lift with shadow, remove gold border and image zoom
+[33m48fb086[m Fix mobile card border and container lift animation issues
+[33m6eb0313[m Optimize mobile menu cards: clean animations with shadow and image zoom
+[33mad1644a[m Fix mobile card animations: only shadow effect, no transform to preserve borders
+[33m298211b[m Simplify mobile card animations - only shadow effects, no complex transforms
+[33m07f6be4[m Enhanced mobile menu card animations with touch interactions, card lift effect, and image zoom
+[33m5183b0d[m Remove mobile touch interactions from menu cards
