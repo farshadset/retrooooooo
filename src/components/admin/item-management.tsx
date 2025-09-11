@@ -48,6 +48,7 @@ interface CategoryDiscount {
 interface ItemManagementProps {
   categories: Category[]
   items: MenuItem[]
+  allItems?: MenuItem[] // All items including desserts for proper context management
   onUpdateCategories: (categories: Category[]) => void
   onUpdateItems: (items: MenuItem[]) => void
   navbarStyle?: NavbarStyle
@@ -102,6 +103,7 @@ const availableIcons = [
 export function ItemManagement({ 
   categories, 
   items, 
+  allItems,
   onUpdateCategories, 
   onUpdateItems,
   navbarStyle = 'icon-with-text',
@@ -132,12 +134,24 @@ export function ItemManagement({
     description: '',
     price: 0,
     image: '',
-    category: 'coffee'
+    category: 'coffee',
+    supplementaryText: ''
   })
 
   // Store original values for cancel functionality
   const [originalCategoryValues, setOriginalCategoryValues] = useState<{[key: string]: Category}>({})
   const [originalItemValues, setOriginalItemValues] = useState<{[key: number]: MenuItem}>({})
+
+  // Helper function to merge local items with all items (preserving desserts)
+  const getMergedItems = (localItems: MenuItem[]): MenuItem[] => {
+    if (!allItems) return localItems
+    
+    // Get desserts items from allItems
+    const dessertsItems = allItems.filter(item => item.category === 'desserts')
+    
+    // Combine desserts items with local items (non-desserts)
+    return [...dessertsItems, ...localItems]
+  }
 
   // Sync with parent when data changes - exclude desserts category
   useEffect(() => {
@@ -247,7 +261,7 @@ export function ItemManagement({
       // Also remove items from this category
       const updatedItems = localItems.filter(item => item.category !== categoryId)
       setLocalItems(updatedItems)
-      onUpdateItems(updatedItems)
+      onUpdateItems(getMergedItems(updatedItems))
       
       if (selectedCategory === categoryId) {
         setSelectedCategory(null)
@@ -287,14 +301,15 @@ export function ItemManagement({
       title: itemForm.title.trim(),
       description: itemForm.description.trim(),
       price: itemForm.price,
-      image: itemForm.image || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0xMDAgNTBDMTI3LjYxNCA1MCAxNTAgNzIuMzg2IDE1MCAxMDBDMTUwIDEyNy42MTQgMTI3LjYxNCAxNTAgMTAwIDE1MEM3Mi4zODYgMTUwIDUwIDEyNy42MTQgNTAgMTAwQzUwIDcyLjM4NiA3Mi4zODYgNTAgMTAwIDUwWiIgZmlsbD0iI0Q5RDBENiIvPgo8L3N2Zz4K'
+      image: itemForm.image || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0xMDAgNTBDMTI3LjYxNCA1MCAxNTAgNzIuMzg2IDE1MCAxMDBDMTUwIDEyNy42MTQgMTI3LjYxNCAxNTAgMTAwIDE1MEM3Mi4zODYgMTUwIDUwIDEyNy42MTQgNTAgMTAwQzUwIDcyLjM4NiA3Mi4zODYgNTAgMTAwIDUwWiIgZmlsbD0iI0Q5RDBENiIvPgo8L3N2Zz4K',
+      supplementaryText: itemForm.supplementaryText || ''
     }
 
     const updatedItems = [...localItems, newItem]
     setLocalItems(updatedItems)
-    onUpdateItems(updatedItems)
+    onUpdateItems(getMergedItems(updatedItems))
     
-    setItemForm({ title: '', description: '', price: 0, image: '', category: selectedCategory })
+    setItemForm({ title: '', description: '', price: 0, image: '', category: selectedCategory, supplementaryText: '' })
     setShowAddItem(false)
   }
 
@@ -303,14 +318,14 @@ export function ItemManagement({
       item.id === itemId ? { ...item, ...updates } : item
     )
     setLocalItems(updatedItems)
-    onUpdateItems(updatedItems)
+    onUpdateItems(getMergedItems(updatedItems))
   }
 
   const handleDeleteItem = (itemId: number) => {
     if (confirm('آیا مطمئن هستید که می‌خواهید این آیتم را حذف کنید؟')) {
       const updatedItems = localItems.filter(item => item.id !== itemId)
       setLocalItems(updatedItems)
-      onUpdateItems(updatedItems)
+      onUpdateItems(getMergedItems(updatedItems))
     }
   }
 
@@ -329,7 +344,7 @@ export function ItemManagement({
       [allItems[item1Index], allItems[item2Index]] = [allItems[item2Index], allItems[item1Index]]
       
       setLocalItems(allItems)
-      onUpdateItems(allItems)
+      onUpdateItems(getMergedItems(allItems))
       }
     }
   }
@@ -349,7 +364,7 @@ export function ItemManagement({
       [allItems[item1Index], allItems[item2Index]] = [allItems[item2Index], allItems[item1Index]]
       
       setLocalItems(allItems)
-      onUpdateItems(allItems)
+      onUpdateItems(getMergedItems(allItems))
       }
     }
   }
@@ -1128,7 +1143,7 @@ export function ItemManagement({
           onClick={(e) => {
             if (e.target === e.currentTarget) {
               setShowAddItem(false)
-              setItemForm({ title: '', description: '', price: 0, image: '', category: selectedCategory })
+              setItemForm({ title: '', description: '', price: 0, image: '', category: selectedCategory, supplementaryText: '' })
             }
           }}
         >
@@ -1141,7 +1156,7 @@ export function ItemManagement({
                   size="sm"
                   onClick={() => {
                     setShowAddItem(false)
-                    setItemForm({ title: '', description: '', price: 0, image: '', category: selectedCategory })
+                    setItemForm({ title: '', description: '', price: 0, image: '', category: selectedCategory, supplementaryText: '' })
                   }}
                   className="p-2 h-8 w-8 text-foreground/70 hover:text-foreground hover:bg-background/50 rounded-full"
                 >
@@ -1247,6 +1262,20 @@ export function ItemManagement({
               </div>
 
               <div>
+                <label className="block text-sm font-medium mb-2 text-foreground">
+                  توضیحات تکمیلی
+                  <span className="text-xs text-muted-foreground mr-2">(متن نمایشی بالای قیمت - مثل "تک"، "دوبل")</span>
+                </label>
+                <input
+                  type="text"
+                  value={itemForm.supplementaryText || ''}
+                  onChange={(e) => setItemForm({ ...itemForm, supplementaryText: e.target.value })}
+                  className="w-full p-3 border border-border rounded-lg bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200"
+                  placeholder="مثال: تک، دوبل، ویژه، ..."
+                />
+              </div>
+
+              <div>
                 <label className="block text-sm font-medium mb-2 text-foreground">توضیحات</label>
                 <textarea
                   value={itemForm.description}
@@ -1322,7 +1351,7 @@ export function ItemManagement({
                   variant="outline" 
                   onClick={() => {
                     setShowAddItem(false)
-                    setItemForm({ title: '', description: '', price: 0, image: '', category: selectedCategory })
+                    setItemForm({ title: '', description: '', price: 0, image: '', category: selectedCategory, supplementaryText: '' })
                   }}
                   className="flex-1 h-12 text-base font-medium"
                 >
@@ -1532,6 +1561,20 @@ export function ItemManagement({
                           className="w-full p-3 border border-border rounded-lg bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200"
                         autoFocus
                           required
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium mb-2 text-foreground">
+                        توضیحات تکمیلی
+                        <span className="text-xs text-muted-foreground mr-2">(متن نمایشی بالای قیمت - مثل "تک"، "دوبل")</span>
+                      </label>
+                      <input
+                        type="text"
+                        defaultValue={item.supplementaryText || ''}
+                        onChange={(e) => handleUpdateItem(item.id, { supplementaryText: e.target.value })}
+                        className="w-full p-3 border border-border rounded-lg bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200"
+                        placeholder="مثال: تک، دوبل، ویژه، ..."
                       />
                     </div>
 

@@ -35,6 +35,7 @@ export function MenuCard({ item, className, isAdmin = false, onEditItem, categor
   const [showEditModal, setShowEditModal] = useState(false)
   const [editTitle, setEditTitle] = useState(item.title)
   const [editDescription, setEditDescription] = useState(item.description)
+  const [editSupplementaryText, setEditSupplementaryText] = useState(item.supplementaryText || '')
   const [editImage, setEditImage] = useState(item.image)
   const [imagePreview, setImagePreview] = useState<string | null>(null)
   const [imageError, setImageError] = useState('')
@@ -52,6 +53,7 @@ export function MenuCard({ item, className, isAdmin = false, onEditItem, categor
     console.log('Edit button clicked for item:', item.title)
     setEditTitle(item.title)
     setEditDescription(item.description)
+    setEditSupplementaryText(item.supplementaryText || '')
     setEditImage(item.image)
     setImagePreview(null)
     setImageError('')
@@ -182,6 +184,7 @@ export function MenuCard({ item, className, isAdmin = false, onEditItem, categor
         ...item, 
         title: editTitle, 
         description: editDescription, 
+        supplementaryText: editSupplementaryText,
         image: editImage
       }
       onEditItem(updatedItem)
@@ -192,6 +195,7 @@ export function MenuCard({ item, className, isAdmin = false, onEditItem, categor
   const handleCancel = () => {
     setEditTitle(item.title)
     setEditDescription(item.description)
+    setEditSupplementaryText(item.supplementaryText || '')
     setEditImage(item.image)
     setImagePreview(null)
     setImageError('')
@@ -200,6 +204,17 @@ export function MenuCard({ item, className, isAdmin = false, onEditItem, categor
     setRotation(0)
     setOriginalImage(null)
     setShowEditModal(false)
+  }
+
+  // Check if there are any changes
+  const hasChanges = () => {
+    return (
+      editTitle !== item.title ||
+      editDescription !== item.description ||
+      editSupplementaryText !== (item.supplementaryText || '') ||
+      editImage !== item.image ||
+      imagePreview !== null
+    )
   }
 
   const handleModalClick = (e: React.MouseEvent) => {
@@ -273,18 +288,26 @@ export function MenuCard({ item, className, isAdmin = false, onEditItem, categor
                 // Check for individual discount first
                 if (item.hasIndividualDiscount && item.discountedPrice) {
                   return (
-                    <div className="flex items-center gap-2">
-                      {/* Individual Discounted Price - Green */}
-                      <span className="text-sm sm:text-base md:text-lg font-bold text-green-600 bg-green-100 border border-green-300 px-2 sm:px-3 py-1 rounded-full">
-                        {item.discountedPrice.toLocaleString('en-US', { 
-                          minimumFractionDigits: 0, 
-                          maximumFractionDigits: 2 
-                        }).replace(/,/g, '.')} تومان
-                      </span>
-                      {/* Original Price - Red with Strike-through */}
-                      <span className="text-xs sm:text-sm font-medium text-red-600 bg-red-100 border border-red-300 px-1.5 sm:px-2 py-1 rounded-full line-through">
-                        {item.price.toLocaleString('en-US').replace(/,/g, '.')} تومان
-                      </span>
+                    <div className="text-right">
+                        {/* Supplementary Text */}
+                        {item.supplementaryText && (
+                          <div className="text-sm font-bold text-foreground mb-1 text-right font-headline">
+                            {item.supplementaryText}
+                          </div>
+                        )}
+                      <div className="flex items-center gap-2">
+                        {/* Individual Discounted Price - Green */}
+                        <span className="text-sm sm:text-base md:text-lg font-bold text-green-600 bg-green-100 border border-green-300 px-2 sm:px-3 py-1 rounded-full">
+                          {item.discountedPrice.toLocaleString('en-US', { 
+                            minimumFractionDigits: 0, 
+                            maximumFractionDigits: 2 
+                          }).replace(/,/g, '.')} تومان
+                        </span>
+                        {/* Original Price - Red with Strike-through */}
+                        <span className="text-xs sm:text-sm font-medium text-red-600 bg-red-100 border border-red-300 px-1.5 sm:px-2 py-1 rounded-full line-through">
+                          {item.price.toLocaleString('en-US').replace(/,/g, '.')} تومان
+                        </span>
+                      </div>
                     </div>
                   )
                 }
@@ -303,18 +326,26 @@ export function MenuCard({ item, className, isAdmin = false, onEditItem, categor
                     // Final validation
                     if (!isNaN(discountedPrice) && discountedPrice > 0) {
                       return (
-                        <div className="flex items-center gap-2">
-                          {/* Category Discounted Price - Green */}
-                          <span className="text-sm sm:text-base md:text-lg font-bold text-green-600 bg-green-100 border border-green-300 px-2 sm:px-3 py-1 rounded-full">
-                            {discountedPrice.toLocaleString('en-US', { 
-                              minimumFractionDigits: 0, 
-                              maximumFractionDigits: 2 
-                            }).replace(/,/g, '.')} تومان
-                          </span>
-                          {/* Original Price - Red with Strike-through */}
-                          <span className="text-xs sm:text-sm font-medium text-red-600 bg-red-100 border border-red-300 px-1.5 sm:px-2 py-1 rounded-full line-through">
-                            {item.price.toLocaleString('en-US').replace(/,/g, '.')} تومان
-                          </span>
+                        <div className="text-right">
+                        {/* Supplementary Text */}
+                        {item.supplementaryText && (
+                          <div className="text-sm font-bold text-foreground mb-1 text-right font-headline">
+                            {item.supplementaryText}
+                          </div>
+                        )}
+                          <div className="flex items-center gap-2">
+                            {/* Category Discounted Price - Green */}
+                            <span className="text-sm sm:text-base md:text-lg font-bold text-green-600 bg-green-100 border border-green-300 px-2 sm:px-3 py-1 rounded-full">
+                              {discountedPrice.toLocaleString('en-US', { 
+                                minimumFractionDigits: 0, 
+                                maximumFractionDigits: 2 
+                              }).replace(/,/g, '.')} تومان
+                            </span>
+                            {/* Original Price - Red with Strike-through */}
+                            <span className="text-xs sm:text-sm font-medium text-red-600 bg-red-100 border border-red-300 px-1.5 sm:px-2 py-1 rounded-full line-through">
+                              {item.price.toLocaleString('en-US').replace(/,/g, '.')} تومان
+                            </span>
+                          </div>
                         </div>
                       )
                     }
@@ -323,13 +354,21 @@ export function MenuCard({ item, className, isAdmin = false, onEditItem, categor
                 
                 // Default price display
                 return (
-                  <span className={`text-sm sm:text-base md:text-lg font-bold px-2 sm:px-3 py-1 rounded-full ${
-                    item.category === 'desserts' 
-                      ? 'text-green-600 bg-green-100 border border-green-300' 
-                      : 'text-blue-600 bg-blue-100'
-                  }`}>
-                    {item.price.toLocaleString('en-US').replace(/,/g, '.')} تومان
-                  </span>
+                  <div className="text-right">
+                        {/* Supplementary Text */}
+                        {item.supplementaryText && (
+                          <div className="text-sm font-bold text-foreground mb-1 text-right font-headline">
+                            {item.supplementaryText}
+                          </div>
+                        )}
+                    <span className={`text-sm sm:text-base md:text-lg font-bold px-2 sm:px-3 py-1 rounded-full ${
+                      item.category === 'desserts' 
+                        ? 'text-green-600 bg-green-100 border border-green-300' 
+                        : 'text-blue-600 bg-blue-100'
+                    }`}>
+                      {item.price.toLocaleString('en-US').replace(/,/g, '.')} تومان
+                    </span>
+                  </div>
                 )
               })()}
             </div>
@@ -520,6 +559,20 @@ export function MenuCard({ item, className, isAdmin = false, onEditItem, categor
                   required
                 />
               </div>
+
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-2">
+                  توضیحات تکمیلی
+                  <span className="text-xs text-muted-foreground mr-2">(متن نمایشی بالای قیمت - مثل "تک"، "دوبل")</span>
+                </label>
+                <input
+                  type="text"
+                  value={editSupplementaryText}
+                  onChange={(e) => setEditSupplementaryText(e.target.value)}
+                  placeholder="مثال: تک، دوبل، ویژه، ..."
+                  className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                />
+              </div>
               
               <div>
                 <label className="block text-sm font-medium text-foreground mb-2">
@@ -534,15 +587,17 @@ export function MenuCard({ item, className, isAdmin = false, onEditItem, categor
                 />
               </div>
 
-              {/* Action Buttons */}
-              <div className="flex gap-3 pt-2">
-                <Button onClick={handleSave} className="flex-1">
-                  ذخیره تغییرات
-                </Button>
-                <Button variant="outline" onClick={handleCancel} className="flex-1">
-                  لغو
-                </Button>
-              </div>
+              {/* Action Buttons - Only show if there are changes */}
+              {hasChanges() && (
+                <div className="flex gap-3 pt-2">
+                  <Button onClick={handleSave} className="flex-1">
+                    ذخیره تغییرات
+                  </Button>
+                  <Button variant="outline" onClick={handleCancel} className="flex-1">
+                    لغو
+                  </Button>
+                </div>
+              )}
             </div>
           </Card>
         </div>,

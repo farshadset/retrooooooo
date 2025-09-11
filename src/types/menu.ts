@@ -37,6 +37,7 @@ export interface MenuItem {
   image: string
   discountedPrice?: number // Individual discounted price for this item
   hasIndividualDiscount?: boolean // Whether this item has individual discount
+  supplementaryText?: string // Additional text displayed above price (like "تک", "دوبل", etc.)
 }
 
 export interface MenuData {
@@ -77,4 +78,5 @@ export interface MenuItemFormData {
   category: string
   discountedPrice?: number
   hasIndividualDiscount?: boolean
+  supplementaryText?: string
 }

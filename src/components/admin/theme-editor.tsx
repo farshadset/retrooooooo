@@ -685,7 +685,8 @@ export function ThemeEditor({
                 >
                     <ItemManagement 
                       categories={categories}
-                    items={menuItems}
+                    items={menuItems.filter(item => item.category !== 'desserts')}
+                    allItems={menuItems}
                     onUpdateCategories={updateCategories}
                     onUpdateItems={updateMenuItems}
                     navbarStyle={navbarStyle}

@@ -26,6 +26,7 @@ export function SquareTemplate({ item, className, isAdmin = false, onEditItem, c
   const [showEditModal, setShowEditModal] = useState(false)
   const [editTitle, setEditTitle] = useState(item.title)
   const [editDescription, setEditDescription] = useState(item.description)
+  const [editSupplementaryText, setEditSupplementaryText] = useState(item.supplementaryText || '')
   const [editImage, setEditImage] = useState(item.image)
   const [imagePreview, setImagePreview] = useState<string | null>(null)
   const [imageError, setImageError] = useState('')
@@ -36,6 +37,7 @@ export function SquareTemplate({ item, className, isAdmin = false, onEditItem, c
     console.log('Square template edit button clicked for:', item.title)
     setEditTitle(item.title)
     setEditDescription(item.description)
+    setEditSupplementaryText(item.supplementaryText || '')
     setEditImage(item.image)
     setImagePreview(null)
     setImageError('')
@@ -78,6 +80,7 @@ export function SquareTemplate({ item, className, isAdmin = false, onEditItem, c
       ...item,
       title: editTitle.trim(),
       description: editDescription.trim(),
+      supplementaryText: editSupplementaryText,
       image: imagePreview || editImage
     }
 
@@ -94,9 +97,21 @@ export function SquareTemplate({ item, className, isAdmin = false, onEditItem, c
     setShowEditModal(false)
     setEditTitle(item.title)
     setEditDescription(item.description)
+    setEditSupplementaryText(item.supplementaryText || '')
     setEditImage(item.image)
     setImagePreview(null)
     setImageError('')
+  }
+
+  // Check if there are any changes
+  const hasChanges = () => {
+    return (
+      editTitle !== item.title ||
+      editDescription !== item.description ||
+      editSupplementaryText !== (item.supplementaryText || '') ||
+      editImage !== item.image ||
+      imagePreview !== null
+    )
   }
 
   return (
@@ -145,7 +160,13 @@ export function SquareTemplate({ item, className, isAdmin = false, onEditItem, c
               // Check for individual discount first
               if (item.hasIndividualDiscount && item.discountedPrice) {
                 return (
-                  <div className="flex flex-col items-center gap-1">
+                  <div className="flex flex-col items-end gap-1">
+                      {/* Supplementary Text */}
+                      {item.supplementaryText && (
+                        <div className="text-sm font-bold text-foreground mb-1 text-right font-headline">
+                          {item.supplementaryText}
+                        </div>
+                      )}
                     {/* Individual Discounted Price - Green */}
                     <span className="text-xs sm:text-sm md:text-base font-bold text-green-600 bg-green-100 border border-green-300 px-2 sm:px-3 py-1 rounded-full">
                       {item.discountedPrice.toLocaleString('en-US', { 
@@ -176,6 +197,12 @@ export function SquareTemplate({ item, className, isAdmin = false, onEditItem, c
                   if (!isNaN(discountedPrice) && discountedPrice > 0) {
                     return (
                       <div className="flex flex-col items-center gap-1">
+                        {/* Supplementary Text */}
+                        {item.supplementaryText && (
+                          <div className="text-xs text-muted-foreground mb-1">
+                            {item.supplementaryText}
+                          </div>
+                        )}
                         {/* Category Discounted Price - Green */}
                         <span className="text-xs sm:text-sm md:text-base font-bold text-green-600 bg-green-100 border border-green-300 px-2 sm:px-3 py-1 rounded-full">
                           {discountedPrice.toLocaleString('en-US', { 
@@ -195,13 +222,21 @@ export function SquareTemplate({ item, className, isAdmin = false, onEditItem, c
               
               // Default price display
               return (
-                <span className={`text-xs sm:text-sm md:text-base font-bold px-2 sm:px-3 py-1 rounded-full ${
-                  item.category === 'desserts' 
-                    ? 'text-green-600 bg-green-100 border border-green-300' 
-                    : 'text-blue-600 bg-blue-100'
-                }`}>
-                  {item.price.toLocaleString('en-US').replace(/,/g, '.')} تومان
-                </span>
+                <div className="flex flex-col items-center gap-1">
+                  {/* Supplementary Text */}
+                  {item.supplementaryText && (
+                    <div className="text-xs text-muted-foreground mb-1">
+                      {item.supplementaryText}
+                    </div>
+                  )}
+                  <span className={`text-xs sm:text-sm md:text-base font-bold px-2 sm:px-3 py-1 rounded-full ${
+                    item.category === 'desserts' 
+                      ? 'text-green-600 bg-green-100 border border-green-300' 
+                      : 'text-blue-600 bg-blue-100'
+                  }`}>
+                    {item.price.toLocaleString('en-US').replace(/,/g, '.')} تومان
+                  </span>
+                </div>
               )
             })()}
           </div>
@@ -294,6 +329,21 @@ export function SquareTemplate({ item, className, isAdmin = false, onEditItem, c
                   required
                 />
               </div>
+
+              {/* Supplementary Text Section */}
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-2">
+                  توضیحات تکمیلی
+                  <span className="text-xs text-muted-foreground mr-2">(متن نمایشی بالای قیمت - مثل "تک"، "دوبل")</span>
+                </label>
+                <input
+                  type="text"
+                  value={editSupplementaryText}
+                  onChange={(e) => setEditSupplementaryText(e.target.value)}
+                  placeholder="مثال: تک، دوبل، ویژه، ..."
+                  className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                />
+              </div>
               
               {/* Description Section */}
               <div>
@@ -309,15 +359,17 @@ export function SquareTemplate({ item, className, isAdmin = false, onEditItem, c
                 />
               </div>
 
-              {/* Action Buttons */}
-              <div className="flex gap-3 pt-2">
-                <Button onClick={handleSave} className="flex-1">
-                  ذخیره تغییرات
-                </Button>
-                <Button variant="outline" onClick={handleCancel} className="flex-1">
-                  لغو
-                </Button>
-              </div>
+              {/* Action Buttons - Only show if there are changes */}
+              {hasChanges() && (
+                <div className="flex gap-3 pt-2">
+                  <Button onClick={handleSave} className="flex-1">
+                    ذخیره تغییرات
+                  </Button>
+                  <Button variant="outline" onClick={handleCancel} className="flex-1">
+                    لغو
+                  </Button>
+                </div>
+              )}
             </div>
           </Card>
         </div>,

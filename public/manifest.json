@@ -1,0 +1,22 @@
+{
+  "name": "RETRO - کافه و شیرینی‌فروشی رترو",
+  "short_name": "RETRO",
+  "description": "منوی دیجیتال کافه RETRO - تجربه‌ای از ترکیب سنت و نوآوری",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#DC2626",
+  "orientation": "portrait",
+  "lang": "fa",
+  "dir": "rtl",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["food", "lifestyle", "business"],
+  "screenshots": []
+}

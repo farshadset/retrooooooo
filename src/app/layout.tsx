@@ -13,13 +13,43 @@ const vazirmatn = Vazirmatn({
 })
 
 export const metadata: Metadata = {
-  title: 'RETRO -',
-  description: 'منوی دیجیتال کافه RETRO - تجربه‌ای از ترکیب سنت و نوآوری',
+  metadataBase: new URL('https://retrocafebakery.ir'),
+  title: 'RETRO - کافه و شیرینی‌فروشی رترو',
+  description: 'منوی دیجیتال کافه RETRO - تجربه‌ای از ترکیب سنت و نوآوری. قهوه، کیک، دسر و نوشیدنی‌های خوشمزه',
+  keywords: 'کافه رترو, قهوه, کیک, دسر, نوشیدنی, شیرینی, منوی دیجیتال',
+  authors: [{ name: 'RETRO Cafe & Bakery' }],
+  creator: 'RETRO Cafe & Bakery',
+  publisher: 'RETRO Cafe & Bakery',
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  openGraph: {
+    type: 'website',
+    locale: 'fa_IR',
+    url: 'https://retrocafebakery.ir',
+    title: 'RETRO - کافه و شیرینی‌فروشی رترو',
+    description: 'منوی دیجیتال کافه RETRO - تجربه‌ای از ترکیب سنت و نوآوری',
+    siteName: 'RETRO Cafe & Bakery',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'RETRO - کافه و شیرینی‌فروشی رترو',
+    description: 'منوی دیجیتال کافه RETRO - تجربه‌ای از ترکیب سنت و نوآوری',
+  },
   icons: {
     icon: '/icon.svg',
     shortcut: '/icon.svg',
     apple: '/icon.svg',
   },
+  manifest: '/manifest.json',
 }
 
 export default function RootLayout({

@@ -46,7 +46,8 @@ export const menuData: MenuData = {
       title: 'اسپرسو',
       description: 'قهوه اسپرسو ایتالیایی با طعم غلیظ و عطر دلپذیر',
       price: 109,
-      image: 'https://images.unsplash.com/photo-1572442388796-11668a67e53d?w=400&h=300&fit=crop'
+      image: 'https://images.unsplash.com/photo-1572442388796-11668a67e53d?w=400&h=300&fit=crop',
+      supplementaryText: 'تک'
     },
     {
       id: 2,
@@ -54,7 +55,8 @@ export const menuData: MenuData = {
       title: 'آمریکنو',
       description: 'اسپرسو با آب داغ برای طعم ملایم‌تر و حجم بیشتر',
       price: 109,
-      image: 'https://images.unsplash.com/photo-1572442388796-11668a67e53d?w=400&h=300&fit=crop'
+      image: 'https://images.unsplash.com/photo-1572442388796-11668a67e53d?w=400&h=300&fit=crop',
+      supplementaryText: 'دوبل'
     },
     {
       id: 3,
