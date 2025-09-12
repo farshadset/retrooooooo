@@ -296,6 +296,22 @@ export function MenuCard({ item, className, isAdmin = false, onEditItem, categor
                           </div>
                         )}
                       <div className="flex items-center gap-2">
+                        {/* Discount Percentage Badge */}
+                        {(() => {
+                          const originalPrice = Number(item.price) || 0
+                          const discountedPrice = Number(item.discountedPrice) || 0
+                          if (originalPrice > 0 && discountedPrice > 0) {
+                            const discountPercentage = Math.round(((originalPrice - discountedPrice) / originalPrice) * 100)
+                            if (discountPercentage > 0) {
+                              return (
+                                <span className="text-xs font-bold text-white px-2 py-1 rounded-full" style={{ backgroundColor: '#D32F2F', color: '#FFFFFF' }}>
+                                  {discountPercentage}%
+                                </span>
+                              )
+                            }
+                          }
+                          return null
+                        })()}
                         {/* Individual Discounted Price - Green */}
                         <span className="text-sm sm:text-base md:text-lg font-bold text-green-600 bg-green-100 border border-green-300 px-2 sm:px-3 py-1 rounded-full">
                           {item.discountedPrice.toLocaleString('en-US', { 
@@ -334,6 +350,10 @@ export function MenuCard({ item, className, isAdmin = false, onEditItem, categor
                           </div>
                         )}
                           <div className="flex items-center gap-2">
+                            {/* Discount Percentage Badge */}
+                            <span className="text-xs font-bold text-white px-2 py-1 rounded-full" style={{ backgroundColor: '#D32F2F', color: '#FFFFFF' }}>
+                              {discountPercentage}%
+                            </span>
                             {/* Category Discounted Price - Green */}
                             <span className="text-sm sm:text-base md:text-lg font-bold text-green-600 bg-green-100 border border-green-300 px-2 sm:px-3 py-1 rounded-full">
                               {discountedPrice.toLocaleString('en-US', { 

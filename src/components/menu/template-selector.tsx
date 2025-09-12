@@ -5,7 +5,7 @@ import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { TemplateType, TemplateConfig } from '@/types/menu'
 import { cn } from '@/lib/utils'
-import { Layout, Square, Grid } from 'lucide-react'
+import { Layout, Square } from 'lucide-react'
 
 interface TemplateSelectorProps {
   selectedTemplate: TemplateType
@@ -21,15 +21,8 @@ const templates: TemplateConfig[] = [
     className: 'bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200'
   },
   {
-    id: 'compact',
-    name: 'قالب فشرده',
-    description: '',
-    icon: '📊',
-    className: 'bg-gradient-to-r from-purple-50 to-pink-50 border-purple-200'
-  },
-  {
     id: 'square',
-    name: 'قالب سریع',
+    name: 'قالب مربعی',
     description: '',
     icon: '⬛',
     className: 'bg-gradient-to-r from-orange-50 to-red-50 border-orange-200'
@@ -40,8 +33,6 @@ const getTemplateIcon = (templateId: TemplateType) => {
   switch (templateId) {
     case 'default':
       return <Layout className="w-5 h-5" />
-    case 'compact':
-      return <Grid className="w-5 h-5" />
     case 'square':
       return <Square className="w-5 h-5" />
     default:

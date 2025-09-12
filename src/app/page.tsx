@@ -261,26 +261,7 @@ export default function HomePage() {
                   </div>
                   
                   {/* Menu Items - Mobile-optimized layouts */}
-                  {selectedTemplate === 'compact' ? (
-                    // Compact template - Mobile: 1 column, Tablet: 2 columns
-                    <div className="grid grid-cols-1 tablet:grid-cols-2 gap-md-lg">
-                      {items.map((item, index) => (
-                        <div
-                          key={item.id}
-                          className="animate-md-slide-in mobile-card"
-                          style={{ animationDelay: `${index * 100}ms` }}
-                        >
-                          <TemplateRenderer
-                            template={selectedTemplate}
-                            item={item}
-                            isAdmin={false}
-                            onEditItem={null}
-                            categoryDiscounts={categoryDiscounts}
-                          />
-                        </div>
-                      ))}
-                    </div>
-                  ) : selectedTemplate === 'square' ? (
+                  {selectedTemplate === 'square' ? (
                     // Square template - Mobile: 2 columns, Tablet: 3 columns, Desktop: 4 columns
                     <div className="grid grid-cols-2 tablet:grid-cols-3 desktop:grid-cols-4 gap-md-md">
                       {items.map((item, index) => (

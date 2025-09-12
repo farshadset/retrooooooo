@@ -240,6 +240,38 @@ export const DessertsHorizontal = forwardRef<HTMLElement, DessertsHorizontalProp
                       <div className="mt-auto flex flex-col items-center justify-center space-y-1 sm:space-y-2">
                         {(dessertsDiscountConfig?.isActive || item.hasIndividualDiscount) ? (
                           <div className="flex items-center gap-3">
+                            {/* Discount Percentage Badge - Mobile responsive */}
+                            {(() => {
+                              // Check if item has individual discount
+                              if (item.hasIndividualDiscount && item.discountedPrice) {
+                                const originalPrice = Number(item.price) || 0
+                                const discountedPrice = Number(item.discountedPrice) || 0
+                                if (originalPrice > 0 && discountedPrice > 0) {
+                                  const discountPercentage = Math.round(((originalPrice - discountedPrice) / originalPrice) * 100)
+                                  if (discountPercentage > 0) {
+                                    return (
+                                      <span className="text-xs font-bold text-white px-2 py-1 rounded-full" style={{ backgroundColor: '#D32F2F', color: '#FFFFFF' }}>
+                                        {discountPercentage}%
+                                      </span>
+                                    )
+                                  }
+                                }
+                              }
+                              
+                              // Use global discount if no individual discount
+                              if (dessertsDiscountConfig?.isActive) {
+                                const discountPercentage = Number(dessertsDiscountConfig?.percentage) || 0
+                                if (discountPercentage > 0) {
+                                  return (
+                                    <span className="text-xs font-bold text-white px-2 py-1 rounded-full" style={{ backgroundColor: '#D32F2F', color: '#FFFFFF' }}>
+                                      {discountPercentage}%
+                                    </span>
+                                  )
+                                }
+                              }
+                              
+                              return null
+                            })()}
                             {/* Discounted Price - Green Box on Left - Mobile responsive */}
                             <span className="text-sm sm:text-base md:text-lg font-bold text-green-600 bg-green-100 border border-green-300 px-2 sm:px-3 py-1 rounded-full">
                               {(() => {

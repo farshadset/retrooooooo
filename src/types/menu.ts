@@ -45,7 +45,7 @@ export interface MenuData {
   items: MenuItem[]
 }
 
-export type TemplateType = 'default' | 'compact' | 'square'
+export type TemplateType = 'default' | 'square'
 
 export interface TemplateConfig {
   id: TemplateType

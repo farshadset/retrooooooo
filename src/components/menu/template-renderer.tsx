@@ -5,7 +5,6 @@ import { MenuItem } from '@/types/menu'
 import { TemplateType } from '@/types/menu'
 import { MenuCard } from './menu-card'
 import { 
-  CompactTemplate,
   SquareTemplate
 } from './templates'
 
@@ -35,17 +34,6 @@ export function TemplateRenderer({
     case 'default':
       return (
         <MenuCard 
-          item={item} 
-          isAdmin={isAdmin}
-          onEditItem={onEditItem}
-          className={className}
-          categoryDiscounts={categoryDiscounts}
-        />
-      )
-    
-    case 'compact':
-      return (
-        <CompactTemplate 
           item={item} 
           isAdmin={isAdmin}
           onEditItem={onEditItem}

@@ -160,24 +160,42 @@ export function SquareTemplate({ item, className, isAdmin = false, onEditItem, c
               // Check for individual discount first
               if (item.hasIndividualDiscount && item.discountedPrice) {
                 return (
-                  <div className="flex flex-col items-end gap-1">
+                  <div className="flex flex-col items-center gap-1">
                       {/* Supplementary Text */}
                       {item.supplementaryText && (
-                        <div className="text-sm font-bold text-foreground mb-1 text-right font-headline">
+                        <div className="text-sm font-bold text-foreground mb-1 text-center font-headline">
                           {item.supplementaryText}
                         </div>
                       )}
                     {/* Individual Discounted Price - Green */}
-                    <span className="text-xs sm:text-sm md:text-base font-bold text-green-600 bg-green-100 border border-green-300 px-2 sm:px-3 py-1 rounded-full">
+                    <span className="text-xs sm:text-sm md:text-base font-bold text-green-600 bg-green-100 border border-green-300 px-2 sm:px-3 py-1 rounded-full text-center">
                       {item.discountedPrice.toLocaleString('en-US', { 
                         minimumFractionDigits: 0, 
                         maximumFractionDigits: 2 
                       }).replace(/,/g, '.')} تومان
                     </span>
-                    {/* Original Price - Red with Strike-through */}
-                    <span className="text-xs font-medium text-red-600 bg-red-100 border border-red-300 px-1.5 sm:px-2 py-1 rounded-full line-through">
-                      {item.price.toLocaleString('en-US').replace(/,/g, '.')} تومان
-                    </span>
+                    <div className="flex items-center justify-center gap-2">
+                      {/* Discount Percentage Badge */}
+                      {(() => {
+                        const originalPrice = Number(item.price) || 0
+                        const discountedPrice = Number(item.discountedPrice) || 0
+                        if (originalPrice > 0 && discountedPrice > 0) {
+                          const discountPercentage = Math.round(((originalPrice - discountedPrice) / originalPrice) * 100)
+                          if (discountPercentage > 0) {
+                            return (
+                              <span className="text-xs font-bold text-white px-2 py-1 rounded-md" style={{ backgroundColor: '#D32F2F', color: '#FFFFFF' }}>
+                                {discountPercentage}%
+                              </span>
+                            )
+                          }
+                        }
+                        return null
+                      })()}
+                      {/* Original Price - Red with Strike-through */}
+                      <span className="text-xs font-medium text-red-600 bg-red-100 border border-red-300 px-1.5 sm:px-2 py-1 rounded-full line-through">
+                        {item.price.toLocaleString('en-US').replace(/,/g, '.')} تومان
+                      </span>
+                    </div>
                   </div>
                 )
               }
@@ -199,21 +217,27 @@ export function SquareTemplate({ item, className, isAdmin = false, onEditItem, c
                       <div className="flex flex-col items-center gap-1">
                         {/* Supplementary Text */}
                         {item.supplementaryText && (
-                          <div className="text-xs text-muted-foreground mb-1">
+                          <div className="text-sm font-bold text-foreground mb-1 text-center font-headline">
                             {item.supplementaryText}
                           </div>
                         )}
                         {/* Category Discounted Price - Green */}
-                        <span className="text-xs sm:text-sm md:text-base font-bold text-green-600 bg-green-100 border border-green-300 px-2 sm:px-3 py-1 rounded-full">
+                        <span className="text-xs sm:text-sm md:text-base font-bold text-green-600 bg-green-100 border border-green-300 px-2 sm:px-3 py-1 rounded-full text-center">
                           {discountedPrice.toLocaleString('en-US', { 
                             minimumFractionDigits: 0, 
                             maximumFractionDigits: 2 
                           }).replace(/,/g, '.')} تومان
                         </span>
-                        {/* Original Price - Red with Strike-through */}
-                        <span className="text-xs font-medium text-red-600 bg-red-100 border border-red-300 px-1.5 sm:px-2 py-1 rounded-full line-through">
-                          {item.price.toLocaleString('en-US').replace(/,/g, '.')} تومان
-                        </span>
+                        <div className="flex items-center justify-center gap-2">
+                          {/* Discount Percentage Badge */}
+                          <span className="text-xs font-bold text-white px-2 py-1 rounded-full" style={{ backgroundColor: '#D32F2F', color: '#FFFFFF' }}>
+                            {discountPercentage}%
+                          </span>
+                          {/* Original Price - Red with Strike-through */}
+                          <span className="text-xs font-medium text-red-600 bg-red-100 border border-red-300 px-1.5 sm:px-2 py-1 rounded-full line-through">
+                            {item.price.toLocaleString('en-US').replace(/,/g, '.')} تومان
+                          </span>
+                        </div>
                       </div>
                     )
                   }

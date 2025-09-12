@@ -5,7 +5,7 @@ import { createPortal } from 'react-dom'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { MenuItem, Category, NavbarStyle, TemplateType, TemplateConfig, DessertsSectionConfig } from '@/types/menu'
-import { LogIn, LogOut, Settings, X, Palette, Menu, Lock, Info, User, Layout, Grid, Square, Trash2 } from 'lucide-react'
+import { LogIn, LogOut, Settings, X, Palette, Menu, Lock, Info, User, Layout, Square, Trash2 } from 'lucide-react'
 import { ThemeEditor } from './theme-editor'
 import { cn } from '@/lib/utils'
 import { useMenuData } from '@/contexts/MenuDataContext'
@@ -20,13 +20,6 @@ const templates: TemplateConfig[] = [
     className: 'bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200'
   },
   {
-    id: 'compact',
-    name: 'قالب فشرده',
-    description: '',
-    icon: '📊',
-    className: 'bg-gradient-to-r from-purple-50 to-pink-50 border-purple-200'
-  },
-  {
     id: 'square',
     name: 'قالب سریع',
     description: '',
@@ -39,8 +32,6 @@ const getTemplateIcon = (templateId: TemplateType) => {
   switch (templateId) {
     case 'default':
       return <Layout className="w-5 h-5" />
-    case 'compact':
-      return <Grid className="w-5 h-5" />
     case 'square':
       return <Square className="w-5 h-5" />
     default:
@@ -582,8 +573,22 @@ export function AdminLogin({
 
       {/* Template Selection Modal */}
       {typeof document !== 'undefined' && showTemplateModal && createPortal(
-        <div className="modal-overlay bg-black/50 backdrop-blur-sm z-[999999] flex items-center justify-center p-4" style={{ zIndex: 999999, position: 'fixed' }}>
-          <Card className="modal-content w-full max-w-4xl bg-card/95 backdrop-blur-md border border-border shadow-2xl relative z-[999999]" style={{ zIndex: 999999 }}>
+        <div 
+          className="modal-overlay bg-black/50 backdrop-blur-sm z-[999999] flex items-center justify-center p-4" 
+          style={{ zIndex: 999999, position: 'fixed' }}
+          onClick={(e) => {
+            // Close modal when clicking on overlay
+            if (e.target === e.currentTarget) {
+              setShowTemplateModal(false)
+            }
+          }}
+        >
+          <Card className={`modal-content w-full bg-card/95 backdrop-blur-md border border-border shadow-2xl relative z-[999999] ${
+            templates.length === 1 ? 'max-w-md' :
+            templates.length === 2 ? 'max-w-2xl' :
+            templates.length === 3 ? 'max-w-4xl' :
+            'max-w-6xl'
+          }`} style={{ zIndex: 999999 }}>
             <Button
               variant="ghost"
               size="sm"
@@ -593,47 +598,17 @@ export function AdminLogin({
               <X size={16} />
             </Button>
             
-            {/* Template Change Confirmation Buttons - Only show when there's a change */}
-            {originalTemplate && selectedTemplate !== originalTemplate && (
-              <div className="absolute top-2 left-2 flex items-center space-x-2 z-10">
-                <Button
-                  variant="default"
-                  size="sm"
-                  onClick={() => {
-                    // Confirm template change - save to localStorage
-                    confirmChanges()
-                    setShowTemplateModal(false)
-                    setOriginalTemplate(null) // Clear the original template
-                  }}
-                  className="bg-green-600 hover:bg-green-700 text-white px-4"
-                >
-                  تأیید تغییرات
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => {
-                    // Cancel template change - revert to original
-                    if (originalTemplate) {
-                      onTemplateChange?.(originalTemplate)
-                    }
-                    cancelChanges() // Revert any other pending changes
-                    setShowTemplateModal(false)
-                    setOriginalTemplate(null) // Clear the original template
-                  }}
-                  className="border-red-500 text-red-600 hover:bg-red-50 px-4"
-                >
-                  لغو تغییرات
-                </Button>
-              </div>
-            )}
             
-            <CardHeader>
-              <CardTitle className="text-center text-xl">انتخاب قالب نمایش</CardTitle>
-              <p className="text-center text-muted-foreground">قالب مورد نظر خود را انتخاب کنید</p>
+            <CardHeader className="pb-6">
+              <CardTitle className="text-center text-xl">انتخاب قالب</CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <CardContent className="px-6 pb-6 pt-2">
+              <div className={`grid gap-6 ${
+                templates.length === 1 ? 'grid-cols-1 max-w-sm mx-auto' :
+                templates.length === 2 ? 'grid-cols-1 md:grid-cols-2 max-w-4xl mx-auto' :
+                templates.length === 3 ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' :
+                'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
+              }`}>
                 {templates.map((template) => (
                   <Card
                     key={template.id}
@@ -675,7 +650,54 @@ export function AdminLogin({
                 ))}
               </div>
               
-              <div className="mt-6 text-center">
+              <div className="mt-8 flex items-center justify-center gap-4">
+                {/* Template Change Confirmation Buttons - Only show when there's a change */}
+                {originalTemplate && selectedTemplate !== originalTemplate ? (
+                  <>
+                    {/* Cancel Button */}
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        // Cancel template change - revert to original
+                        if (originalTemplate) {
+                          onTemplateChange?.(originalTemplate)
+                        }
+                        cancelChanges() // Revert any other pending changes
+                        setShowTemplateModal(false)
+                        setOriginalTemplate(null) // Clear the original template
+                      }}
+                      className="border-red-500 text-red-600 hover:bg-red-50 px-4"
+                    >
+                      لغو تغییرات
+                    </Button>
+                    
+                    {/* Close Button - Center */}
+                    <Button 
+                      onClick={() => setShowTemplateModal(false)} 
+                      variant="outline"
+                      className="min-w-32"
+                    >
+                      بستن
+                    </Button>
+                    
+                    {/* Confirm Button */}
+                    <Button
+                      variant="default"
+                      size="sm"
+                      onClick={() => {
+                        // Confirm template change - save to localStorage
+                        confirmChanges()
+                        setShowTemplateModal(false)
+                        setOriginalTemplate(null) // Clear the original template
+                      }}
+                      className="bg-green-600 hover:bg-green-700 text-white px-4"
+                    >
+                      تأیید تغییرات
+                    </Button>
+                  </>
+                ) : (
+                  /* Close Button - Only show when no changes */
                 <Button 
                   onClick={() => setShowTemplateModal(false)} 
                   variant="outline"
@@ -683,6 +705,7 @@ export function AdminLogin({
                 >
                   بستن
                 </Button>
+                )}
               </div>
             </CardContent>
           </Card>
