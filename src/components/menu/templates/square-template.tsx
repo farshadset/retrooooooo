@@ -175,6 +175,10 @@ export function SquareTemplate({ item, className, isAdmin = false, onEditItem, c
                       }).replace(/,/g, '.')} تومان
                     </span>
                     <div className="flex items-center justify-center gap-2">
+                      {/* Original Price - Red with Strike-through */}
+                      <span className="text-xs font-medium text-red-600 bg-red-100 border border-red-300 px-1.5 sm:px-2 py-1 rounded-full line-through">
+                        {item.price.toLocaleString('en-US').replace(/,/g, '.')} تومان
+                      </span>
                       {/* Discount Percentage Badge */}
                       {(() => {
                         const originalPrice = Number(item.price) || 0
@@ -191,10 +195,6 @@ export function SquareTemplate({ item, className, isAdmin = false, onEditItem, c
                         }
                         return null
                       })()}
-                      {/* Original Price - Red with Strike-through */}
-                      <span className="text-xs font-medium text-red-600 bg-red-100 border border-red-300 px-1.5 sm:px-2 py-1 rounded-full line-through">
-                        {item.price.toLocaleString('en-US').replace(/,/g, '.')} تومان
-                      </span>
                     </div>
                   </div>
                 )
@@ -229,13 +229,13 @@ export function SquareTemplate({ item, className, isAdmin = false, onEditItem, c
                           }).replace(/,/g, '.')} تومان
                         </span>
                         <div className="flex items-center justify-center gap-2">
-                          {/* Discount Percentage Badge */}
-                          <span className="text-xs font-bold text-white px-2 py-1 rounded-full" style={{ backgroundColor: '#D32F2F', color: '#FFFFFF' }}>
-                            {discountPercentage}%
-                          </span>
                           {/* Original Price - Red with Strike-through */}
                           <span className="text-xs font-medium text-red-600 bg-red-100 border border-red-300 px-1.5 sm:px-2 py-1 rounded-full line-through">
                             {item.price.toLocaleString('en-US').replace(/,/g, '.')} تومان
+                          </span>
+                          {/* Discount Percentage Badge */}
+                          <span className="text-xs font-bold text-white px-2 py-1 rounded-full" style={{ backgroundColor: '#D32F2F', color: '#FFFFFF' }}>
+                            {discountPercentage}%
                           </span>
                         </div>
                       </div>

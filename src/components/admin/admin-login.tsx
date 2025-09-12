@@ -654,6 +654,30 @@ export function AdminLogin({
                 {/* Template Change Confirmation Buttons - Only show when there's a change */}
                 {originalTemplate && selectedTemplate !== originalTemplate ? (
                   <>
+                    {/* Confirm Button */}
+                    <Button
+                      variant="default"
+                      size="sm"
+                      onClick={() => {
+                        // Confirm template change - save to localStorage
+                        confirmChanges()
+                        setShowTemplateModal(false)
+                        setOriginalTemplate(null) // Clear the original template
+                      }}
+                      className="bg-green-600 hover:bg-green-700 text-white px-4"
+                    >
+                      تأیید تغییرات
+                    </Button>
+                    
+                    {/* Close Button - Center */}
+                    <Button 
+                      onClick={() => setShowTemplateModal(false)} 
+                      variant="outline"
+                      className="min-w-32"
+                    >
+                      بستن
+                    </Button>
+                    
                     {/* Cancel Button */}
                     <Button
                       variant="outline"
@@ -670,30 +694,6 @@ export function AdminLogin({
                       className="border-red-500 text-red-600 hover:bg-red-50 px-4"
                     >
                       لغو تغییرات
-                    </Button>
-                    
-                    {/* Close Button - Center */}
-                    <Button 
-                      onClick={() => setShowTemplateModal(false)} 
-                      variant="outline"
-                      className="min-w-32"
-                    >
-                      بستن
-                    </Button>
-                    
-                    {/* Confirm Button */}
-                    <Button
-                      variant="default"
-                      size="sm"
-                      onClick={() => {
-                        // Confirm template change - save to localStorage
-                        confirmChanges()
-                        setShowTemplateModal(false)
-                        setOriginalTemplate(null) // Clear the original template
-                      }}
-                      className="bg-green-600 hover:bg-green-700 text-white px-4"
-                    >
-                      تأیید تغییرات
                     </Button>
                   </>
                 ) : (

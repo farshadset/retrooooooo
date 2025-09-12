@@ -258,9 +258,9 @@ export function MenuCard({ item, className, isAdmin = false, onEditItem, categor
         )}
 
         <div className="flex flex-row-reverse relative z-10 rounded-xl overflow-hidden">
-          {/* Image Section - 28% width on all screens */}
-          <div className="w-[28%] flex-shrink-0 overflow-hidden rounded-l-xl">
-            <div className="relative w-full h-48 sm:h-60 md:h-64">
+          {/* Image Section - Mobile: 40% width for square aspect, Desktop: 28% width */}
+          <div className="w-[40%] sm:w-[28%] flex-shrink-0 overflow-hidden rounded-l-xl">
+            <div className="relative w-full h-40 sm:h-48 md:h-52">
               <Image
                 src={imagePreview || editImage || item.image}
                 alt={item.title}
@@ -272,9 +272,9 @@ export function MenuCard({ item, className, isAdmin = false, onEditItem, categor
             </div>
           </div>
           
-          {/* Content Section - 72% width on all screens */}
-          <div className="w-[72%] flex flex-col text-right px-4 sm:px-6 md:px-8 py-4 sm:py-6 md:py-8 relative">
-            <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-foreground mb-2 sm:mb-3 leading-tight font-headline group-hover:text-primary transition-colors duration-300">
+          {/* Content Section - Mobile: 60% width, Desktop: 72% width */}
+          <div className="w-[60%] sm:w-[72%] flex flex-col text-right px-3 sm:px-4 md:px-6 py-4 sm:py-5 md:py-6 relative">
+            <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-foreground mb-1 sm:mb-2 leading-tight font-headline group-hover:text-primary transition-colors duration-300">
               {item.title}
             </h3>
             
@@ -283,7 +283,7 @@ export function MenuCard({ item, className, isAdmin = false, onEditItem, categor
             </p>
 
             {/* Price Display - Bottom Right - Mobile responsive */}
-            <div className="absolute bottom-3 sm:bottom-4 md:bottom-6 right-4 sm:right-6 md:right-8">
+            <div className="absolute bottom-2 sm:bottom-3 md:bottom-4 right-3 sm:right-4 md:right-6">
               {(() => {
                 // Check for individual discount first
                 if (item.hasIndividualDiscount && item.discountedPrice) {
@@ -295,7 +295,56 @@ export function MenuCard({ item, className, isAdmin = false, onEditItem, categor
                             {item.supplementaryText}
                           </div>
                         )}
-                      <div className="flex items-center gap-2">
+                      {/* Mobile: All prices in one horizontal line like horizontal menu */}
+                      <div className="flex sm:hidden items-center gap-2">
+                        {/* Individual Discounted Price - Green */}
+                        <span className="text-sm font-bold text-green-600 bg-green-100 border border-green-300 px-2 py-1 rounded-full">
+                          {item.discountedPrice.toLocaleString('en-US', { 
+                            minimumFractionDigits: 0, 
+                            maximumFractionDigits: 2 
+                          }).replace(/,/g, '.')} تومان
+                        </span>
+                        {/* Original Price with Discount Percentage inside - Mobile style */}
+                        <div className="text-xs font-medium text-red-600 bg-red-100 border border-red-300 px-1.5 py-1 rounded-full flex items-center gap-1 overflow-hidden">
+                          {/* Price part with strike-through */}
+                          <span className="line-through">
+                            {item.price.toLocaleString('en-US').replace(/,/g, '.')}
+                          </span>
+                          {/* Discount Percentage Badge inside price box */}
+                          {(() => {
+                            const originalPrice = Number(item.price) || 0
+                            const discountedPrice = Number(item.discountedPrice) || 0
+                            if (originalPrice > 0 && discountedPrice > 0) {
+                              const discountPercentage = Math.round(((originalPrice - discountedPrice) / originalPrice) * 100)
+                              if (discountPercentage > 0) {
+                                return (
+                                  <div className="flex items-center">
+                                    <div className="w-1 h-4 bg-red-100"></div>
+                                    <span className="text-xs font-bold text-white px-1 py-1 rounded-full" style={{ backgroundColor: '#D32F2F', color: '#FFFFFF' }}>
+                                      {discountPercentage}%
+                                    </span>
+                                  </div>
+                                )
+                              }
+                            }
+                            return null
+                          })()}
+                        </div>
+                      </div>
+                      
+                      {/* Desktop: Original layout */}
+                      <div className="hidden sm:flex items-center gap-2">
+                        {/* Individual Discounted Price - Green */}
+                        <span className="text-sm sm:text-base md:text-lg font-bold text-green-600 bg-green-100 border border-green-300 px-2 sm:px-3 py-1 rounded-full">
+                          {item.discountedPrice.toLocaleString('en-US', { 
+                            minimumFractionDigits: 0, 
+                            maximumFractionDigits: 2 
+                          }).replace(/,/g, '.')} تومان
+                        </span>
+                        {/* Original Price - Red with Strike-through */}
+                        <span className="text-xs sm:text-sm font-medium text-red-600 bg-red-100 border border-red-300 px-1.5 sm:px-2 py-1 rounded-full line-through">
+                          {item.price.toLocaleString('en-US').replace(/,/g, '.')} تومان
+                        </span>
                         {/* Discount Percentage Badge */}
                         {(() => {
                           const originalPrice = Number(item.price) || 0
@@ -312,17 +361,6 @@ export function MenuCard({ item, className, isAdmin = false, onEditItem, categor
                           }
                           return null
                         })()}
-                        {/* Individual Discounted Price - Green */}
-                        <span className="text-sm sm:text-base md:text-lg font-bold text-green-600 bg-green-100 border border-green-300 px-2 sm:px-3 py-1 rounded-full">
-                          {item.discountedPrice.toLocaleString('en-US', { 
-                            minimumFractionDigits: 0, 
-                            maximumFractionDigits: 2 
-                          }).replace(/,/g, '.')} تومان
-                        </span>
-                        {/* Original Price - Red with Strike-through */}
-                        <span className="text-xs sm:text-sm font-medium text-red-600 bg-red-100 border border-red-300 px-1.5 sm:px-2 py-1 rounded-full line-through">
-                          {item.price.toLocaleString('en-US').replace(/,/g, '.')} تومان
-                        </span>
                       </div>
                     </div>
                   )
@@ -349,11 +387,33 @@ export function MenuCard({ item, className, isAdmin = false, onEditItem, categor
                             {item.supplementaryText}
                           </div>
                         )}
-                          <div className="flex items-center gap-2">
-                            {/* Discount Percentage Badge */}
-                            <span className="text-xs font-bold text-white px-2 py-1 rounded-full" style={{ backgroundColor: '#D32F2F', color: '#FFFFFF' }}>
-                              {discountPercentage}%
+                          {/* Mobile: All prices in one horizontal line like horizontal menu */}
+                          <div className="flex sm:hidden items-center gap-2">
+                            {/* Category Discounted Price - Green */}
+                            <span className="text-sm font-bold text-green-600 bg-green-100 border border-green-300 px-2 py-1 rounded-full">
+                              {discountedPrice.toLocaleString('en-US', { 
+                                minimumFractionDigits: 0, 
+                                maximumFractionDigits: 2 
+                              }).replace(/,/g, '.')} تومان
                             </span>
+                            {/* Original Price with Discount Percentage inside - Mobile style */}
+                            <div className="text-xs font-medium text-red-600 bg-red-100 border border-red-300 px-1.5 py-1 rounded-full flex items-center gap-1 overflow-hidden">
+                              {/* Price part with strike-through */}
+                              <span className="line-through">
+                                {item.price.toLocaleString('en-US').replace(/,/g, '.')}
+                              </span>
+                              {/* Discount Percentage Badge inside price box */}
+                              <div className="flex items-center">
+                                <div className="w-1 h-4 bg-red-100"></div>
+                                <span className="text-xs font-bold text-white px-1 py-1 rounded-full" style={{ backgroundColor: '#D32F2F', color: '#FFFFFF' }}>
+                                  {discountPercentage}%
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                          
+                          {/* Desktop: Original layout */}
+                          <div className="hidden sm:flex items-center gap-2">
                             {/* Category Discounted Price - Green */}
                             <span className="text-sm sm:text-base md:text-lg font-bold text-green-600 bg-green-100 border border-green-300 px-2 sm:px-3 py-1 rounded-full">
                               {discountedPrice.toLocaleString('en-US', { 
@@ -364,6 +424,10 @@ export function MenuCard({ item, className, isAdmin = false, onEditItem, categor
                             {/* Original Price - Red with Strike-through */}
                             <span className="text-xs sm:text-sm font-medium text-red-600 bg-red-100 border border-red-300 px-1.5 sm:px-2 py-1 rounded-full line-through">
                               {item.price.toLocaleString('en-US').replace(/,/g, '.')} تومان
+                            </span>
+                            {/* Discount Percentage Badge */}
+                            <span className="text-xs font-bold text-white px-2 py-1 rounded-full" style={{ backgroundColor: '#D32F2F', color: '#FFFFFF' }}>
+                              {discountPercentage}%
                             </span>
                           </div>
                         </div>

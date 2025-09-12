@@ -205,12 +205,12 @@ export const DessertsHorizontal = forwardRef<HTMLElement, DessertsHorizontalProp
               {/* All Items with Square Template Design - Mobile responsive */}
               {dessertsItems.map((item) => (
                 <div key={item.id} className="flex-shrink-0">
-                  <div className="w-64 sm:w-72 md:w-80 h-80 sm:h-88 md:h-96 bg-card text-card-foreground shadow-sm border border-border rounded-lg hover:shadow-lg transition-all duration-300 hover:scale-105 group overflow-hidden relative z-10">
+                  <div className="w-48 sm:w-54 md:w-60 bg-card text-card-foreground shadow-sm border border-border rounded-lg hover:shadow-lg transition-all duration-300 hover:scale-105 group overflow-hidden relative z-10">
                     
 
                     
-                    {/* Image Section - Mobile responsive */}
-                    <div className="relative h-44 sm:h-48 md:h-56 overflow-hidden z-10">
+                    {/* Image Section - Square aspect ratio - Mobile responsive */}
+                    <div className="relative aspect-square overflow-hidden z-10">
                       {item.image ? (
                         <img 
                           src={item.image} 
@@ -225,7 +225,7 @@ export const DessertsHorizontal = forwardRef<HTMLElement, DessertsHorizontalProp
                     </div>
 
                     {/* Content Section - Mobile responsive */}
-                    <div className="p-3 sm:p-4 md:p-5 flex flex-col h-36 sm:h-40 relative z-20">
+                    <div className="p-3 sm:p-4 md:p-5 flex flex-col relative z-20">
                       {/* Title - Mobile responsive */}
                       <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-foreground mb-2 sm:mb-3 leading-tight font-headline group-hover:text-primary transition-colors duration-300">
                         {item.title}
@@ -239,41 +239,9 @@ export const DessertsHorizontal = forwardRef<HTMLElement, DessertsHorizontalProp
                       {/* Price - Centered - Mobile responsive */}
                       <div className="mt-auto flex flex-col items-center justify-center space-y-1 sm:space-y-2">
                         {(dessertsDiscountConfig?.isActive || item.hasIndividualDiscount) ? (
-                          <div className="flex items-center gap-3">
-                            {/* Discount Percentage Badge - Mobile responsive */}
-                            {(() => {
-                              // Check if item has individual discount
-                              if (item.hasIndividualDiscount && item.discountedPrice) {
-                                const originalPrice = Number(item.price) || 0
-                                const discountedPrice = Number(item.discountedPrice) || 0
-                                if (originalPrice > 0 && discountedPrice > 0) {
-                                  const discountPercentage = Math.round(((originalPrice - discountedPrice) / originalPrice) * 100)
-                                  if (discountPercentage > 0) {
-                                    return (
-                                      <span className="text-xs font-bold text-white px-2 py-1 rounded-full" style={{ backgroundColor: '#D32F2F', color: '#FFFFFF' }}>
-                                        {discountPercentage}%
-                                      </span>
-                                    )
-                                  }
-                                }
-                              }
-                              
-                              // Use global discount if no individual discount
-                              if (dessertsDiscountConfig?.isActive) {
-                                const discountPercentage = Number(dessertsDiscountConfig?.percentage) || 0
-                                if (discountPercentage > 0) {
-                                  return (
-                                    <span className="text-xs font-bold text-white px-2 py-1 rounded-full" style={{ backgroundColor: '#D32F2F', color: '#FFFFFF' }}>
-                                      {discountPercentage}%
-                                    </span>
-                                  )
-                                }
-                              }
-                              
-                              return null
-                            })()}
-                            {/* Discounted Price - Green Box on Left - Mobile responsive */}
-                            <span className="text-sm sm:text-base md:text-lg font-bold text-green-600 bg-green-100 border border-green-300 px-2 sm:px-3 py-1 rounded-full">
+                          <div className="flex items-center gap-2">
+                            {/* Discounted Price - Green Box - Mobile responsive */}
+                            <span className="text-sm sm:text-sm md:text-base font-bold text-green-600 bg-green-100 border border-green-300 px-2 sm:px-3 py-1 rounded-full">
                               {(() => {
                                 // Check if item has individual discount
                                 if (item.hasIndividualDiscount && item.discountedPrice) {
@@ -311,10 +279,52 @@ export const DessertsHorizontal = forwardRef<HTMLElement, DessertsHorizontalProp
                                 return item.price.toLocaleString('en-US').replace(/,/g, '.')
                               })()} تومان
                             </span>
-                            {/* Original Price - Red Box on Right with Strike-through - Mobile responsive */}
-                            <span className="text-xs sm:text-sm font-medium text-red-600 bg-red-100 border border-red-300 px-1.5 sm:px-2 py-1 rounded-full line-through">
-                              {item.price.toLocaleString('en-US').replace(/,/g, '.')} تومان
-                            </span>
+                            
+                            {/* Original Price with Discount Percentage inside - Mobile style like vertical menu */}
+                            <div className="text-sm text-red-600 bg-red-100 border border-red-300 px-1.5 py-1 rounded-full flex items-center gap-1 overflow-hidden">
+                              {/* Price part with strike-through */}
+                              <span className="line-through">
+                                {item.price.toLocaleString('en-US').replace(/,/g, '.')}
+                              </span>
+                              {/* Discount Percentage Badge inside price box */}
+                              {(() => {
+                                // Check if item has individual discount
+                                if (item.hasIndividualDiscount && item.discountedPrice) {
+                                  const originalPrice = Number(item.price) || 0
+                                  const discountedPrice = Number(item.discountedPrice) || 0
+                                  if (originalPrice > 0 && discountedPrice > 0) {
+                                    const discountPercentage = Math.round(((originalPrice - discountedPrice) / originalPrice) * 100)
+                                    if (discountPercentage > 0) {
+                                      return (
+                                        <div className="flex items-center">
+                                          <div className="w-1 h-4 bg-red-100"></div>
+                                          <span className="text-xs font-bold text-white px-1 py-1 rounded-full" style={{ backgroundColor: '#D32F2F', color: '#FFFFFF' }}>
+                                            {discountPercentage}%
+                                          </span>
+                                        </div>
+                                      )
+                                    }
+                                  }
+                                }
+                                
+                                // Use global discount if no individual discount
+                                if (dessertsDiscountConfig?.isActive) {
+                                  const discountPercentage = Number(dessertsDiscountConfig?.percentage) || 0
+                                  if (discountPercentage > 0) {
+                                    return (
+                                      <div className="flex items-center">
+                                        <div className="w-1 h-4 bg-red-100"></div>
+                                        <span className="text-xs font-bold text-white px-1 py-1 rounded-full" style={{ backgroundColor: '#D32F2F', color: '#FFFFFF' }}>
+                                          {discountPercentage}%
+                                        </span>
+                                      </div>
+                                    )
+                                  }
+                                }
+                                
+                                return null
+                              })()}
+                            </div>
                           </div>
                         ) : (
                           <span className="text-sm sm:text-base md:text-lg font-bold text-green-600 bg-green-100 border border-green-300 px-2 sm:px-3 py-1 rounded-full">
