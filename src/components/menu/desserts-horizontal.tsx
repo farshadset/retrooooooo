@@ -130,6 +130,15 @@ export const DessertsHorizontal = forwardRef<HTMLElement, DessertsHorizontalProp
     }
   }
 
+  // Handle wheel events for horizontal scrolling
+  const handleWheel = (e: React.WheelEvent) => {
+    if (scrollContainerRef.current) {
+      e.preventDefault()
+      const scrollAmount = e.deltaY * 2 // Adjust scroll sensitivity
+      scrollContainerRef.current.scrollLeft += scrollAmount
+    }
+  }
+
   return (
     <section ref={ref} className="py-6 border-b border-gray-200">
       <div className="container mx-auto px-3 sm:px-4">
@@ -141,7 +150,7 @@ export const DessertsHorizontal = forwardRef<HTMLElement, DessertsHorizontalProp
                 <div className="mb-2">
                   <div className="flex items-start justify-between mb-2">
                     <div className="flex-1">
-                      <div className="flex items-center gap-2 sm:gap-3 mb-2">
+                      <div className="flex items-center gap-6 sm:gap-3 mb-2">
                         {config.icon && config.icon !== 'none' && (
                           <div className="text-primary">
                             <div className="w-6 h-6 sm:w-8 sm:h-8">
@@ -149,12 +158,12 @@ export const DessertsHorizontal = forwardRef<HTMLElement, DessertsHorizontalProp
                             </div>
                           </div>
                         )}
-                        <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-foreground" 
+                        <h2 className="text-3xl sm:text-2xl md:text-3xl lg:text-3xl font-bold text-foreground" 
                             style={{ fontFamily: currentTheme.typography.headlineFontFamily }}>
                           {config.title}
                         </h2>
                       </div>
-                      <p className="text-xs sm:text-sm text-muted-foreground">
+                      <p className="text-sm sm:text-base text-muted-foreground mt-4 sm:mt-2">
                         {dessertsItems.length} {config.description}
                       </p>
                     </div>
@@ -201,6 +210,7 @@ export const DessertsHorizontal = forwardRef<HTMLElement, DessertsHorizontalProp
               onTouchStart={handleTouchStart}
               onTouchMove={handleTouchMove}
               onTouchEnd={handleTouchEnd}
+              onWheel={handleWheel}
             >
               {/* All Items with Square Template Design - Mobile responsive */}
               {dessertsItems.map((item) => (

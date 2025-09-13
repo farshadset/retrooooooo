@@ -538,7 +538,7 @@ export function AdminLogin({
                     id="rememberMe"
                     checked={rememberMe}
                     onChange={(e) => setRememberMe(e.target.checked)}
-                    className="w-4 h-4 text-primary border-border rounded focus:ring-primary focus:ring-2"
+                    className="w-3 h-3 sm:w-4 sm:h-4 text-primary border-border rounded focus:ring-primary focus:ring-2"
                   />
                   <label htmlFor="rememberMe" className="text-sm text-foreground">
                     به خاطر سپردن

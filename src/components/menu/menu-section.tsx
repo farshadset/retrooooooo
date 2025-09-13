@@ -22,11 +22,12 @@ export function MenuSection({ category, items, className }: MenuSectionProps) {
       id={`category-${category.id}`}
       className={cn("py-6 sm:py-8 animate-fade-in scroll-mt-20 sm:scroll-mt-24", className)}
       data-category={category.id}
+      data-section-type="category"
     >
       <div className="container mx-auto px-3 sm:px-4">
         {/* Category Header */}
         <div className="mb-6 sm:mb-8 text-center">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground">
+          <h2 className="text-3xl sm:text-2xl md:text-3xl lg:text-3xl font-bold text-foreground">
             {category.name}
           </h2>
         </div>

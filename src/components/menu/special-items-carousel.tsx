@@ -96,6 +96,15 @@ export function SpecialItemsCarousel({ specialItems, onEditItem, isAdmin = false
     }
   }
 
+  // Handle wheel events for horizontal scrolling
+  const handleWheel = (e: React.WheelEvent) => {
+    if (scrollContainerRef.current) {
+      e.preventDefault()
+      const scrollAmount = e.deltaY * 2 // Adjust scroll sensitivity
+      scrollContainerRef.current.scrollLeft += scrollAmount
+    }
+  }
+
   // If no special items, don't render anything
   if (!specialItems.length) {
     return null
@@ -133,6 +142,7 @@ export function SpecialItemsCarousel({ specialItems, onEditItem, isAdmin = false
             onMouseMove={handleMouseMove}
             onMouseUp={handleMouseUp}
             onMouseLeave={handleMouseLeave}
+            onWheel={handleWheel}
             className="flex gap-4 overflow-x-auto scrollbar-hide pb-2 cursor-grab select-none"
             style={{ 
               scrollbarWidth: 'none', 

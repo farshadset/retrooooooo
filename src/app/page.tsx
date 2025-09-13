@@ -92,8 +92,8 @@ export default function HomePage() {
   // Use scroll synchronization hook with improved settings
   const { activeCategory, setActiveCategory } = useScrollSync({
     categories: categoryIds,
-    offset: 150, // Increased offset for more stable detection
-    threshold: 0.4, // Higher threshold to prevent flickering
+    offset: 120, // Optimized offset for better detection
+    threshold: 0.3, // Balanced threshold for responsiveness
     dessertsSectionHeight: dessertsSectionHeight
   })
 
@@ -169,9 +169,9 @@ export default function HomePage() {
       {/* Header - Material Design 3 optimized */}
       <header className={`${currentTheme.header.showBackground ? 'md-primary' : 'md-surface'} safe-area-top`}>
         <div className="mobile-container py-md-lg">
-          <div className="flex justify-between items-center">
+          <div className="flex justify-between items-center relative">
             {/* Admin Login - Top Left */}
-            <div className="md-touch-target">
+            <div className="md-touch-target flex-shrink-0">
               <AdminLogin
                 onLogin={handleAdminLogin}
                 isLoggedIn={isAdmin}
@@ -186,7 +186,7 @@ export default function HomePage() {
             </div>
             
             {/* Main Title/Logo - Center - Material Design 3 Typography */}
-            <div className="text-center flex-1">
+            <div className="mobile-header-center">
               {currentTheme.header.type === 'text' && (
                 <h1 className="md-display-small mobile-headline" style={{ fontFamily: currentTheme.typography.headerTitleFontFamily }}>
                   {currentTheme.header.title}
@@ -197,28 +197,28 @@ export default function HomePage() {
                   <img 
                     src={currentTheme.header.logoUrl || '/api/placeholder/200/80/cccccc/666666?text=RETRO'} 
                     alt="لوگو" 
-                    className="h-16 sm:h-20 md:h-24 w-auto"
+                    className="h-12 sm:h-16 md:h-20 w-auto"
                   />
                 </div>
               )}
               {currentTheme.header.type === 'textAndLogo' && (
-                <div className="space-y-md-md">
+                <div className="space-y-2 sm:space-y-md-md">
                   <div className="flex justify-center">
                     <img 
                       src={currentTheme.header.logoUrl || '/api/placeholder/200/80/cccccc/666666?text=RETRO'} 
                       alt="لوگو" 
-                      className="h-16 sm:h-20 md:h-24 w-auto"
+                      className="h-10 sm:h-16 md:h-20 w-auto"
                     />
                   </div>
-                  <h1 className="md-display-small mobile-headline" style={{ fontFamily: currentTheme.typography.headerTitleFontFamily }}>
+                  <h1 className="md-display-small mobile-headline text-sm sm:text-base" style={{ fontFamily: currentTheme.typography.headerTitleFontFamily }}>
                     {currentTheme.header.title}
                   </h1>
                 </div>
               )}
             </div>
             
-            {/* Spacer for balance */}
-            <div className="w-24"></div>
+            {/* Spacer for balance - same width as left side */}
+            <div className="flex-shrink-0 w-12 sm:w-16 md:w-24"></div>
           </div>
         </div>
       </header>
@@ -247,12 +247,12 @@ export default function HomePage() {
 
 
       {/* Menu Content - Material Design 3 optimized for mobile */}
-      <main className="content-section relative bg-md-background">
+      <main className="content-section mobile-scroll-container relative bg-md-background">
         <div className="mobile-container relative z-10">
           <div className="max-w-5xl mx-auto">
             <div className="flex flex-col space-y-md-2xl">
               {groupedItems.map(({ category, items }) => (
-                <div key={category.id} id={`category-${category.id}`} data-category={category.id}>
+                <div key={category.id} id={`category-${category.id}`} data-category={category.id} className="category-section">
                   {/* Category Header - Material Design 3 Typography */}
                   <div className="mb-md-lg text-center">
                     <h2 className="md-headline-medium mobile-headline text-md-on-background">

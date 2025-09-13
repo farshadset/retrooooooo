@@ -11,8 +11,8 @@ interface UseScrollSyncProps {
 
 export function useScrollSync({ 
   categories, 
-  offset = 100, 
-  threshold = 0.3,
+  offset = 120, // بهتر برای موبایل
+  threshold = 0.3, // کاهش threshold برای حساسیت بیشتر
   dessertsSectionHeight = 0
 }: UseScrollSyncProps) {
   const [activeCategory, setActiveCategory] = useState<string>(categories[0] || '')
@@ -20,6 +20,7 @@ export function useScrollSync({
   const timeoutRef = useRef<NodeJS.Timeout | null>(null)
   const lastActiveCategoryRef = useRef<string>(categories[0] || '')
   const isUpdatingRef = useRef<boolean>(false)
+  const sectionElementsRef = useRef<Map<string, HTMLElement>>(new Map())
 
   const updateActiveCategory = useCallback((categoryId: string) => {
     // Prevent rapid state updates that cause flickering
@@ -27,6 +28,7 @@ export function useScrollSync({
       return
     }
 
+    console.log('Updating active category:', categoryId)
     isUpdatingRef.current = true
     lastActiveCategoryRef.current = categoryId
     setActiveCategory(categoryId)
@@ -34,204 +36,240 @@ export function useScrollSync({
     // Reset the flag after a short delay
     setTimeout(() => {
       isUpdatingRef.current = false
-    }, 100)
+    }, 50) // کاهش delay برای پاسخگویی بهتر
   }, [])
 
-  // Two separate scroll handlers for different scenarios
-  const handleScrollWithoutDesserts = useCallback(() => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current)
-    }
+  // IntersectionObserver callback برای تشخیص دقیق‌تر بخش‌های فعال
+  const handleIntersection = useCallback((entries: IntersectionObserverEntry[]) => {
+    // تشخیص موبایل برای الگوریتم بهتر
+    const isMobile = window.innerWidth <= 768 || 'ontouchstart' in window
+    const viewportHeight = window.innerHeight
+    const viewportCenter = viewportHeight / 2
+    
+    // پیدا کردن بخشی که بیشترین مقدار intersection را دارد
+    let maxIntersectionRatio = 0
+    let mostVisibleCategory = ''
+    let closestToCenter = Infinity
+    let closestCategory = ''
 
-    timeoutRef.current = setTimeout(() => {
-      // Normal scroll detection when desserts section is NOT visible
-      const scrollPosition = window.scrollY + offset
-      let foundCategory = ''
-
-      // Find which category section is currently in view
-      for (let i = categories.length - 1; i >= 0; i--) {
-        const categoryId = categories[i]
-        const element = document.getElementById(`category-${categoryId}`)
-        
-        if (element) {
-          const elementTop = element.offsetTop
-          const elementBottom = elementTop + element.offsetHeight
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const categoryId = entry.target.getAttribute('data-category')
+        if (categoryId) {
+          const element = entry.target as HTMLElement
+          const elementHeight = element.offsetHeight
+          const isShortSection = elementHeight < viewportHeight * 0.3
           
-          if (scrollPosition >= elementTop && scrollPosition < elementBottom) {
-            foundCategory = categoryId
-            break
+          // اگر بخش کوتاه است، threshold پایین‌تر اعمال کن
+          const effectiveThreshold = isShortSection ? threshold * 0.5 : threshold
+          
+          // اگر intersection ratio بالاتر از threshold باشد
+          if (entry.intersectionRatio > maxIntersectionRatio) {
+            maxIntersectionRatio = entry.intersectionRatio
+            mostVisibleCategory = categoryId
           }
-        }
-      }
-      
-      // Only update if we found a different category
-      if (foundCategory && foundCategory !== lastActiveCategoryRef.current) {
-        updateActiveCategory(foundCategory)
-      }
-    }, 50)
-  }, [categories, offset, updateActiveCategory])
-
-  const handleScrollWithDesserts = useCallback(() => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current)
-    }
-
-    timeoutRef.current = setTimeout(() => {
-      // Special scroll detection when desserts section IS visible
-      // Much lower detection point to avoid conflicts
-      const adjustedOffset = offset + dessertsSectionHeight - 450
-      const scrollPosition = window.scrollY + adjustedOffset
-      
-      console.log('Scroll with Desserts Debug:', {
-        dessertsHeight: dessertsSectionHeight,
-        originalOffset: offset,
-        adjustedOffset,
-        scrollY: window.scrollY,
-        scrollPosition
-      })
-      
-      let foundCategory = ''
-
-      // Find which category section is currently in view
-      for (let i = categories.length - 1; i >= 0; i--) {
-        const categoryId = categories[i]
-        const element = document.getElementById(`category-${categoryId}`)
-        
-        if (element) {
-          const elementTop = element.offsetTop
-          const elementBottom = elementTop + element.offsetHeight
           
-          if (scrollPosition >= elementTop && scrollPosition < elementBottom) {
-            foundCategory = categoryId
-            break
-          }
-        }
-      }
-
-      // Special handling for first category when desserts section is visible
-      if (!foundCategory && categories.length > 0) {
-        const firstCategory = categories[0]
-        const firstElement = document.getElementById(`category-${firstCategory}`)
-        
-        if (firstElement && window.scrollY < firstElement.offsetTop + 200) {
-          // If we're within 200px of the first category, activate it
-          foundCategory = firstCategory
-        }
-      }
-      
-      // Only update if we found a different category
-      if (foundCategory && foundCategory !== lastActiveCategoryRef.current) {
-        updateActiveCategory(foundCategory)
-      }
-    }, 50)
-  }, [categories, offset, dessertsSectionHeight, updateActiveCategory])
-
-  // Main scroll handler that chooses the appropriate logic
-  const handleScroll = useCallback(() => {
-    if (dessertsSectionHeight > 0) {
-      handleScrollWithDesserts()
-    } else {
-      handleScrollWithoutDesserts()
-    }
-  }, [dessertsSectionHeight, handleScrollWithDesserts, handleScrollWithoutDesserts])
-
-  // Two separate intersection observers for different scenarios
-  const createObserverWithoutDesserts = useCallback(() => {
-    return new IntersectionObserver(
-      (entries) => {
-        // Sort entries by intersection ratio to find the most visible section
-        const sortedEntries = entries
-          .filter(entry => entry.isIntersecting)
-          .sort((a, b) => (b.intersectionRatio || 0) - (a.intersectionRatio || 0))
-
-        if (sortedEntries.length > 0) {
-          const mostVisibleEntry = sortedEntries[0]
-          const categoryId = mostVisibleEntry.target.getAttribute('data-category')
+          // در موبایل: بخشی که نزدیک‌تر به مرکز صفحه است را در نظر بگیر
+          // در دسکتاپ: بخشی که نزدیک‌تر به بالای viewport است را در نظر بگیر
+          const rect = entry.boundingClientRect
+          const elementCenter = rect.top + (rect.height / 2)
           
-          if (categoryId && categoryId !== lastActiveCategoryRef.current) {
-            // Only update if the intersection ratio is significant
-            if ((mostVisibleEntry.intersectionRatio || 0) > threshold) {
-              updateActiveCategory(categoryId)
+          if (isMobile) {
+            // موبایل: فاصله از مرکز صفحه
+            const distanceFromCenter = Math.abs(elementCenter - viewportCenter)
+            if (distanceFromCenter < closestToCenter) {
+              closestToCenter = distanceFromCenter
+              closestCategory = categoryId
+            }
+          } else {
+            // دسکتاپ: فاصله از بالای viewport
+            const distanceFromTop = Math.abs(rect.top - offset)
+            if (distanceFromTop < closestToCenter) {
+              closestToCenter = distanceFromTop
+              closestCategory = categoryId
             }
           }
         }
-      },
-      {
-        rootMargin: `-${offset}px 0px -${offset}px 0px`,
-        threshold: [0, 0.1, 0.3, 0.5, 0.7, 0.9, 1.0]
       }
-    )
-  }, [offset, threshold, updateActiveCategory])
+    })
 
-  const createObserverWithDesserts = useCallback(() => {
-    return new IntersectionObserver(
-      (entries) => {
-        // Sort entries by intersection ratio to find the most visible section
-        const sortedEntries = entries
-          .filter(entry => entry.isIntersecting)
-          .sort((a, b) => (b.intersectionRatio || 0) - (a.intersectionRatio || 0))
+    // در موبایل، اولویت با نزدیک‌ترین بخش به مرکز است
+    // در دسکتاپ، اولویت با intersection ratio است
+    const finalCategory = isMobile 
+      ? (closestCategory || mostVisibleCategory)
+      : (mostVisibleCategory && maxIntersectionRatio >= threshold) 
+        ? mostVisibleCategory 
+        : closestCategory
 
-        if (sortedEntries.length > 0) {
-          const mostVisibleEntry = sortedEntries[0]
-          const categoryId = mostVisibleEntry.target.getAttribute('data-category')
-          
-          if (categoryId && categoryId !== lastActiveCategoryRef.current) {
-            // Only update if the intersection ratio is significant
-            if ((mostVisibleEntry.intersectionRatio || 0) > threshold) {
-              updateActiveCategory(categoryId)
-            }
-          }
-        }
-      },
-      {
-        rootMargin: `-${offset + dessertsSectionHeight - 450}px 0px -${offset}px 0px`,
-        threshold: [0, 0.1, 0.3, 0.5, 0.7, 0.9, 1.0]
-      }
-    )
-  }, [offset, threshold, dessertsSectionHeight, updateActiveCategory])
+    if (finalCategory) {
+      updateActiveCategory(finalCategory)
+    }
+  }, [threshold, updateActiveCategory, offset])
 
-  // Main intersection observer that chooses the appropriate logic
+  // تنظیم IntersectionObserver
   useEffect(() => {
+    if (categories.length === 0) return
+
+    // پاک کردن observer قبلی
     if (observerRef.current) {
       observerRef.current.disconnect()
     }
 
-    // Choose the appropriate observer based on desserts section visibility
-    if (dessertsSectionHeight > 0) {
-      observerRef.current = createObserverWithDesserts()
-    } else {
-      observerRef.current = createObserverWithoutDesserts()
-    }
+    // ایجاد observer جدید - بهینه‌سازی threshold برای performance بهتر
+    observerRef.current = new IntersectionObserver(handleIntersection, {
+      root: null, // viewport
+      rootMargin: `-${offset}px 0px -50% 0px`, // تغییر به 50% برای مرکز صفحه
+      threshold: [0, 0.25, 0.5, 0.75, 1.0] // کاهش threshold برای performance بهتر
+    })
 
-    // Observe all category sections
+    // اضافه کردن تمام بخش‌ها به observer - بهینه‌سازی Map sync
+    const newElementsMap = new Map<string, HTMLElement>()
     categories.forEach(categoryId => {
       const element = document.getElementById(`category-${categoryId}`)
-      if (element && observerRef.current) {
-        observerRef.current.observe(element)
+      if (element) {
+        element.setAttribute('data-category', categoryId)
+        newElementsMap.set(categoryId, element)
+        observerRef.current?.observe(element)
       }
     })
+    
+    // Update Map reference for better performance
+    sectionElementsRef.current = newElementsMap
 
     return () => {
       if (observerRef.current) {
         observerRef.current.disconnect()
       }
     }
-  }, [categories, offset, threshold, dessertsSectionHeight, updateActiveCategory])
+  }, [categories, offset, handleIntersection])
 
-  // Fallback scroll listener with improved performance
+  // Fallback scroll listener با debounce برای performance بهتر
+  const handleScroll = useCallback(() => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current)
+    }
+
+    // استفاده از requestAnimationFrame برای smooth performance
+    const rafId = requestAnimationFrame(() => {
+      timeoutRef.current = setTimeout(() => {
+        const scrollPosition = window.scrollY + offset
+        let foundCategory = ''
+
+        console.log('Scroll Detection (Fallback):', {
+          scrollY: window.scrollY,
+          offset,
+          scrollPosition,
+          categories: categories.length
+        })
+
+        // تشخیص موبایل برای الگوریتم بهتر
+        const isMobile = window.innerWidth <= 768 || 'ontouchstart' in window
+        const viewportHeight = window.innerHeight
+        const viewportCenter = viewportHeight / 2
+        
+        if (isMobile) {
+          // موبایل: پیدا کردن بخشی که نزدیک‌تر به مرکز صفحه است
+          let closestDistance = Infinity
+          let closestCategory = ''
+          
+          for (let i = categories.length - 1; i >= 0; i--) {
+            const categoryId = categories[i]
+            const element = sectionElementsRef.current.get(categoryId)
+            
+            if (element) {
+              const elementTop = element.offsetTop
+              const elementBottom = elementTop + element.offsetHeight
+              const elementCenter = elementTop + (element.offsetHeight / 2)
+              
+              // محاسبه فاصله از مرکز viewport
+              const distanceFromCenter = Math.abs(elementCenter - (scrollPosition + viewportCenter))
+              
+              console.log(`Category ${categoryId} (Mobile):`, {
+                elementTop,
+                elementBottom,
+                elementCenter,
+                scrollPosition,
+                viewportCenter,
+                distanceFromCenter,
+                isInView: scrollPosition >= elementTop && scrollPosition < elementBottom
+              })
+              
+              // اگر بخش در viewport است و نزدیک‌تر به مرکز است
+              if (scrollPosition >= elementTop && scrollPosition < elementBottom && distanceFromCenter < closestDistance) {
+                closestDistance = distanceFromCenter
+                closestCategory = categoryId
+              }
+            }
+          }
+          
+          foundCategory = closestCategory
+        } else {
+          // دسکتاپ: پیدا کردن بخشی که در viewport است
+          for (let i = categories.length - 1; i >= 0; i--) {
+            const categoryId = categories[i]
+            const element = sectionElementsRef.current.get(categoryId)
+            
+            if (element) {
+              const elementTop = element.offsetTop
+              const elementBottom = elementTop + element.offsetHeight
+              
+              console.log(`Category ${categoryId} (Desktop):`, {
+                elementTop,
+                elementBottom,
+                scrollPosition,
+                isInView: scrollPosition >= elementTop && scrollPosition < elementBottom
+              })
+              
+              if (scrollPosition >= elementTop && scrollPosition < elementBottom) {
+                foundCategory = categoryId
+                break
+              }
+            }
+          }
+        }
+        
+        // Only update if we found a different category
+        if (foundCategory && foundCategory !== lastActiveCategoryRef.current) {
+          updateActiveCategory(foundCategory)
+        }
+      }, 16) // کاهش timeout به 16ms برای 60fps
+    })
+
+    return () => cancelAnimationFrame(rafId)
+  }, [categories, offset, updateActiveCategory])
+
+  // Fallback scroll listener - همیشه فعال در موبایل برای دقت بیشتر
   useEffect(() => {
-    window.addEventListener('scroll', handleScroll, { passive: true })
+    const isMobile = window.innerWidth <= 768 || 'ontouchstart' in window
     
-    // Initial check
-    handleScroll()
+    // در موبایل همیشه scroll listener فعال باشد برای دقت بیشتر
+    // در دسکتاپ فقط اگر IntersectionObserver پشتیبانی نمی‌شود
+    if (!window.IntersectionObserver || isMobile) {
+      window.addEventListener('scroll', handleScroll, { passive: true })
+      
+      // Initial check
+      handleScroll()
 
+      return () => {
+        window.removeEventListener('scroll', handleScroll)
+        if (timeoutRef.current) {
+          clearTimeout(timeoutRef.current)
+        }
+      }
+    }
+  }, [handleScroll])
+
+  // Cleanup
+  useEffect(() => {
     return () => {
-      window.removeEventListener('scroll', handleScroll)
+      if (observerRef.current) {
+        observerRef.current.disconnect()
+      }
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current)
       }
     }
-  }, [handleScroll])
+  }, [])
 
   return { activeCategory, setActiveCategory }
 }

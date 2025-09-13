@@ -60,121 +60,224 @@ export default function CategoryNav({ categories, selectedCategory, onCategoryCh
   // Touch interaction states for mobile
   const [touchedButton, setTouchedButton] = useState<string | null>(null)
   const [touchStartTime, setTouchStartTime] = useState(0)
+  
+  // iOS sticky positioning fallback
+  const [isIOS, setIsIOS] = useState(false)
 
-  // Two separate functions for different scenarios
-  const getActiveCategoryWithoutDesserts = useCallback(() => {
-    const navHeight = navRef.current?.offsetHeight || 0
-    const extraOffset = 0 // Reduced to 0px to show first two items properly
-    const currentScrollPosition = window.scrollY + navHeight + extraOffset
+  // تشخیص iOS و تنظیم fallback برای sticky positioning
+  useEffect(() => {
+    const checkIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || 
+                    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
+    setIsIOS(checkIOS)
     
-    // Find which category section is currently in view
-    for (const category of categories) {
-      const categorySection = document.getElementById(`category-${category.id}`)
-      if (categorySection) {
-        const sectionTop = categorySection.offsetTop
-        const sectionBottom = sectionTop + categorySection.offsetHeight
-        
-        if (currentScrollPosition >= sectionTop && currentScrollPosition < sectionBottom) {
-          return category.id
-        }
+    if (checkIOS && navRef.current) {
+      // برای iOS، از position: fixed استفاده می‌کنیم
+      const nav = navRef.current.parentElement
+      if (nav) {
+        nav.style.position = 'fixed'
+        nav.style.top = '0'
+        nav.style.left = '0'
+        nav.style.right = '0'
+        nav.style.zIndex = '9999'
       }
     }
-    
-    return selectedCategory
-  }, [categories, selectedCategory])
+  }, [])
 
-  const getActiveCategoryWithDesserts = useCallback(() => {
-    const navHeight = navRef.current?.offsetHeight || 0
-    const extraOffset = 0 // Reduced to 0px to show first two items properly
-    // Much lower detection point when desserts are visible
-    const dessertsOffset = -450
-    const currentScrollPosition = window.scrollY + navHeight + extraOffset + dessertsOffset
+  // Scroll spy functionality is now handled by useScrollSync hook in the parent component
+  // This component only handles click navigation and visual feedback
+
+  // Center active nav item functionality
+  const scrollActiveItemIntoView = useCallback((activeCategoryId: string) => {
+    if (!navRef.current) return
+
+    const activeButton = navRef.current.querySelector(`[data-category="${activeCategoryId}"]`) as HTMLElement
+    if (!activeButton) return
+
+    const navContainer = navRef.current
+    const containerRect = navContainer.getBoundingClientRect()
+    const buttonRect = activeButton.getBoundingClientRect()
     
-    console.log('Scroll Detection with Desserts Debug:', {
-      windowScrollY: window.scrollY,
-      navHeight,
-      extraOffset,
-      dessertsOffset,
-      currentScrollPosition
+    // Calculate the center position
+    const containerCenter = containerRect.left + containerRect.width / 2
+    const buttonCenter = buttonRect.left + buttonRect.width / 2
+    
+    // Calculate scroll distance to center the button
+    const scrollDistance = buttonCenter - containerCenter
+    
+    // Dynamic tolerance based on screen width for better mobile experience
+    const tolerance = Math.max(30, window.innerWidth * 0.1) // 10% of screen width, min 30px
+    if (Math.abs(scrollDistance) > tolerance) {
+      // Smooth scroll to center the active item
+      navContainer.scrollBy({
+        left: scrollDistance,
+        behavior: 'smooth'
+      })
+
+      console.log('Centering active nav item:', {
+        activeCategoryId,
+        scrollDistance,
+        containerCenter,
+        buttonCenter,
+        tolerance
+      })
+    }
+  }, [])
+
+  // Effect to center active item when selectedCategory changes
+  useEffect(() => {
+    if (selectedCategory) {
+      // Small delay to ensure the DOM is updated
+      const timeoutId = setTimeout(() => {
+        scrollActiveItemIntoView(selectedCategory)
+      }, 150) // افزایش delay برای موبایل
+
+      return () => clearTimeout(timeoutId)
+    }
+  }, [selectedCategory, scrollActiveItemIntoView])
+
+  // Additional effect for initial load to center the first active item
+  useEffect(() => {
+    if (selectedCategory && navRef.current) {
+      // Wait for the component to be fully rendered
+      const timeoutId = setTimeout(() => {
+        scrollActiveItemIntoView(selectedCategory)
+      }, 300)
+
+      return () => clearTimeout(timeoutId)
+    }
+  }, [selectedCategory, scrollActiveItemIntoView])
+
+  // Mobile-optimized scroll function with combined approach
+  const performSmoothScroll = useCallback((targetPosition: number, categoryId: string) => {
+    // Check if it's mobile device
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
+                    window.innerWidth <= 768 || 
+                    'ontouchstart' in window
+    
+    console.log('Mobile Detection:', { 
+      isMobile, 
+      userAgent: navigator.userAgent, 
+      innerWidth: window.innerWidth,
+      categoryId,
+      targetPosition
     })
     
-    // Find which category section is currently in view
-    for (const category of categories) {
-      const categorySection = document.getElementById(`category-${category.id}`)
+    if (isMobile) {
+      // Combined approach: CSS fallback + JavaScript precision
+      const categorySection = document.getElementById(`category-${categoryId}`)
       if (categorySection) {
-        const sectionTop = categorySection.offsetTop
-        const sectionBottom = sectionTop + categorySection.offsetHeight
+        // First try CSS scroll-padding (simple approach)
+        const hasScrollPadding = getComputedStyle(document.documentElement).scrollPaddingTop !== 'auto'
         
-        // Debug logging for first category
-        if (category.id === categories[0]?.id) {
-          console.log('Category Check with Desserts:', {
-            categoryId: category.id,
+        if (hasScrollPadding && !isIOS) {
+          // Use CSS scroll-padding for simple cases
+          console.log('Using CSS scroll-padding approach')
+          categorySection.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'start',
+            inline: 'nearest'
+          })
+        } else {
+          // Use JavaScript for precise control (iOS or complex cases)
+          console.log('Using JavaScript precise approach')
+          const navbarHeight = navRef.current?.offsetHeight || 0
+          const safeAreaTop = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--safe-area-inset-top') || '0')
+          const totalOffset = navbarHeight + safeAreaTop + 20 // 20px extra margin
+          
+          const sectionTop = categorySection.offsetTop
+          const finalScrollPosition = Math.max(0, sectionTop - totalOffset)
+          
+          console.log('Mobile Scroll Calculation:', {
             sectionTop,
-            sectionBottom,
-            currentScrollPosition,
-            isInView: currentScrollPosition >= sectionTop && currentScrollPosition < sectionBottom
+            navbarHeight,
+            safeAreaTop,
+            totalOffset,
+            finalScrollPosition
+          })
+          
+          // Use smooth scroll with proper position
+          window.scrollTo({
+            top: finalScrollPosition,
+            behavior: 'smooth'
           })
         }
         
-        if (currentScrollPosition >= sectionTop && currentScrollPosition < sectionBottom) {
-          return category.id
+        // Fallback for devices that don't support smooth scrolling
+        if (!hasScrollPadding || isIOS) {
+          setTimeout(() => {
+            const currentScrollY = window.scrollY
+            const expectedPosition = categorySection.offsetTop - (navRef.current?.offsetHeight || 0) - 20
+            if (Math.abs(currentScrollY - expectedPosition) > 50) {
+              console.log('Using manual animation fallback')
+              // Manual animation fallback
+              const startPosition = window.pageYOffset
+              const distance = expectedPosition - startPosition
+              const duration = 600
+              let start: number | null = null
+              
+              const easeInOutQuad = (t: number, b: number, c: number, d: number): number => {
+                t /= d / 2
+                if (t < 1) return c / 2 * t * t + b
+                t--
+                return -c / 2 * (t * (t - 2) - 1) + b
+              }
+              
+              const animation = (currentTime: number) => {
+                if (start === null) start = currentTime
+                const timeElapsed = currentTime - start
+                const run = easeInOutQuad(timeElapsed, startPosition, distance, duration)
+                window.scrollTo(0, run)
+                if (timeElapsed < duration) requestAnimationFrame(animation)
+              }
+              
+              requestAnimationFrame(animation)
+            }
+          }, 100)
         }
       }
-    }
-    
-    return selectedCategory
-  }, [categories, selectedCategory])
-
-  // Main function that chooses the appropriate logic
-  const getActiveCategoryFromScroll = useCallback(() => {
-    // Check if desserts section is visible
-    const dessertsSection = document.querySelector('section[class*="py-6 border-b border-gray-200"]')
-    const dessertsHeight = dessertsSection ? dessertsSection.getBoundingClientRect().height : 0
-    
-    if (dessertsHeight > 0) {
-      return getActiveCategoryWithDesserts()
     } else {
-      return getActiveCategoryWithoutDesserts()
-    }
-  }, [getActiveCategoryWithDesserts, getActiveCategoryWithoutDesserts])
-
-  // Handle scroll events to automatically update active category
-  useEffect(() => {
-    const handleScroll = () => {
-      const newActiveCategory = getActiveCategoryFromScroll()
-      if (newActiveCategory !== selectedCategory) {
-        onCategoryChange(newActiveCategory)
+      // For desktop, use the original method
+      window.scrollTo({
+        top: Math.max(0, targetPosition),
+        behavior: 'smooth'
+      })
+      
+      // Fallback for browsers that don't support smooth scrolling
+      if (!('scrollBehavior' in document.documentElement.style)) {
+        const startPosition = window.pageYOffset
+        const distance = targetPosition - startPosition
+        const duration = 500
+        let start: number | null = null
+        
+        const easeInOutQuad = (t: number, b: number, c: number, d: number): number => {
+          t /= d / 2
+          if (t < 1) return c / 2 * t * t + b
+          t--
+          return -c / 2 * (t * (t - 2) - 1) + b
+        }
+        
+        const animation = (currentTime: number) => {
+          if (start === null) start = currentTime
+          const timeElapsed = currentTime - start
+          const run = easeInOutQuad(timeElapsed, startPosition, distance, duration)
+          window.scrollTo(0, run)
+          if (timeElapsed < duration) requestAnimationFrame(animation)
+        }
+        
+        requestAnimationFrame(animation)
       }
     }
+  }, [])
 
-    // Throttle scroll events for better performance
-    let ticking = false
-    const throttledScrollHandler = () => {
-      if (!ticking) {
-        requestAnimationFrame(() => {
-          handleScroll()
-          ticking = false
-        })
-        ticking = true
-      }
-    }
-
-    window.addEventListener('scroll', throttledScrollHandler, { passive: true })
-    
-    return () => {
-      window.removeEventListener('scroll', throttledScrollHandler)
-    }
-  }, [getActiveCategoryFromScroll, selectedCategory, onCategoryChange])
-
-  // Two separate click handlers for different scenarios
-  const handleCategoryClickWithoutDesserts = useCallback((categoryId: string) => {
+  // Simplified click handler for category navigation
+  const handleCategoryClick = useCallback((categoryId: string) => {
     const categorySection = document.getElementById(`category-${categoryId}`)
     if (categorySection) {
       const navHeight = navRef.current?.offsetHeight || 0
-      const extraOffset = 0 // Reduced to 0px to show first two items properly
+      const extraOffset = 20 // Small offset for better visibility
       const scrollPosition = categorySection.offsetTop - navHeight - extraOffset
       
-      console.log('Category Click without Desserts Debug:', {
+      console.log('Category Click Debug:', {
         categoryId,
         categoryTop: categorySection.offsetTop,
         navHeight,
@@ -182,106 +285,12 @@ export default function CategoryNav({ categories, selectedCategory, onCategoryCh
         calculatedScrollPosition: scrollPosition
       })
       
-      // Enhanced smooth scrolling for both mobile and desktop
-      window.scrollTo({
-        top: Math.max(0, scrollPosition),
-        behavior: 'smooth'
-      })
-      
-      // Fallback for browsers that don't support smooth scrolling
-      if (!('scrollBehavior' in document.documentElement.style)) {
-        const startPosition = window.pageYOffset
-        const distance = scrollPosition - startPosition
-        const duration = 500
-        let start: number | null = null
-        
-        const easeInOutQuad = (t: number, b: number, c: number, d: number): number => {
-          t /= d / 2
-          if (t < 1) return c / 2 * t * t + b
-          t--
-          return -c / 2 * (t * (t - 2) - 1) + b
-        }
-        
-        const animation = (currentTime: number) => {
-          if (start === null) start = currentTime
-          const timeElapsed = currentTime - start
-          const run = easeInOutQuad(timeElapsed, startPosition, distance, duration)
-          window.scrollTo(0, run)
-          if (timeElapsed < duration) requestAnimationFrame(animation)
-        }
-        
-        requestAnimationFrame(animation)
-      }
+      // Use the mobile-optimized scroll function
+      performSmoothScroll(scrollPosition, categoryId)
     }
     
     onCategoryChange(categoryId)
-  }, [onCategoryChange])
-
-  const handleCategoryClickWithDesserts = useCallback((categoryId: string) => {
-    const categorySection = document.getElementById(`category-${categoryId}`)
-    if (categorySection) {
-      const navHeight = navRef.current?.offsetHeight || 0
-      const extraOffset = 0 // Reduced to 0px to show first two items properly
-      // Much higher scroll position when desserts are visible
-      const dessertsOffset = 450
-      const scrollPosition = categorySection.offsetTop - navHeight - extraOffset + dessertsOffset
-      
-      console.log('Category Click with Desserts Debug:', {
-        categoryId,
-        categoryTop: categorySection.offsetTop,
-        navHeight,
-        extraOffset,
-        dessertsOffset,
-        calculatedScrollPosition: scrollPosition
-      })
-      
-      // Enhanced smooth scrolling for both mobile and desktop
-      window.scrollTo({
-        top: Math.max(0, scrollPosition),
-        behavior: 'smooth'
-      })
-      
-      // Fallback for browsers that don't support smooth scrolling
-      if (!('scrollBehavior' in document.documentElement.style)) {
-        const startPosition = window.pageYOffset
-        const distance = scrollPosition - startPosition
-        const duration = 500
-        let start: number | null = null
-        
-        const easeInOutQuad = (t: number, b: number, c: number, d: number): number => {
-          t /= d / 2
-          if (t < 1) return c / 2 * t * t + b
-          t--
-          return -c / 2 * (t * (t - 2) - 1) + b
-        }
-        
-        const animation = (currentTime: number) => {
-          if (start === null) start = currentTime
-          const timeElapsed = currentTime - start
-          const run = easeInOutQuad(timeElapsed, startPosition, distance, duration)
-          window.scrollTo(0, run)
-          if (timeElapsed < duration) requestAnimationFrame(animation)
-        }
-        
-        requestAnimationFrame(animation)
-      }
-    }
-    
-    onCategoryChange(categoryId)
-  }, [onCategoryChange])
-
-  // Main click handler that chooses the appropriate logic
-  const handleCategoryClick = useCallback((categoryId: string) => {
-    // Check if desserts section is visible
-    const dessertsSection = document.querySelector('section[class*="py-6 border-b border-gray-200"]')
-    const dessertsHeight = dessertsSection ? dessertsSection.getBoundingClientRect().height : 0
-    
-    if (dessertsHeight > 0) {
-      handleCategoryClickWithDesserts(categoryId)
-    } else {
-      handleCategoryClickWithoutDesserts(categoryId)
-    }
-  }, [handleCategoryClickWithDesserts, handleCategoryClickWithoutDesserts])
+  }, [onCategoryChange, performSmoothScroll])
 
   // Mouse drag-to-scroll functionality
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
@@ -306,6 +315,15 @@ export default function CategoryNav({ categories, selectedCategory, onCategoryCh
     setIsDragging(false)
     if (navRef.current) {
       navRef.current.style.cursor = 'grab'
+    }
+  }, [])
+
+  // Handle wheel events for horizontal scrolling
+  const handleWheel = useCallback((e: React.WheelEvent) => {
+    if (navRef.current) {
+      e.preventDefault()
+      const scrollAmount = e.deltaY * 2 // Adjust scroll sensitivity
+      navRef.current.scrollLeft += scrollAmount
     }
   }, [])
 
@@ -363,10 +381,12 @@ export default function CategoryNav({ categories, selectedCategory, onCategoryCh
 
   // Render category content based on navbar style - Mobile optimized
   const renderCategoryContent = (category: Category) => {
+    const isActive = selectedCategory === category.id
+    
     switch (navbarStyle) {
       case 'text-only':
         return (
-          <span className="text-xs sm:text-sm md:text-base font-medium">
+          <span className={`text-xs sm:text-sm md:text-base font-medium ${isActive ? 'text-primary-foreground' : 'text-foreground'}`}>
             {category.name}
           </span>
         )
@@ -385,7 +405,7 @@ export default function CategoryNav({ categories, selectedCategory, onCategoryCh
             <div className="flex items-center justify-center">
               {getCategoryIcon(category.icon)}
             </div>
-            <span className="text-xs sm:text-sm md:text-sm font-medium text-center leading-tight">
+            <span className={`text-xs sm:text-sm md:text-sm font-medium text-center leading-tight ${isActive ? 'text-primary-foreground' : 'text-foreground'}`}>
               {category.name}
             </span>
           </div>
@@ -409,7 +429,7 @@ export default function CategoryNav({ categories, selectedCategory, onCategoryCh
   }
 
   return (
-    <nav className="sticky top-0 z-40 bg-background/90 backdrop-blur-md border-b border-border shadow-sm">
+    <nav className={`sticky-nav sticky-nav-backdrop top-0 z-40 bg-background/90 backdrop-blur-md border-b border-border shadow-sm ${isIOS ? 'ios-fixed-nav' : ''}`}>
       <div className="mobile-container">
         <div 
           ref={navRef}
@@ -418,6 +438,7 @@ export default function CategoryNav({ categories, selectedCategory, onCategoryCh
           onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUp}
           onMouseLeave={handleMouseLeave}
+          onWheel={handleWheel}
           style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
         >
           {categories.map((category) => {
@@ -438,19 +459,23 @@ export default function CategoryNav({ categories, selectedCategory, onCategoryCh
                   getButtonClasses(),
                   "rounded-lg sm:rounded-xl border-2 transition-all duration-300 ease-in-out",
                   "bg-transparent backdrop-blur-md border-transparent",
-                  "text-foreground font-medium font-body",
-                  "hover:bg-secondary/70 hover:border-gold/50 hover:scale-105",
+                  // Default text color
+                  !isActive && "text-foreground font-medium font-body",
+                  // Active state text color - must come after default
+                  isActive && "text-primary-foreground font-semibold",
+                  "hover:bg-secondary/70 hover:border-secondary/50 hover:scale-105",
                   "active:scale-95",
                   // Touch feedback styles
                   isTouched && [
-                    "bg-secondary/70 border-gold/50 scale-105",
+                    "bg-secondary/70 border-secondary/50 scale-105",
                     "shadow-[0_0_12px_2px_hsl(var(--primary)/0.2)]"
                   ],
-                  // Active state styles
+                  // Active state styles - better contrast
                   isActive && [
                     "bg-primary text-primary-foreground",
-                    "border-gold shadow-[0_0_12px_2px_hsl(var(--primary)/0.4)]",
-                    "hover:bg-primary hover:border-gold hover:scale-100"
+                    "border-primary/20 shadow-[0_0_12px_2px_hsl(var(--primary)/0.4)]",
+                    "hover:bg-primary hover:text-primary-foreground hover:border-primary/20 hover:scale-100",
+                    "font-semibold" // اضافه کردن font weight برای contrast بهتر
                   ]
                 )}
               >
