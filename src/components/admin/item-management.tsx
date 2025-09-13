@@ -793,7 +793,7 @@ export function ItemManagement({
                           })
                         }
                       }}
-                      className="w-4 h-4 text-primary border-border rounded focus:ring-primary focus:ring-2"
+                      className="w-4 h-4 mobile-checkbox text-primary border-border rounded focus:ring-primary focus:ring-2"
                     />
                     <label htmlFor={`categoryDiscount-${selectedCategory}`} className="text-sm">
                       {categoryDiscounts[selectedCategory]?.isActive ? 'فعال' : 'غیرفعال'}
@@ -1252,10 +1252,9 @@ export function ItemManagement({
                 <label className="block text-sm font-medium mb-2 text-foreground">نام آیتم *</label>
                 <input
                   type="text"
-                  value={itemForm.title}
+                  value={itemForm.title || ''}
                   onChange={(e) => setItemForm({ ...itemForm, title: e.target.value })}
                   className="w-full p-3 border border-border rounded-lg bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200"
-                  placeholder="مثال: اسپرسو"
                   autoFocus
                   required
                 />
@@ -1271,18 +1270,16 @@ export function ItemManagement({
                   value={itemForm.supplementaryText || ''}
                   onChange={(e) => setItemForm({ ...itemForm, supplementaryText: e.target.value })}
                   className="w-full p-3 border border-border rounded-lg bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200"
-                  placeholder="مثال: تک، دوبل، ویژه، ..."
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium mb-2 text-foreground">توضیحات</label>
                 <textarea
-                  value={itemForm.description}
+                  value={itemForm.description || ''}
                   onChange={(e) => setItemForm({ ...itemForm, description: e.target.value })}
                   className="w-full p-3 border border-border rounded-lg resize-none bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200"
                   rows={3}
-                  placeholder="توضیحات آیتم (اختیاری)"
                 />
               </div>
 
@@ -1290,10 +1287,9 @@ export function ItemManagement({
                 <label className="block text-sm font-medium mb-2 text-foreground">قیمت (تومان)</label>
                 <input
                   type="number"
-                  value={itemForm.price}
+                  value={itemForm.price || ''}
                   onChange={(e) => setItemForm({ ...itemForm, price: parseInt(e.target.value) || 0 })}
                   className="w-full p-3 border border-border rounded-lg bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200"
-                  placeholder="0"
                   min="0"
                 />
               </div>
@@ -1306,7 +1302,7 @@ export function ItemManagement({
                     id="hasIndividualDiscount"
                     checked={itemForm.hasIndividualDiscount || false}
                     onChange={(e) => setItemForm({ ...itemForm, hasIndividualDiscount: e.target.checked })}
-                    className="w-4 h-4 text-primary border-border rounded focus:ring-primary focus:ring-2"
+                    className="w-4 h-4 mobile-checkbox text-primary border-border rounded focus:ring-primary focus:ring-2"
                   />
                   <label htmlFor="hasIndividualDiscount" className="text-sm font-medium text-foreground">
                     تخفیف جداگانه برای این آیتم
@@ -1321,15 +1317,11 @@ export function ItemManagement({
                   <input
                     type="number"
                     step="0.01"
-                    value={itemForm.discountedPrice || 0}
+                    value={itemForm.discountedPrice || ''}
                     onChange={(e) => setItemForm({ ...itemForm, discountedPrice: parseFloat(e.target.value) || 0 })}
                     className="w-full p-3 border border-border rounded-lg bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200"
-                    placeholder="0.00"
                     min="0"
                   />
-                  <p className="text-xs text-muted-foreground mt-1">
-                    این قیمت در صفحه اصلی نمایش داده می‌شود
-                  </p>
                 </div>
               )}
 
@@ -1556,10 +1548,9 @@ export function ItemManagement({
                         <label className="block text-sm font-medium mb-2 text-foreground">نام آیتم *</label>
                       <input
                         type="text"
-                        defaultValue={item.title}
+                        value={item.title}
                         onChange={(e) => handleUpdateItem(item.id, { title: e.target.value })}
                           className="w-full p-3 border border-border rounded-lg bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200"
-                        autoFocus
                           required
                       />
                     </div>
@@ -1571,17 +1562,16 @@ export function ItemManagement({
                       </label>
                       <input
                         type="text"
-                        defaultValue={item.supplementaryText || ''}
+                        value={item.supplementaryText || ''}
                         onChange={(e) => handleUpdateItem(item.id, { supplementaryText: e.target.value })}
                         className="w-full p-3 border border-border rounded-lg bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200"
-                        placeholder="مثال: تک، دوبل، ویژه، ..."
                       />
                     </div>
 
                     <div>
                         <label className="block text-sm font-medium mb-2 text-foreground">توضیحات *</label>
                       <textarea
-                        defaultValue={item.description}
+                        value={item.description}
                         onChange={(e) => handleUpdateItem(item.id, { description: e.target.value })}
                           className="w-full p-3 border border-border rounded-lg resize-none bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200"
                         rows={3}
@@ -1592,7 +1582,7 @@ export function ItemManagement({
                         <label className="block text-sm font-medium mb-2 text-foreground">قیمت (تومان) *</label>
                       <input
                         type="number"
-                        defaultValue={item.price}
+                        value={item.price || ''}
                         onChange={(e) => handleUpdateItem(item.id, { price: parseInt(e.target.value) || 0 })}
                           className="w-full p-3 border border-border rounded-lg bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200"
                         min="0"
@@ -1673,7 +1663,7 @@ export function ItemManagement({
                             id={`hasIndividualDiscount-${item.id}`}
                             checked={item.hasIndividualDiscount || false}
                             onChange={(e) => handleUpdateItem(item.id, { hasIndividualDiscount: e.target.checked })}
-                            className="w-4 h-4 text-primary border-border rounded focus:ring-primary focus:ring-2"
+                            className="w-4 h-4 mobile-checkbox text-primary border-border rounded focus:ring-primary focus:ring-2"
                           />
                           <label htmlFor={`hasIndividualDiscount-${item.id}`} className="text-sm font-medium text-foreground">
                             تخفیف جداگانه برای این آیتم
@@ -1688,15 +1678,11 @@ export function ItemManagement({
                           <input
                             type="number"
                             step="0.01"
-                            defaultValue={item.discountedPrice || 0}
+                            value={item.discountedPrice || ''}
                             onChange={(e) => handleUpdateItem(item.id, { discountedPrice: parseFloat(e.target.value) || 0 })}
                             className="w-full p-3 border border-border rounded-lg bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200"
-                            placeholder="0.00"
                             min="0"
                           />
-                          <p className="text-xs text-muted-foreground mt-1">
-                            این قیمت در صفحه اصلی نمایش داده می‌شود
-                          </p>
                         </div>
                       )}
                     </div>

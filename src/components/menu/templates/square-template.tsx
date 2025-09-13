@@ -33,6 +33,14 @@ export function SquareTemplate({ item, className, isAdmin = false, onEditItem, c
   
   const fileInputRef = useRef<HTMLInputElement>(null)
 
+  // Update editImage when item.image changes (for external updates)
+  React.useEffect(() => {
+    if (!showEditModal) {
+      setEditImage(item.image)
+      setImagePreview(null)
+    }
+  }, [item.image, showEditModal])
+
   const handleEditClick = () => {
     console.log('Square template edit button clicked for:', item.title)
     setEditTitle(item.title)

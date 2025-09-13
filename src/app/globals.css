@@ -770,6 +770,14 @@
       min-height: 44px;
       min-width: 44px;
     }
+    
+    /* کوچک کردن checkbox برای موبایل */
+    .mobile-checkbox {
+      width: 14px !important;
+      height: 14px !important;
+      min-width: 14px !important;
+      min-height: 14px !important;
+    }
   }
   
   /* Improved animation performance */

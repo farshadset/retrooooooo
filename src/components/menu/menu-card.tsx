@@ -45,6 +45,14 @@ export function MenuCard({ item, className, isAdmin = false, onEditItem, categor
   const [rotation, setRotation] = useState(0)
   const [originalImage, setOriginalImage] = useState<string | null>(null)
   const [showHelp, setShowHelp] = useState(false)
+
+  // Update editImage when item.image changes (for external updates)
+  React.useEffect(() => {
+    if (!showEditModal) {
+      setEditImage(item.image)
+      setImagePreview(null)
+    }
+  }, [item.image, showEditModal])
   
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const imageRef = useRef<HTMLImageElement>(null)

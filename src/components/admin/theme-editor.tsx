@@ -644,19 +644,6 @@ export function ThemeEditor({
 
                     
 
-                    {/* Header Background Toggle */}
-                    <div className="flex items-center space-x-3">
-                      <input
-                        type="checkbox"
-                        id="showHeaderBackground"
-                        checked={currentTheme.header.showBackground}
-                        onChange={(e) => updateHeader({ showBackground: e.target.checked })}
-                        className="w-4 h-4 text-primary border-border rounded focus:ring-primary focus:ring-2"
-                      />
-                      <label htmlFor="showHeaderBackground" className="text-sm font-medium">
-                        نمایش پس‌زمینه سربرگ
-                      </label>
-                    </div>
 
 
 
@@ -767,7 +754,7 @@ export function ThemeEditor({
                               }
                               updateDessertsConfig(newConfig)
                             }}
-                            className="w-4 h-4 text-primary border-border rounded focus:ring-primary focus:ring-2"
+                            className="w-4 h-4 mobile-checkbox text-primary border-border rounded focus:ring-primary focus:ring-2"
                           />
                           <label htmlFor="dessertsVisibility" className="text-sm">
                             {dessertsConfig?.isVisible ? 'فعال' : 'غیرفعال'}
@@ -814,7 +801,7 @@ export function ThemeEditor({
                                   isActive: e.target.checked 
                                 })
                               }}
-                          className="w-4 h-4 text-primary border-border rounded focus:ring-primary focus:ring-2"
+                          className="w-4 h-4 mobile-checkbox text-primary border-border rounded focus:ring-primary focus:ring-2"
                         />
                             <label htmlFor="dessertsDiscount" className="text-sm">
                               {dessertsDiscountConfig?.isActive ? 'فعال' : 'غیرفعال'}
@@ -1698,7 +1685,6 @@ export function ThemeEditor({
                           }
                         }}
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200"
-                        placeholder="مثال: کیک شکلاتی"
                       />
                     </div>
 
@@ -1716,26 +1702,25 @@ export function ThemeEditor({
                         }}
                         rows={3}
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 resize-none"
-                        placeholder="توضیحات آیتم"
                       />
                     </div>
 
                     {/* 4. Price - Fourth */}
                     <div>
-                      <label className="block text-sm font-medium mb-2 text-gray-700">قیمت اصلی (تومان)</label>
+                      <label className="block text-sm font-medium mb-2 text-gray-700">قیمت (تومان)</label>
                       <input
-                        type="number"
-                        value={editingDessertsItem ? editingDessertsItem.price : dessertsItemForm.price}
+                        type="text"
+                        value={editingDessertsItem ? (editingDessertsItem.price || '') : (dessertsItemForm.price || '')}
                         onChange={(e) => {
+                          const value = e.target.value
+                          const numericValue = value === '' ? 0 : parseFloat(value) || 0
                           if (editingDessertsItem) {
-                            setEditingDessertsItem({ ...editingDessertsItem, price: parseInt(e.target.value) || 0 })
+                            setEditingDessertsItem({ ...editingDessertsItem, price: numericValue })
                           } else {
-                            setDessertsItemForm({ ...dessertsItemForm, price: parseInt(e.target.value) || 0 })
+                            setDessertsItemForm({ ...dessertsItemForm, price: numericValue })
                           }
                         }}
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200"
-                        placeholder="0"
-                        min="0"
                       />
                     </div>
 
@@ -1753,7 +1738,7 @@ export function ThemeEditor({
                               setDessertsItemForm({ ...dessertsItemForm, hasIndividualDiscount: e.target.checked })
                             }
                           }}
-                          className="w-4 h-4 text-primary border-border rounded focus:ring-primary focus:ring-2"
+                          className="w-4 h-4 mobile-checkbox text-primary border-border rounded focus:ring-primary focus:ring-2"
                         />
                         <label htmlFor="hasIndividualDiscount" className="text-sm font-medium text-gray-700">
                           تخفیف جداگانه برای این آیتم
@@ -1766,23 +1751,19 @@ export function ThemeEditor({
                       <div>
                         <label className="block text-sm font-medium mb-2 text-gray-700">قیمت بعد از تخفیف (تومان)</label>
                         <input
-                          type="number"
-                          step="0.01"
-                          value={editingDessertsItem ? editingDessertsItem.discountedPrice || 0 : dessertsItemForm.discountedPrice}
+                          type="text"
+                          value={editingDessertsItem ? (editingDessertsItem.discountedPrice || '') : (dessertsItemForm.discountedPrice || '')}
                           onChange={(e) => {
+                            const value = e.target.value
+                            const numericValue = value === '' ? 0 : parseFloat(value) || 0
                             if (editingDessertsItem) {
-                              setEditingDessertsItem({ ...editingDessertsItem, discountedPrice: parseFloat(e.target.value) || 0 })
+                              setEditingDessertsItem({ ...editingDessertsItem, discountedPrice: numericValue })
                             } else {
-                              setDessertsItemForm({ ...dessertsItemForm, discountedPrice: parseFloat(e.target.value) || 0 })
+                              setDessertsItemForm({ ...dessertsItemForm, discountedPrice: numericValue })
                             }
                           }}
                           className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200"
-                          placeholder="0.00"
-                          min="0"
                         />
-                        <p className="text-xs text-gray-500 mt-1">
-                          این قیمت در صفحه اصلی نمایش داده می‌شود
-                        </p>
                       </div>
                     )}
                   </div>
